@@ -49,11 +49,11 @@ zsh
 
 $ cat zsh/.zshrc
 …
-for sh in ~/.zshrc.d/*
-do
-    [[ -r ${sh} ]] && source "${sh}"
-done
-unset sh
+  for module in ${zsh_modules_dir}/*
+  do
+    [[ -r ${module} ]] && source "${module}"
+  done
+  unset module
 …
 ```
 
