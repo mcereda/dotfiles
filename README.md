@@ -19,10 +19,10 @@ Aaahm… Well… Nope.
 It expects one to manage the repository as packages using [GNU stow]:
 
 ```shell
-$ stow --target $target_dir $package_list
+$ stow --target $target_dir --dotfiles $package_list
 
 # simulate
-$ stow --target $HOME --verbose common git linux vim zsh --simulate
+$ stow --target $HOME --verbose common git linux vim zsh --dotfiles --simulate
 …
 LINK: .screenrc => Repositories/Private/dotfiles/screen/.screenrc
 LINK: .vimrc => Repositories/Private/dotfiles/vim/.vimrc
@@ -59,22 +59,24 @@ unset sh
 
 To achieve the expected result:
 
-- the files' numbered prefix should follow a structured priority:
-
-  1. generic environment customizations (personal, work, …)
-  1. os-related overlays and customizations (darwin, linux, …)
-  1. package managers customizations (brew, macports, …)
-  1. frameworks configuration and activation (antigen, zplug, …)
-  1. shell customization (bash, zsh, …)
-  1. app overlays (git, minikube, …)
-  1. aliases and functions
-  1. prompt customization
-
-- files should use defaults, but not override variables which could have been set before them
+- environment variables should use default values, and override them only when needed:
 
    ```shell
    antigen theme ${ANTIGEN_THEME:-gentoo}
    ```
+
+- the files' numbered prefix should follow a structured priority:
+
+  1. generic environment customizations (_personal_, _work_, …)
+  1. os-related overlays and customizations (_darwin_, _linux_, …)
+  1. package managers customizations (`brew`, _macports_, …)
+  1. frameworks configuration and activation (`antigen`, `zplug`, …)
+  1. shell customization (`bash`, `zsh`, …)
+  1. app overlays (`git`, `minikube`, …)
+  1. aliases and functions
+  1. prompt customization
+
+This should ensure nice, subsequent overrides of variable values and settings.
 
 I personally suggest to keep all shared resources in one place putting them under the `${package}/.local/share/${package}` folder and sourcing them inside a package's files:
 
