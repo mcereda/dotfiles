@@ -53,8 +53,8 @@ path=(
 # All files in the configuration folder will be automatically loaded in
 # numeric order. The last file setting a value overrides the previous ones.
 # Links are only sourced if their reference exists.
-zsh_modules_dir="${zsh_modules_dir:-~/.zshrc.d}"
-if [[ -d "${zsh_modules_dir}" ]];
+zsh_modules_dir="${zsh_modules_dir:-$HOME/.zshrc.d}"
+if [[ -d "${zsh_modules_dir}" ]]
 then
 	for module in ${zsh_modules_dir}/*
 	do
