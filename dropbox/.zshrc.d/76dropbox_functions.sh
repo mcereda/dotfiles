@@ -12,7 +12,7 @@ dropbox-install () {
 	curl $DROPBOX_url \
 		--continue-at - \
 		--location \
-    	--output $DROPBOX_archive \
+		--output $DROPBOX_archive \
 		--retry $DROPBOX_retries \
 		--silent --show-error
 
@@ -39,7 +39,7 @@ dropbox-install-control-script () {
 	curl $DROPBOX_script_url \
 		--continue-at - \
 		--location \
-    	--output $DROPBOX_script_download_path \
+		--output $DROPBOX_script_download_path \
 		--retry $DROPBOX_retries \
 		--silent --show-error
 
