@@ -28,7 +28,8 @@ source $ANTIGEN_INIT
 # Load the oh-my-zsh's library.
 antigen use oh-my-zsh
 
-# Bundles from the default repo (robbyrussell's oh-my-zsh).
+# Bundle plugins from the default repo (robbyrussell's oh-my-zsh).
+# Plugin list: https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
 antigen bundle git
 command which asdf      >/dev/null 2>&1 && antigen bundle asdf
 command which aws       >/dev/null 2>&1 && antigen bundle aws
