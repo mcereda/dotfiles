@@ -8,7 +8,7 @@ fi
 # Download Antigen if missing.
 ANTIGEN_HOME="${ANTIGEN_HOME:-$HOME/.local/share}/antigen"
 ANTIGEN_INIT="${ANTIGEN_HOME}/antigen.zsh"
-[[ ! -d "$ANTIGEN_HOME" ]] && mkdir --parents "$ANTIGEN_HOME"
+[[ ! -d "$ANTIGEN_HOME" ]] && mkdir -p "$ANTIGEN_HOME"
 if [[ ! -e "$ANTIGEN_INIT" ]]
 then
 	echo -n "Getting latest version of antigen... "
