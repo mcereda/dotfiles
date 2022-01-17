@@ -1,4 +1,4 @@
-# Prioritize kegs
+# Prioritize kegs.
 for keg in ${KEGS[@]}
 do
 	path=(
