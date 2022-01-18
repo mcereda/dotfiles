@@ -26,6 +26,7 @@ dropbox-install () {
 
 	[[ ${DEBUG} ]] && set +o xtrace
 }
+
 dropbox-install-control-script () {
 	# https://www.dropbox.com/install-linux
 	[[ ${DEBUG} ]] && set -o xtrace
