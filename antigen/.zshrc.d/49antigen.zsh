@@ -7,12 +7,12 @@ fi
 
 # Download Antigen if missing.
 ANTIGEN_HOME="${ANTIGEN_HOME:-$HOME/.local/share}/antigen"
-ANTIGEN_INIT="${ANTIGEN_HOME}/antigen.zsh"
+ANTIGEN_INIT="${ANTIGEN_INIT:-$ANTIGEN_HOME/antigen.zsh}"
 [[ ! -d "$ANTIGEN_HOME" ]] && mkdir -p "$ANTIGEN_HOME"
 if [[ ! -e "$ANTIGEN_INIT" ]]
 then
 	echo -n "Getting latest version of antigen... "
-	curl --location --silent git.io/antigen > $ANTIGEN_INIT
+	curl --location --silent git.io/antigen > "$ANTIGEN_INIT"
 	echo "done"
 fi
 
@@ -23,7 +23,7 @@ ADOTDIR=~/.cache/antigen
 ANTIGEN_AUTO_CONFIG=false
 
 # Load the framework.
-source $ANTIGEN_INIT
+source "$ANTIGEN_INIT"
 
 # Load the oh-my-zsh's library.
 antigen use oh-my-zsh
@@ -50,7 +50,7 @@ antigen bundle zsh-users/zsh-history-substring-search
 antigen bundle zsh-users/zsh-syntax-highlighting
 
 # Load the theme.
-antigen theme ${ANTIGEN_THEME:-gentoo}
+antigen theme "${ANTIGEN_THEME:-gentoo}"
 
 # Tell Antigen that you're done.
 antigen apply
