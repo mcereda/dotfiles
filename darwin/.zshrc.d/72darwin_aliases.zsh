@@ -1,6 +1,8 @@
 alias broken-links='find . -type l -not -path "*/Library/*" -exec test ! -e {} \; -print'
 alias dead-links='broken-links'
 
+alias darwin-upgrade-routine='softwareupdate --install --recommended'
+
 # Enable colors.
 alias grep='grep --color=always'
 alias ls='ls -G'

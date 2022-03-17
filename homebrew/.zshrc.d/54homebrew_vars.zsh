@@ -1,3 +1,3 @@
 [[ -z "${UPGRADE_ROUTINES[@]}" ]] && UPGRADE_ROUTINES=()
 
-UPGRADE_ROUTINES+='darwin-upgrade-routine'
+UPGRADE_ROUTINES+='brew-upgrade-routine'
