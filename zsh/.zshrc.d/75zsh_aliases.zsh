@@ -2,7 +2,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias please='sudo'
 alias uncomment='grep -Ev "^#|^$"'
 
-[[ -n "${UPGRADE_ROUTINES[@]}" ]] && alias upgrade-routine="${(j:; :)UPGRADE_ROUTINES}"
+[[ -n "${UPGRADE_ROUTINES[@]}" ]] && alias upgrade-routine="${(j:; echo -e "\n---\n"; :)UPGRADE_ROUTINES}"
 
 # History.
 # alias redo='$(fc -ln -1)'
