@@ -1,6 +1,6 @@
 # The file to save the history in when an interactive shell exits.
 # If unset, the history is not saved.
-HISTFILE=~/.zhistory
+HISTFILE=~/.zsh_history
 
 # Set the number of lines or commands allowed in the history file
 SAVEHIST=50000

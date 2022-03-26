@@ -82,8 +82,8 @@ promptinit
 # Remove non-existing directories, follow symlinks and clean up remaing paths.
 if command which realpath >/dev/null 2>&1
 then
-  fpath=( $(realpath --canonicalize-existing --no-symlinks --quiet ${fpath[@]}) )
-  path=(  $(realpath --canonicalize-existing --no-symlinks --quiet ${path[@]})  )
+	fpath=( $(realpath --canonicalize-existing --no-symlinks --quiet ${fpath[@]}) )
+	path=(  $(realpath --canonicalize-existing --no-symlinks --quiet ${path[@]})  )
 fi
 
 # Make PATH's and FPATH's entries unique for better performances.
