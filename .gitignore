@@ -1,0 +1,9 @@
+################################################################################
+## .gitignore
+################################################################################
+
+# Data files are plain, non-templatable files.
+# Used here to store static data local to the executing host only.
+.chezmoidata.json
+.chezmoidata.toml
+.chezmoidata.yaml
