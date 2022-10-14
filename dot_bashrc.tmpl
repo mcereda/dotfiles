@@ -1,30 +1,33 @@
 ################################################################################
 ## ~/.bashrc
 ##
-## There are 3 different types of shells in Bash: the login shell, the normal
-## shell and the interactive shell.
+## There are 3 different types of shells in Bash:
+## - the login shell;
+## - the interactive non-login shell;
+## - the non-interactive non-login shell.
 ## Login shells read /etc/profile, and only the first one found between
 ## '~/.bash_profile', '~/.bash_login' and '~/.profile' in this order.
-## Interactive non-login shells read /etc/bashrc and ~/.bashrc.
-## In this setup, ~/.bash_profile sources ~/.bashrc, which means that all
+## Interactive non-login shells read '/etc/bashrc' and '~/.bashrc'.
+## Non-interactive non-login shell read the file which name is the value of the
+## '$BASH_ENV' variable.
+## In this setup, '~/.bash_profile' sources '~/.bashrc', which means that all
 ## changes made here will also take effect in a login shell.
 ##
 ## This file is sourced by all *interactive* Bash shells on startup, including
 ## some apparently interactive shells such as `scp` and `rcp` which can't
 ## tolerate any output.
 ## Make sure this doesn't display anything or bad things will happen!
-## Follows /etc/bashrc.
 ##
-## It is recommended to put language settings in ~/.profile rather than here,
-## since multilingual X sessions would not work properly if LANG is overridden
-## in every subshell.
+## It is recommended to put language settings in '~/.bash_profile',
+## '~/.bash_login' or '~/.profile' rather than here, as multilingual X sessions
+## would not work properly if '$LANG' is overridden in every subshell.
 ##
 ## References:
 ## - https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
 ################################################################################
 
 # Debug.
-# echo "${BASH_SOURCE} sourced"
+# echo "${BASH_SOURCE} is being sourced."
 
 ########################################
 # Basic utility aliases and functions.
@@ -43,7 +46,7 @@ is-shell-interactive () {
 	# From Bash's manpage:
 	#   '$PS1' is set and '$-' includes 'i' if the shell is interactive.
 
-	if [[ ! $- =~ 'i' ]] || [[ ! -t 0 ]]
+	if [[ ! $- =~ i ]] || [[ ! -t 0 ]]
 	then
 		return 1
 	fi
@@ -54,11 +57,32 @@ is-shell-login () {
 	#   A login shell is one whose first character of argument zero is a '-', or
 	#   one started with the '--login' option.
 
-	if [[ ! $0 =~ '^-' ]] || [[ $(shopt login_shell | cut -f 2) != 'on' ]]
+	if [[ ! $0 =~ ^- ]] || [[ $(shopt login_shell | cut -f 2) != 'on' ]]
 	then
 		return 1
 	fi
 }
+
+# Needs to return 0 or 1 and not `true` or `false`.
+# Input's case is lowered to save on match options.
+{{- /* The shortened version is available since Bash 5. */}}
+{{-    if lt (atoi (output "bash" "-c" "echo ${BASH_VERSION:0:1}" | trim)) 5 }}
+# Bash3 has no built-in means to convert case of a string, fallback to `tr`.
+is-true () {
+	local INPUT="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
+	if [[ ! "$INPUT" =~ ^1|on|true|yes$ ]]
+	then
+		return 1
+	fi
+}
+{{-    else }}
+is-true () {
+	if [[ ! "${1,,}" =~ ^1|on|true|yes$ ]]
+	then
+		return 1
+	fi
+}
+{{-    end }}
 
 ########################################
 # Pre-flight checks.
