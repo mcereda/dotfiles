@@ -85,13 +85,13 @@ Due to less time in general, performance issues and the decision to not always d
 - the files are managed using [chezmoi], just because it offers lots of features (templating and encryption, mostly) and I find it easier than [GNU stow] or other similar projects ([yadm])
 - chezmoi's configuration files format of choice is **YAML**, because I find it is easy to read, write, and merge in the code
 - files containing any private data shall be encrypted; see [encryption](#encryption) for details
-- shell-related files shall focus on performance as I am easily annoied by slow prompts; see [shell files conventions](#shell-files-conventions) for details
+- shell-related files shall focus on performance as I am easily annoyed by slow prompts; see [shell files conventions](#shell-files-conventions) for details
 - host-specific files are looked for in a directory named as the hostname, inside the `$hostsDir` directory:
 
   ```golang
   // file at $(chezmoi source-path)/dot_gitconfig
-  {{- $hostsDir := dig "hostsdir" ".hosts" . }}
-  {{- $hostGitConfigs := list (joinPath $hostsDir .chezmoi.hostname "dot_gitconfig") }}
+  {{ $hostsDir := dig "hostsDir" ".hosts" . }}
+  {{ $hostGitConfigs := list (joinPath $hostsDir .chezmoi.hostname "dot_gitconfig") }}
   ```
 
   the `$hostsDir` variable can be manually defined using the `data.hostsDir` key in chezmoi's configuration:
@@ -120,10 +120,10 @@ Host-specific encrypted files are looked for in a directory named as the hashed 
 
 ```golang
 // file at $(chezmoi source-path)/dot_gitconfig
-{{- $hashedHostname := dig "hashedhostname" (adler32sum (sha256sum .chezmoi.hostname)) . }}
-{{- $hostEncryptedGitConfigs := list
-        (joinPath $hostsDir $hashedHostname (print "encrypted_dot_gitconfig" (dig "age" "suffix" ".age" .)))
-        (joinPath $hostsDir $hashedHostname (print "encrypted_dot_gitconfig" (dig "gpg" "suffix" ".asc" .))) }}
+{{ $hashedHostname := dig "hashedHostname" (adler32sum (sha256sum .chezmoi.hostname)) . }}
+{{ $hostEncryptedGitConfigs := list
+     (joinPath $hostsDir $hashedHostname (print "encrypted_dot_gitconfig" (dig "age" "suffix" ".age" .)))
+     (joinPath $hostsDir $hashedHostname (print "encrypted_dot_gitconfig" (dig "gpg" "suffix" ".asc" .))) }}
 ```
 
 The hashed hostname can be manually defined using the `data.hashedHostname` key in chezmoi's configuration, and is included in the rendered configuration file after an init to speed things up on the next execution:
@@ -131,7 +131,7 @@ The hashed hostname can be manually defined using the `data.hashedHostname` key 
 ```yaml
 # file at $HOME/.config/chezmoi/chezmoi.yaml
 data:
-  hashedhostname: …
+  hashedHostname: …
 ```
 
 By default, hostnames are hashed in 2 steps:
@@ -189,7 +189,12 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 ## Testing
 
 ```sh
+docker run -it --name fedora -v "${PWD}:/root/.local/share/chezmoi" fedora:36
 dnf install -y https://github.com/twpayne/chezmoi/releases/download/v2.24.0/chezmoi-2.24.0-aarch64.rpm
+chezmoi init
+chezmoi init
+chezmoi diff
+chezmoi apply
 ```
 
 ## Further readings
