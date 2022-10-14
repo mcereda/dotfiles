@@ -2,105 +2,105 @@
 ## .chezmoi.yaml
 ################################################################################
 
-{{- /*
-    * Compute or set default values. Add yours here.
-    * It's just nice to have them handy here and reference them later.
-    */}}
+{{/*
+   * Compute or set default values. Add yours here.
+   * It's just nice to have them handy here and reference them later.
+   */}}
 
-{{- $defaults := dict }}
-{{- $_ := set $defaults "encryption" "gpg" }}
-{{- $_ := set $defaults "hashedHostname" (adler32sum (sha256sum .chezmoi.hostname)) }}
-{{- $_ := set $defaults "hostsDir" ".hosts" }}
-
-
-{{- /*
-     * For chezmoi to be able to decrypt any encrypted file which content needs
-     * to be loaded, it requires the 'encryption' setting to be set _before_
-     * the first run.
-     * The easiest solution to this is to leverage the available init functions
-     * to create a file with just that, and then re-run the 'init' step.
-     */}}
-
-{{  if not (stat .chezmoi.configFile) }}
-
-  {{- /*
-       * Enable encryption on the first init, and ask the user to re-run.
-       * I cannot currently find a way to automatically re-run this step, as
-       * there is no 'output'-like init function.
-       */}}
-
-  {{- pick $defaults "encryption" | toYaml }}
-  {{- writeToStdout
-        "Required initial encryption value set to its default one.\n"
-        "Please re-run `chezmoi init`\n" }}
-
-{{- else }}
-
-  {{/*
-    * Update the configuration file building upon what is already there.
-    * The easiest way to do this is not to fiddle with the direct assignments,
-    * but to create a new dict instead, fill it with the current settings, and
-    * just print the contents of such dict at the end.
-    */}}
+{{-  $defaults := dict }}
+{{-  $_ := set $defaults "encryption" "gpg" }}
+{{-  $_ := set $defaults "hashedHostname" (adler32sum (sha256sum .chezmoi.hostname)) }}
+{{-  $_ := set $defaults "hostsDir" ".hosts" -}}
 
 
-  {{- /*
-      * Start from the existing configuration.
-      * Remove the parts which do not belong in this file.
-      */}}
+{{/*
+   * For chezmoi to be able to decrypt any encrypted file which content needs
+   * to be loaded, it requires the 'encryption' setting to be set _before_
+   * the first run.
+   * The easiest solution to this is to leverage the available init functions
+   * to create a file with just that, and then re-run the 'init' step.
+   */}}
 
-  {{- $config := omit . "chezmoi" }}
+{{-  if not (stat .chezmoi.configFile) -}}
 
+{{/*
+   *   Enable encryption on the first init, and ask the user to re-run.
+   *   I cannot currently find a way to automatically re-run this step, as
+   *   there is no 'output'-like init function.
+   */}}
 
-  {{- /*
-      * Reuse the old custom data, or create a new empty key for what comes.
-      * Then, update or fill it with the new custom data.
-      */}}
+{{-    pick $defaults "encryption" | toYaml }}
+{{-    writeToStdout
+         "Required initial encryption value set to its default one.\n"
+         "Please re-run `chezmoi init`\n" }}
 
-  {{- $_ := set $config "data" (dig "data" dict $config) }}
+{{-  else -}}
 
-  {{- $hashedHostname := dig "hashedHostname" $defaults.hashedHostname . }}
-  {{- $_ := set $config.data "hashedHostname" $hashedHostname }}
-
-
-  {{- /*
-      * Load pieces of configuration from hosts-specific configuration files, if
-      * any such file exists.
-      * Every file's content will overwrite the existing settings in order.
-      */}}
-
-  {{- $hostsDir := dig "hostsDir" $defaults.hostsDir . }}
-
-  {{- $hostConfigFiles := list
-        (joinPath $hostsDir .chezmoi.hostname ".chezmoi.yaml") }}
-  {{- range $f := $hostConfigFiles }}
-  {{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
-  {{-     $hostConfig := dict }}
-  {{-     $hostConfig = include $f | fromYaml }}
-  {{-     $config = mergeOverwrite $config $hostConfig }}
-  {{-   end }}
-  {{- end }}
-
-  {{- $hostEncryptedConfigFiles := list
-        (joinPath $hostsDir $hashedHostname (print "encrypted_chezmoi.yaml" (dig "age" "suffix" ".age" .)))
-        (joinPath $hostsDir $hashedHostname (print "encrypted_chezmoi.yaml" (dig "gpg" "suffix" ".asc" .))) }}
-  {{- range $f := $hostEncryptedConfigFiles }}
-  {{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
-  {{-     $hostConfig := dict }}
-  {{-     $hostConfig = include $f | decrypt | fromYaml }}
-  {{-     $config = mergeOverwrite $config $hostConfig }}
-  {{-   end }}
-  {{- end }}
+{{/*
+   *   Update the configuration file building upon what is already there.
+   *   The easiest way to do this is not to fiddle with the direct assignments,
+   *   but to create a new dict instead, fill it with the current settings, and
+   *   just print the contents of such dict at the end.
+   */ -}}
 
 
-  {{- /*
-      * Write out the resulting configuration merge.
-      * Clean up the configuration root from what needs to stay in the 'data' key.
-      */}}
-  {{- range $k := keys $config.data }}
-  {{-   $config = omit $config $k }}
-  {{- end }}
+{{/*
+   *   Start from the existing configuration.
+   *   Remove the parts which do not belong in this file.
+   */}}
 
-  {{- $config | toYaml }}
+{{-    $config := omit . "chezmoi" -}}
 
-{{- end -}}
+
+{{/*
+   *   Reuse the old custom data, or create a new empty key for what comes.
+   *   Then, update or fill it with the new custom data.
+   */}}
+
+{{-    $_ := set $config "data" (dig "data" dict $config) }}
+
+{{-    $hashedHostname := dig "hashedHostname" $defaults.hashedHostname . }}
+{{-    $_ := set $config.data "hashedHostname" $hashedHostname -}}
+
+
+{{/*
+   *   Load pieces of configuration from hosts-specific configuration files, if
+   *   any such file exists.
+   *   Every file's content will overwrite the existing settings in order.
+   */}}
+
+{{-    $hostsDir := dig "hostsDir" $defaults.hostsDir . }}
+
+{{-    $hostConfigFiles := list
+         (joinPath $hostsDir .chezmoi.hostname ".chezmoi.yaml") }}
+{{-    range $f := $hostConfigFiles }}
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-        $hostConfig := dict }}
+{{-        $hostConfig = include $f | fromYaml }}
+{{-        $config = mergeOverwrite $config $hostConfig }}
+{{-      end }}
+{{-    end }}
+
+{{-    $hostEncryptedConfigFiles := list
+         (joinPath $hostsDir $hashedHostname (print "encrypted_chezmoi.yaml" (dig "age" "suffix" ".age" .)))
+         (joinPath $hostsDir $hashedHostname (print "encrypted_chezmoi.yaml" (dig "gpg" "suffix" ".asc" .))) }}
+{{-    range $f := $hostEncryptedConfigFiles }}
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-        $hostConfig := dict }}
+{{-        $hostConfig = include $f | decrypt | fromYaml }}
+{{-        $config = mergeOverwrite $config $hostConfig }}
+{{-      end }}
+{{-    end -}}
+
+
+{{/*
+   *   Write out the resulting configuration merge.
+   *   Clean up the configuration root from what needs to stay in the 'data' key.
+   */}}
+{{-    range $k := keys $config.data }}
+{{-      $config = omit $config $k }}
+{{-    end }}
+
+{{-    $config | toYaml }}
+
+{{-  end -}}
