@@ -1,0 +1,75 @@
+################################################################################
+## ~/.bashrc
+##
+## There are 3 different types of shells in Bash: the login shell, normal shell
+## and interactive shell. Login shells read ~/.bash_profile and ~/.profile when
+## existing, while interactive shells read ~/.bashrc; in this setup,
+## ~/.bash_profile sources ~/.bashrc, which means that all changes made here
+## will also take effect in a login shell.
+##
+## This file is sourced by all *interactive* Bash shells on startup, including
+## some apparently interactive shells such as scp and rcp that can't tolerate
+## any output.
+## Make sure this doesn't display anything or bad things might happen!
+##
+## It is recommended to make language settings in ~/.profile rather than here,
+## since multilingual X sessions would not work properly if LANG is overridden
+## in every subshell.
+##
+## References:
+## - https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
+################################################################################
+
+########################################
+# Basic utility aliases and functions.
+# Used to simplify checks later.
+########################################
+
+is-shell-interactive () {
+	if [[ $- != *i* ]]
+	then
+		return 1
+	fi
+}
+
+is-shell-login () {
+	if [[ ! $0 =~ '-.*' ]] || [[ $(shopt login_shell) == 'on' ]]
+	then
+		return 1
+	fi
+}
+
+########################################
+# Pre-flight checks.
+########################################
+
+# If this is a non-interactive shell, do nothing else.
+# There is no need to set anything past this point for scp and rcp, and it's
+# important to refrain from outputting anything in those cases.
+is-shell-interactive && return
+
+########################################
+# Shell configuration.
+########################################
+
+{{- /* This feature is available since Bash 4. */}}
+{{-    if ge (atoi (output "bash" "-c" "echo ${BASH_VERSION:0:1}" | trim)) 4 }}
+
+# List the status of any stopped and running jobs before exiting an interactive
+# shell. If any jobs are running, defer exiting until a second exit is attempted
+# without an intervening command, and always postpone exiting if any jobs are
+# stopped.
+shopt -s checkjobs
+
+{{-    end }}
+
+# Check the window size of the current terminal window after each command.
+# If necessary, update the values of the LINES and COLUMNS variables.
+shopt -s checkwinsize
+
+# If Readline is being used, do not attempt to search PATH for possible
+# completions when the line is empty and wait a long time for this.
+shopt -s no_empty_cmd_completion
+
+# Add "/" to links to directories in autocompletion.
+set mark-symlinked-directories on

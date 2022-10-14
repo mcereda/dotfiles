@@ -1,0 +1,12 @@
+################################################################################
+## ~/.bash_profile
+##
+## This file is sourced by all Bash *login* shells.
+################################################################################
+
+# This line is recommended by the Bash info pages.
+: "${BASHRC=$HOME/.bashrc}"
+if [[ -r "$BASHRC" ]]
+then
+	source "$BASHRC"
+fi
