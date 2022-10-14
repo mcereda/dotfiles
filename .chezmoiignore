@@ -13,3 +13,12 @@ README.md
 .inputrc
 
 {{-    end }}
+
+{{-    if and
+         (not (lookPath "vim"))
+         (not (lookPath "vim.tiny")) }}
+
+# Vim not found in the user's PATH, ignore all the related files.
+.vimrc
+
+{{- end }}
