@@ -2,6 +2,19 @@
 
 My dotfiles, for better/faster/simpler host management and more fun!
 
+1. [License](#license)
+2. [Status](#status)
+3. [Support and contributing](#support-and-contributing)
+4. [Contributing](#contributing)
+5. [Usage](#usage)
+6. [Design decisions](#design-decisions)
+   1. [Encryption](#encryption)
+   2. [Shell-related files conventions](#shell-related-files-conventions)
+7. [Gotchas](#gotchas)
+8. [TODO](#todo)
+9. [Testing](#testing)
+10. [Further readings](#further-readings)
+
 ## License
 
 The MIT license is used here, see [LICENSE].
