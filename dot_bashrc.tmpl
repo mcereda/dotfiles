@@ -1,18 +1,21 @@
 ################################################################################
 ## ~/.bashrc
 ##
-## There are 3 different types of shells in Bash: the login shell, normal shell
-## and interactive shell. Login shells read ~/.bash_profile and ~/.profile when
-## existing, while interactive shells read ~/.bashrc; in this setup,
-## ~/.bash_profile sources ~/.bashrc, which means that all changes made here
-## will also take effect in a login shell.
+## There are 3 different types of shells in Bash: the login shell, the normal
+## shell and the interactive shell.
+## Login shells read /etc/profile, and only the first one found between
+## '~/.bash_profile', '~/.bash_login' and '~/.profile' in this order.
+## Interactive non-login shells read /etc/bashrc and ~/.bashrc.
+## In this setup, ~/.bash_profile sources ~/.bashrc, which means that all
+## changes made here will also take effect in a login shell.
 ##
 ## This file is sourced by all *interactive* Bash shells on startup, including
-## some apparently interactive shells such as scp and rcp that can't tolerate
-## any output.
-## Make sure this doesn't display anything or bad things might happen!
+## some apparently interactive shells such as `scp` and `rcp` which can't
+## tolerate any output.
+## Make sure this doesn't display anything or bad things will happen!
+## Follows /etc/bashrc.
 ##
-## It is recommended to make language settings in ~/.profile rather than here,
+## It is recommended to put language settings in ~/.profile rather than here,
 ## since multilingual X sessions would not work properly if LANG is overridden
 ## in every subshell.
 ##
@@ -20,21 +23,38 @@
 ## - https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
 ################################################################################
 
+# Debug.
+# echo "${BASH_SOURCE} sourced"
+
 ########################################
 # Basic utility aliases and functions.
 #
 # Used to simplify checks later.
+# Needed in non-interactive shells too.
 ########################################
 
+alias disable-xtrace='set +o xtrace'
+alias enable-xtrace='set -o xtrace'
+
+# Print the whole current environment.
+alias printallenv='set -o posix && set'
+
 is-shell-interactive () {
-	if [[ $- != *i* ]]
+	# From Bash's manpage:
+	#   '$PS1' is set and '$-' includes 'i' if the shell is interactive.
+
+	if [[ ! $- =~ 'i' ]] || [[ ! -t 0 ]]
 	then
 		return 1
 	fi
 }
 
 is-shell-login () {
-	if [[ ! $0 =~ '-.*' ]] || [[ $(shopt login_shell) == 'on' ]]
+	# From Bash's manpage:
+	#   A login shell is one whose first character of argument zero is a '-', or
+	#   one started with the '--login' option.
+
+	if [[ ! $0 =~ '^-' ]] || [[ $(shopt login_shell | cut -f 2) != 'on' ]]
 	then
 		return 1
 	fi
@@ -47,7 +67,7 @@ is-shell-login () {
 # If this is a non-interactive shell, do nothing else.
 # There is no need to set anything past this point for scp and rcp, and it's
 # important to refrain from outputting anything in those cases.
-is-shell-interactive && return
+is-shell-interactive || return
 
 ########################################
 # Shell configuration.
@@ -103,3 +123,30 @@ shopt -s histappend
 # If readline is being used, load the results of history substitution into the
 # editing buffer, allowing further modification before execution.
 shopt -s histverify
+
+########################################
+# Utility aliases and functions.
+#
+# Ordered and grouped by dependencies.
+########################################
+
+alias redo='$(history -p !!)'
+alias uncomment='grep -Ev "^#|^$"'
+
+{{-    if lookPath "notify-send" }}
+
+alias alert='\
+	notify-send --urgency=low -i \
+	"$([ $? = 0 ] && echo terminal || echo error)" \
+	"$(history \
+	   | tail -n1 \
+	   | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+{{-    end }}
+
+{{-    if lookPath "sudo" }}
+
+alias please='sudo'
+alias sedo='sudo redo'
+
+{{-    end }}
