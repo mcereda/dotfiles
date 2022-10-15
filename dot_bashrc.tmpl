@@ -34,6 +34,7 @@
 #
 # Used to simplify checks later.
 # Needed in non-interactive shells too.
+# Ordered alphabetically and by dependencies.
 ########################################
 
 alias disable-xtrace='set +o xtrace'
@@ -59,6 +60,16 @@ is-shell-login () {
 	[[ $0 =~ ^- ]] || [[ $(shopt login_shell | cut -f 2) == 'on' ]]
 }
 
+to-lower () {
+{{- /* The shortened version is available since Bash 5. */}}
+{{-    if lt (atoi (output "bash" "-c" "echo ${BASH_VERSION:0:1}" | trim)) 5 }}
+	# Bash3 has no built-in means to convert case of a string, fallback to `tr`.
+	echo "$(echo "$1" | tr '[:upper:]' '[:lower:]')"
+{{-    else }}
+	echo "${1,,}"
+{{-    end }}
+}
+
 is-true () {
 	# Needs to return 0 or 1 and not `true` or `false`.
 	# Input's case is lowered to save on match options.
@@ -68,6 +79,8 @@ is-true () {
 }
 
 path-add () {
+	is-true "$DEBUG" && enable-xtrace
+
 	local APPEND="${APPEND:-0}"
 	local PREPEND="${PREPEND:-1}"
 
@@ -80,6 +93,10 @@ path-add () {
 	then
 		path-prepend $@
 	fi
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
 }
 
 path-append () {
@@ -88,6 +105,8 @@ path-append () {
 	# leaving the variable in an inconsistent state.
 	# Multiple entries need to be ordered from higher to lower priority due to
 	# them being added at the end of PATH's value one by one.
+
+	is-true "$DEBUG" && enable-xtrace
 
 	for ENTRY in $@
 	do
@@ -106,6 +125,10 @@ path-append () {
 	done
 
 	export PATH
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
 }
 
 path-prepend () {
@@ -114,6 +137,8 @@ path-prepend () {
 	# leaving the variable in an inconsistent state.
 	# Multiple entries need to be ordered from lower to higher priority due to
 	# them being added at the beginning of PATH's value one by one.
+
+	is-true "$DEBUG" && enable-xtrace
 
 	for ENTRY in $@
 	do
@@ -132,9 +157,15 @@ path-prepend () {
 	done
 
 	export PATH
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
 }
 
 path-remove-broken () {
+	is-true "$DEBUG" && enable-xtrace
+
 	PATH="$(\
 		printf %s "$PATH" \
 		| awk -vRS=: '$0' \
@@ -142,26 +173,27 @@ path-remove-broken () {
 		| paste -s -d ':' \
 	)"
 	export PATH
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
 }
 
 path-remove-duplicates () {
+	is-true "$DEBUG" && enable-xtrace
+
 	PATH="$(\
 		printf %s "$PATH" \
 		| awk -vRS=: '!a[$0]++' \
 		| paste -s -d ':' \
 	)"
 	export PATH
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
 }
 
-to-lower () {
-{{- /* The shortened version is available since Bash 5. */}}
-{{-    if lt (atoi (output "bash" "-c" "echo ${BASH_VERSION:0:1}" | trim)) 5 }}
-	# Bash3 has no built-in means to convert case of a string, fallback to `tr`.
-	echo "$(echo "$1" | tr '[:upper:]' '[:lower:]')"
-{{-    else }}
-	echo "${1,,}"
-{{-    end }}
-}
 
 ########################################
 # Pre-flight operations.
