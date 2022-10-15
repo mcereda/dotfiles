@@ -42,14 +42,13 @@ alias enable-xtrace='set -o xtrace'
 # Print the whole current environment.
 alias printallenv='set -o posix && set'
 
+is-symlink-broken () { [[ ! -e "$1" ]] ; }
+
 is-shell-interactive () {
 	# From Bash's manpage:
 	#   '$PS1' is set and '$-' includes 'i' if the shell is interactive.
 
-	if [[ ! $- =~ i ]] || [[ ! -t 0 ]]
-	then
-		return 1
-	fi
+	[[ $- =~ i ]] || [[ -t 0 ]]
 }
 
 is-shell-login () {
@@ -57,20 +56,81 @@ is-shell-login () {
 	#   A login shell is one whose first character of argument zero is a '-', or
 	#   one started with the '--login' option.
 
-	if [[ ! $0 =~ ^- ]] || [[ $(shopt login_shell | cut -f 2) != 'on' ]]
+	[[ $0 =~ ^- ]] || [[ $(shopt login_shell | cut -f 2) == 'on' ]]
+}
+
+is-true () {
+	# Needs to return 0 or 1 and not `true` or `false`.
+	# Input's case is lowered to save on match options.
+
+	local LOWERED_INPUT="$(to-lower "$1")"
+	[[ "$LOWERED_INPUT" =~ ^1|on|true|yes$ ]]
+}
+
+path-add () {
+	local APPEND="${APPEND:-0}"
+	local PREPEND="${PREPEND:-1}"
+
+	if is-true "$APPEND"
 	then
-		return 1
+		append-path "$1"
+	fi
+
+	if is-true "$PREPEND"
+	then
+		prepend-path "$1"
 	fi
 }
 
-# Needs to return 0 or 1 and not `true` or `false`.
-# Input's case is lowered to save on match options.
-is-true () {
-	local LOWERED_INPUT="$(to-lower "$1")"
-	if [[ ! "$LOWERED_INPUT" =~ ^1|on|true|yes$ ]]
+path-append () {
+	# Add the absolute path the input refers to.
+
+	if [[ ! -d "$1" ]]
 	then
+		echo "error: $1 does not exist" >&2
 		return 1
 	fi
+
+	cd "$1"
+	PATH="${PATH}:${PWD}"
+	cd - > /dev/null
+
+	export PATH
+}
+
+path-prepend () {
+	# Add the absolute path the input refers to.
+
+	if [[ ! -d "$1" ]]
+	then
+		echo "error: $1 does not exist" >&2
+		return 1
+	fi
+
+	cd "$1"
+	PATH="${PWD}:${PATH}"
+	cd - > /dev/null
+
+	export PATH
+}
+
+path-remove-broken () {
+	PATH="$(\
+		printf %s "$PATH" \
+		| awk -vRS=: '$0' \
+		| xargs -I {} bash -c "[[ -e {} ]] && echo {}" \
+		| paste -s -d ':' \
+	)"
+	export PATH
+}
+
+path-remove-duplicates () {
+	PATH="$(\
+		printf %s "$PATH" \
+		| awk -vRS=: '!a[$0]++' \
+		| paste -s -d ':' \
+	)"
+	export PATH
 }
 
 to-lower () {
@@ -160,10 +220,12 @@ alias uncomment='grep -Ev "^#|^$"'
 
 alias alert='\
 	notify-send --urgency=low -i \
-	"$([ $? = 0 ] && echo terminal || echo error)" \
-	"$(history \
-	   | tail -n1 \
-	   | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+	"$( [ $? = 0 ] && echo terminal || echo error >&2 )" \
+	"$( \
+		history \
+			| tail -n1 \
+			| sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'' \
+		)"'
 
 {{-    end }}
 
