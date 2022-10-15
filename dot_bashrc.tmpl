@@ -73,12 +73,12 @@ path-add () {
 
 	if is-true "$APPEND"
 	then
-		append-path "$1"
+		path-append "$1"
 	fi
 
 	if is-true "$PREPEND"
 	then
-		prepend-path "$1"
+		path-prepend "$1"
 	fi
 }
 
@@ -144,8 +144,31 @@ to-lower () {
 }
 
 ########################################
-# Pre-flight checks.
+# Pre-flight operations.
 ########################################
+
+# Add common paths to PATH.
+# Entries needs to be from the lower to the higher priority due to them being
+# added at the beginning of PATH's value one by one.
+{{-    $paths := list
+		 "/bin"
+		 "/sbin"
+         "/usr/bin"
+		 "/usr/sbin"
+         "/usr/local/bin"
+		 "/usr/local/sbin"
+         (joinPath (env "HOME") ".local" "bin")
+         (joinPath (env "HOME") ".bin")
+         (joinPath (env "HOME") "bin") }}
+{{-    range $d := $paths | compact }}
+{{-      if stat $d }}
+path-add {{ $d | quote }}
+{{-      end }}
+{{-    end }}
+
+# Clean up PATH
+path-remove-duplicates
+path-remove-broken
 
 # If this is a non-interactive shell, do nothing else.
 # There is no need to set anything past this point for scp and rcp, and it's
