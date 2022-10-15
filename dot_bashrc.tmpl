@@ -73,43 +73,63 @@ path-add () {
 
 	if is-true "$APPEND"
 	then
-		path-append "$1"
+		path-append $@
 	fi
 
 	if is-true "$PREPEND"
 	then
-		path-prepend "$1"
+		path-prepend $@
 	fi
 }
 
 path-append () {
-	# Add the absolute path the input refers to.
+	# Add the absolute paths the input entries refer to.
+	# Different loops to make it fail before adding the first entry. This avoids
+	# leaving the variable in an inconsistent state.
+	# Multiple entries need to be ordered from higher to lower priority due to
+	# them being added at the end of PATH's value one by one.
 
-	if [[ ! -d "$1" ]]
-	then
-		echo "error: $1 does not exist" >&2
-		return 1
-	fi
+	for ENTRY in $@
+	do
+		if [[ ! -d "$ENTRY" ]]
+		then
+			echo "error: $ENTRY does not exist" >&2
+			return 1
+		fi
+	done
 
-	cd "$1"
-	PATH="${PATH}:${PWD}"
-	cd - > /dev/null
+	for ENTRY in $@
+	do
+		cd "$ENTRY"
+		PATH="${PATH}:${PWD}"
+		cd - > /dev/null
+	done
 
 	export PATH
 }
 
 path-prepend () {
-	# Add the absolute path the input refers to.
+	# Add the absolute paths the input entries refer to.
+	# Different loops to make it fail before adding the first entry. This avoids
+	# leaving the variable in an inconsistent state.
+	# Multiple entries need to be ordered from lower to higher priority due to
+	# them being added at the beginning of PATH's value one by one.
 
-	if [[ ! -d "$1" ]]
-	then
-		echo "error: $1 does not exist" >&2
-		return 1
-	fi
+	for ENTRY in $@
+	do
+		if [[ ! -d "$ENTRY" ]]
+		then
+			echo "error: $ENTRY does not exist" >&2
+			return 1
+		fi
+	done
 
-	cd "$1"
-	PATH="${PWD}:${PATH}"
-	cd - > /dev/null
+	for ENTRY in $@
+	do
+		cd "$ENTRY"
+		PATH="${PWD}:${PATH}"
+		cd - > /dev/null
+	done
 
 	export PATH
 }
@@ -148,8 +168,7 @@ to-lower () {
 ########################################
 
 # Add common paths to PATH.
-# Entries needs to be from the lower to the higher priority due to them being
-# added at the beginning of PATH's value one by one.
+# Each entry will be prepended in the given order.
 {{-    $paths := list
 		 "/bin"
 		 "/sbin"
@@ -160,11 +179,12 @@ to-lower () {
          (joinPath (env "HOME") ".local" "bin")
          (joinPath (env "HOME") ".bin")
          (joinPath (env "HOME") "bin") }}
-{{-    range $d := $paths | compact }}
-{{-      if stat $d }}
-path-add {{ $d | quote }}
+{{-    range $p := $paths | compact }}
+{{-      if not (stat $p) }}
+{{-        $paths = without $paths $p }}
 {{-      end }}
 {{-    end }}
+path-add {{ $paths | join " " }}
 
 # Clean up PATH
 path-remove-duplicates
