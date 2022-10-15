@@ -7,3 +7,7 @@
 .chezmoidata.json
 .chezmoidata.toml
 .chezmoidata.yaml
+
+# Host-specific files.
+# This is not the place to store them.
+.hosts/
