@@ -468,55 +468,10 @@ then
 fi
 
 {{-    if or
+         (lookPath "python")
          (lookPath "python2")
          (lookPath "python3") }}
 
-####################
-# Python.
-#
-# See also:
-# - https://docs.python.org/3/using/cmdline.html#environment-variables
-####################
+{{       includeTemplate "python.sh"}}
 
-PYTHONCACHE=1
-PYTHONREQUIREMENTSFILES=(
-	"${HOME}/.local/lib/python/requirements.txt"
-)
-
-PYTHONCACHEDIROPTIONS=()
-if ! is-true "$PYTHONCACHE"
-then
-	PYTHONCACHEDIROPTIONS+=( '--no-cache-dir' )
-fi
-
-PYTHONREQUIREMENTSOPTION=()
-for FILE in ${PYTHONREQUIREMENTSFILES[@]}
-do
-	if [[ -r "$FILE" ]]
-	then
-		PYTHONREQUIREMENTSOPTION+=( "--requirement $FILE" )
-	fi
-done
-
-{{-      if or
-           (lookPath "pip2")
-           (lookPath "pip3") }}
-
-alias python-upgrade-all='pip install -U ${PYTHONCACHEDIROPTIONS[@]} --requirement <(pip freeze | sed "s/==/>=/")'
-alias python-upgrade-pip='pip install -U ${PYTHONCACHEDIROPTIONS[@]} pip'
-alias python-upgrade-requirements='pip install -U ${PYTHONCACHEDIROPTIONS[@]} ${PYTHONREQUIREMENTSOPTION[@]}'
-
-alias python-user-upgrade-all='python-upgrade-all --user'
-alias python-user-upgrade-pip='python-upgrade-pip --user'
-alias python-user-upgrade-requirements='python-upgrade-requirements --user'
-
-alias python-upgrade-routine='python-user-upgrade-requirements'
-
-# Add the upgrade routine to the system's.
-if [[ ! "${UPGRADE_ROUTINES[@]}" =~ 'python-upgrade-routine' ]]
-then
-	UPGRADE_ROUTINES+=( 'python-upgrade-routine' )
-fi
-
-{{-      end }}
 {{-    end }}

@@ -18,6 +18,16 @@ README.md
 
 {{-    end }}
 
+{{-    if and
+         (not (lookPath "python"))
+         (not (lookPath "python2"))
+         (not (lookPath "python3")) }}
+
+# Python not found in the user's PATH, ignore all the related files.
+.local/lib/python/
+
+{{-    end }}
+
 {{-    if not (lookPath "screen") }}
 
 # Screen not found in the user's PATH, ignore all the related files.
