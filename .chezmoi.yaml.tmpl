@@ -4,6 +4,7 @@
 
 {{- $debug := false }}
 
+
 {{- /*
      * Update the configuration file building upon what is already there.
      * The easiest way to do this is not to fiddle with the direct assignments,
@@ -13,7 +14,7 @@
 
 
 {{- /*
-     * Compute or set default values. Add yours here.
+     * Compute or set default values for this file. Add yours here.
      * I just find nice to have them handy here and reference them later, and
      * setting them one per line feels more readable than a convoluted,
      * all-in-one dict definition (I tried).
@@ -28,7 +29,7 @@
 {{-    $_ := set $defaults "encryption" "gpg" }}
 
 {{-    if $debug }}
-# defaults:
+{{       "defaults:" | comment "# " }}
 {{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
@@ -40,20 +41,14 @@
 
 {{-    $config := $defaults }}
 
-{{-    if $debug }}
-# After assignment from $defaults.
-# config:
-{{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
 {{-    if stat $.chezmoi.configFile }}
 {{-      $configFromFile := include $.chezmoi.configFile | fromYaml }}
 {{-      $_ := mustMergeOverwrite $config $configFromFile }}
 {{-    end }}
 
 {{-    if $debug }}
-# After merge from config file.
-# config:
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
@@ -71,18 +66,25 @@
          (joinPath $config.data.hostDir ".chezmoi.yaml") }}
 
 {{-    range $f := $hostConfigFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
 {{-        $hostConfig := includeTemplate $f | fromYaml }}
 {{-        $_ := mustMergeOverwrite $config $hostConfig }}
+
 {{-      end }}
+
 {{-    end }}
 
 {{-    if $debug }}
-# After merge from host's specific config files.
-# config:
+{{       "merged with the host's specific config files" | comment "# " }}
+{{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * It is useless to hash the default file's names, as this method is not
@@ -97,6 +99,11 @@
          (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{-    range $f := $hostEncryptedConfigFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
 {{- /*
@@ -131,8 +138,8 @@
 {{-    end }}
 
 {{-    if $debug }}
-# After merge from host's specific encrypted config files.
-# config:
+{{       "merged with the host's specific encrypted config files" | comment "# " }}
+{{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
