@@ -13,3 +13,98 @@ startup_message off
 termcapinfo xterm ti@:te@
 termcapinfo xterm-color ti@:te@
 vbell off
+
+
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    if $debug }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+
+{{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file.
+     */}}
+
+{{-    $config := $defaults }}
+
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+
+{{- /*
+     * Load pieces of configuration from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will be templated, and the result will be added,
+     * in the order each appears in the list.
+     */}}
+
+{{-    $hostScreenrcFiles := list
+         (joinPath $config.data.hostDir ".screenrc.tmpl")
+         (joinPath $config.data.hostDir ".screenrc") }}
+
+{{-    range $f := $hostScreenrcFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{         includeTemplate $f }}
+{{-      end }}
+
+{{-    end }}
+
+{{- /*
+     * It is useless to hash the default file's names, as this method is not
+     * a real encryption and doing it just makes identifying the right file
+     * more difficult. Just add your file path to this list eventually.
+     */}}
+
+{{-    $hostEncryptedScreenrcFiles := list
+         (joinPath $config.data.encryptedHostDir (print ".screenrc.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".screenrc.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".screenrc" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".screenrc" (dig "gpg" "suffix" ".asc" $config))) }}
+
+{{-    range $f := $hostEncryptedScreenrcFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
+{{- /*
+     *     For chezmoi to be able to decrypt any encrypted file which content
+     *     needs to be loaded, it requires the 'encryption' setting to be
+     *     present in the configuration file _before_ the run.
+     */}}
+
+{{-        if hasKey $config "encryption" }}
+{{           includeTemplate $f | decrypt }}
+{{-        end }}
+
+{{-      end }}
+
+{{-    end }}
