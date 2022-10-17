@@ -2,16 +2,7 @@
 ## .chezmoi.yaml
 ################################################################################
 
-{{- /*
-     * Compute or set default values. Add yours here.
-     * I just find nice to have them handy here and reference them later.
-     */}}
-
-{{-    $defaults := dict }}
-{{-    $_ := set $defaults "encryption" "gpg" }}
-{{-    $_ := set $defaults "hashedHostname" (adler32sum (sha256sum .chezmoi.hostname)) }}
-{{-    $_ := set $defaults "hostsDir" ".hosts" }}
-
+{{- $debug := false }}
 
 {{- /*
      * Update the configuration file building upon what is already there.
@@ -22,48 +13,76 @@
 
 
 {{- /*
-     * Start from the existing configuration.
-     * Remove the parts which do not belong in this file.
+     * Compute or set default values. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
      */}}
 
-{{-    $config := omit . "chezmoi" }}
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+{{-    $_ := set $defaults.data "hashedHostname" (adler32sum (sha256sum $.chezmoi.hostname)) }}
+{{-    $_ := set $defaults.data "hostsDir" ".hosts" }}
+{{-    $_ := set $defaults.data "hostDir" (joinPath $defaults.data.hostsDir $.chezmoi.hostname) }}
+{{-    $_ := set $defaults.data "encryptedHostDir" (joinPath $defaults.data.hostsDir $defaults.data.hashedHostname) }}
+{{-    $_ := set $defaults "encryption" "gpg" }}
+
+{{-    if $debug }}
+# defaults:
+{{       $defaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+
+{{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file, if it exists.
+     */}}
+
+{{-    $config := $defaults }}
+
+{{-    if $debug }}
+# After assignment from $defaults.
+# config:
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
 
 {{-    if stat $.chezmoi.configFile }}
 {{-      $configFromFile := include $.chezmoi.configFile | fromYaml }}
-{{-      $_ := mergeOverwrite $config $configFromFile }}
+{{-      $_ := mustMergeOverwrite $config $configFromFile }}
+{{-    end }}
+
+{{-    if $debug }}
+# After merge from config file.
+# config:
+{{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
 
 {{- /*
-     * Reuse the old custom data, if existing, or create a new empty dict for
-     * what is to come. Then, update it with the new custom data.
-     */}}
-
-{{-    $_ := set $config "data" (dig "data" dict $config) }}
-
-{{-    $hashedHostname := dig "hashedHostname" $defaults.hashedHostname $config }}
-{{-    $_ := set $config.data "hashedHostname" $hashedHostname }}
-
-{{-    $hostsDir := dig "hostsDir" $defaults.hostsDir $config }}
-{{-    $_ := set $config.data "hostsDir" $hostsDir }}
-
-
-{{- /*
-     * Load pieces of configuration from hosts-specific configuration files, if
-     * any such file exists.
-     * Every file's content will overwrite the existing settings in order.
+     * Load pieces of configuration from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will overwrite the existing settings in the order
+     * each appears in the list, with the next file overwriting values in the
+     * previous one.
      */}}
 
 {{-    $hostConfigFiles := list
-         (joinPath $hostsDir .chezmoi.hostname ".chezmoi.yaml.tmpl")
-         (joinPath $hostsDir .chezmoi.hostname ".chezmoi.yaml") }}
+         (joinPath $config.data.hostDir ".chezmoi.yaml.tmpl")
+         (joinPath $config.data.hostDir ".chezmoi.yaml") }}
 
 {{-    range $f := $hostConfigFiles }}
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-{{-        $hostConfig := include $f | fromYaml }}
-{{-        $_ := mergeOverwrite $config $hostConfig }}
+{{-        $hostConfig := includeTemplate $f | fromYaml }}
+{{-        $_ := mustMergeOverwrite $config $hostConfig }}
 {{-      end }}
 {{-    end }}
+
+{{-    if $debug }}
+# After merge from host's specific config files.
+# config:
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
 
 {{- /*
      * It is useless to hash the default file's names, as this method is not
@@ -72,43 +91,49 @@
      */}}
 
 {{-    $hostEncryptedConfigFiles := list
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml" (dig "age" "suffix" ".age" $config)))
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml" (dig "gpg" "suffix" ".asc" $config))) }}
+         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{-    range $f := $hostEncryptedConfigFiles }}
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
 {{- /*
      *     For chezmoi to be able to decrypt any encrypted file which content
-     *     needs to be loaded, it requires the 'encryption' setting to be set
-     *     _before_ the run.
-     *     I cannot currently find a way to automatically re-run this step, as
-     *     there is no 'output'-like init function.
+     *     needs to be loaded, it requires the 'encryption' setting to be
+     *     present in the configuration file _before_ the run.
+     *     I cannot currently find a way to automatically re-run the init step,
+     *     as there is no 'output'-like init function. The easiest yet currently
+     *     the best solution I could find is to write the config file in the
+     *     current state and leverage the init functions to notify the user to
+     *     re-run the 'init' step.
      */}}
-{{-        if hasKey $config "encryption" }}
 
-{{-          $hostConfig := include $f | decrypt | fromYaml }}
-{{-          $_ := mergeOverwrite $config $hostConfig }}
+{{-        if and
+             (stat $.chezmoi.configFile)
+             (hasKey $config "encryption") }}
+
+{{-          $hostConfig := includeTemplate $f | decrypt | fromYaml }}
+{{-          $_ := mustMergeOverwrite $config $hostConfig }}
 
 {{-        else }}
-{{- /*
-     *       The easiest solution I was able to find to this is to add a default
-     *       value for it to the config file and leverage the init functions to
-     *       ask the user to re-run the 'init' command.
-     */}}
-{{-          $_ := set $config "encryption" $defaults.encryption }}
 
-{{-          if not (stat $.chezmoi.configFile) }}
-{{-            writeToStdout
-                 "Encrypted files found.\n"
-                 "Required initial encryption setting set to its default value.\n"
-                 "Please re-run `chezmoi init` to include them.\n" }}
-{{-          end }}
+{{-          writeToStdout
+               "Encrypted files found.\n"
+               "Required initial encryption setting set to its default value.\n"
+               "Please re-run `chezmoi init` to include them.\n" }}
 
 {{-        end }}
+
 {{-      end }}
+
+{{-    end }}
+
+{{-    if $debug }}
+# After merge from host's specific encrypted config files.
+# config:
+{{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
 
@@ -116,6 +141,7 @@
      * Write out the resulting configuration merge.
      * Clean up the configuration root from what needs to stay in the 'data' key.
      */}}
+
 {{-    range $k := keys $config.data }}
 {{-      $config = omit $config $k }}
 {{-    end }}
