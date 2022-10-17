@@ -33,7 +33,7 @@ This repository is not open for contributions, but I might accept suggestions. P
 
 ## Usage
 
-> Tested on Fedora and Mac OS X.
+> Tested on Fedora 36 and Mac OS X.
 
 1. install [chezmoi]
 1. import the `age`/`gpg` key you might need to decrypt the encrypted files and give it ultimate trust
@@ -46,7 +46,7 @@ This repository is not open for contributions, but I might accept suggestions. P
    chezmoi init https://github.com/mcereda/dotfiles.git [--branch chezmoi]
    ```
 
-   if no configuration file is already present on the host, this step will also create a default configuration file to enable encryption, which is needed by the template used in the next steps
+   if encrypted files are found in the repository, this step will also enable encryption in the configuration file using the default value (`gpg`).
 
 1. optionally, create the [chezmoidata.format] data file in the repository root folder:
 
@@ -74,13 +74,13 @@ This repository is not open for contributions, but I might accept suggestions. P
    Comment: hostname is deepthought
    Comment: get the hash with "chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'"
    Comment: encrypt the file with "chezmoi encrypt" or the related encryption application's method
-   Comment: file at $(chezmoi source-path)/.hosts/1092817333/encrypted_chezmoi.yaml.asc
+   Comment: file at $(chezmoi source-path)/.hosts/1092817333/.chezmoi.yaml.asc
 
    hQIMAwbYc…
    -----END PGP MESSAGE-----
    ```
 
-1. re-run `chezmoi init` to create the comprehensive configuration file
+1. re-run `chezmoi init` to include the encrypted configuration files (if any)
 1. check and apply the changes using chezmoi
 
    ```sh
@@ -123,9 +123,9 @@ Some files are `decrypt`ed in the main templates and never used directly.
 Since those encrypted files are not registered in chezmoi, its `edit` command will **not** work transparently; use **something like** this instead:
 
 ```sh
-chezmoi decrypt $HOME/.local/share/chezmoi/encrypted_file.yaml.asc --output /tmp/plaintext.yaml
+chezmoi decrypt $HOME/.local/share/chezmoi/cyphertext.yaml.asc --output /tmp/plaintext.yaml
 vim /tmp/plaintext.yaml
-chezmoi encrypt /tmp/plaintext.yaml --output $HOME/.local/share/chezmoi/encrypted_file.yaml.asc
+chezmoi encrypt /tmp/plaintext.yaml --output $HOME/.local/share/chezmoi/cyphertext.yaml.asc
 rm /tmp/plaintext.yaml
 ```
 
@@ -180,7 +180,7 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 - ~~Due to a feature of a library used by [chezmoi], all custom variable names in the configuration file are converted to lowercase; see the [custom data fields appear as all lowercase strings] GitHub issue for more information.~~ solved in [2376](https://github.com/twpayne/chezmoi/pull/2376/files)
 
 - A value for `.encryption` **must** be set in chezmoi's configuration file **before execution** if the `decrypt` or `encrypt` functions are used in a template; this just sets a default application for encryption purposes, as the `decrypt` function will choose the appropriate application by itself.  
-  The easiest solution to this is to leverage the available init functions to create a file with just that, and then re-run the 'init' step.
+  The easiest solution to this is to skip those files if no encryption is set in the configuration file, and leverage the available init functions to notify the user to then re-run the 'init' step.
 
 - The [chezmoidata.format] data files are plain, and no templating is done on them; this means:
 
