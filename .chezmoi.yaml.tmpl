@@ -41,10 +41,10 @@
 
 {{-    $_ := set $config "data" (dig "data" dict $config) }}
 
-{{-    $hashedHostname := dig "hashedHostname" $defaults.hashedHostname . }}
+{{-    $hashedHostname := dig "hashedHostname" $defaults.hashedHostname $config }}
 {{-    $_ := set $config.data "hashedHostname" $hashedHostname }}
 
-{{-    $hostsDir := dig "hostsDir" $defaults.hostsDir . }}
+{{-    $hostsDir := dig "hostsDir" $defaults.hostsDir $config }}
 {{-    $_ := set $config.data "hostsDir" $hostsDir }}
 
 
@@ -72,10 +72,10 @@
      */}}
 
 {{-    $hostEncryptedConfigFiles := list
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml.tmpl" (dig "age" "suffix" ".age" .)))
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml" (dig "age" "suffix" ".age" .)))
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml.tmpl" (dig "gpg" "suffix" ".asc" .)))
-         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml" (dig "gpg" "suffix" ".asc" .))) }}
+         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml" (dig "age" "suffix" ".age" $config)))
+         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $hostsDir $hashedHostname (print "encrypted_.chezmoi.yaml" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{-    range $f := $hostEncryptedConfigFiles }}
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
