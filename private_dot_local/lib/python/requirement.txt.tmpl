@@ -68,10 +68,10 @@ wheel
      */}}
 
 {{-    $hostEncryptedPythonGlobalRequirementFiles := list
-         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "encrypted_requirement.txt.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "encrypted_requirement.txt.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "encrypted_requirement.txt" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "encrypted_requirement.txt" (dig "gpg" "suffix" ".asc" $config))) }}
+         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "requirement.txt.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "requirement.txt.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "requirement.txt" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir $config.data.pythonGlobalRequirementDir (print "requirement.txt" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{-    range $f := $hostEncryptedPythonGlobalRequirementFiles }}
 

@@ -94,10 +94,10 @@
      */}}
 
 {{-    $hostEncryptedConfigFiles := list
-         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir (print "encrypted_.chezmoi.yaml" (dig "gpg" "suffix" ".asc" $config))) }}
+         (joinPath $config.data.encryptedHostDir (print ".chezmoi.yaml.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".chezmoi.yaml.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".chezmoi.yaml" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".chezmoi.yaml" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{-    range $f := $hostEncryptedConfigFiles }}
 
