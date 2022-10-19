@@ -8,6 +8,13 @@ README.md
 
 {{- /* Ignore files for applications absent from the host. */}}
 
+{{-    if not (lookPath "asdf") }}
+
+# Asdf not found in the user's PATH, ignore all the related files.
+.tool-versions
+
+{{-    end }}
+
 {{-    if not (lookPath "bash") }}
 
 # Bash not found in the user's PATH, ignore all the related files.
