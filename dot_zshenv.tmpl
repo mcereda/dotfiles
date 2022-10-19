@@ -60,6 +60,16 @@ path=(
 	${path[@]}
 )
 
+########################################
+# Applications settings.
+########################################
+
+{{-    if (lookPath "brew") }}
+
+{{       includeTemplate "homebrew.env" }}
+
+{{-    end }}
+
 {{- /* Host-specific additions and overrides. */}}
 
 {{- /*

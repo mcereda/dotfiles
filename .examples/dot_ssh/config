@@ -32,7 +32,7 @@ Host  local vm*
 	UserKnownHostsFile     /dev/null
 
 # Network devices' specific settings
-# In this case, firwealls and switches
+# In this case, firewalls and switches
 Host  net?a?-fw? org?-h?-sw?
 	CanonicalDomains     my.org
 	CanonicalizeMaxDots  0
@@ -65,7 +65,7 @@ ServerAliveCountMax  2
 UseKeyChain          yes
 
 # Keep connections open for some time to reuse them
-# Use %C to use a hash of many different informations as socket identifier
+# Use %C to use a hash of many different information as socket identifier
 ControlMaster   auto
 ControlPersist  30s
 ControlPath     ~/.ssh/control-%C

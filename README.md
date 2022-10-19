@@ -123,9 +123,9 @@ Some files are `decrypt`ed in the main templates and never used directly.
 Since those encrypted files are not registered in chezmoi, its `edit` command will **not** work transparently; use **something like** this instead:
 
 ```sh
-chezmoi decrypt $HOME/.local/share/chezmoi/cyphertext.yaml.asc --output /tmp/plaintext.yaml
+chezmoi decrypt $HOME/.local/share/chezmoi/ciphertext.yaml.asc --output /tmp/plaintext.yaml
 vim /tmp/plaintext.yaml
-chezmoi encrypt /tmp/plaintext.yaml --output $HOME/.local/share/chezmoi/cyphertext.yaml.asc
+chezmoi encrypt /tmp/plaintext.yaml --output $HOME/.local/share/chezmoi/ciphertext.yaml.asc
 rm /tmp/plaintext.yaml
 ```
 
