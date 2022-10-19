@@ -62,7 +62,9 @@
 {{-      end }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
 {{         includeTemplate $f }}
+
 {{-      end }}
 
 {{-    end }}
@@ -94,7 +96,9 @@
      */}}
 
 {{-        if hasKey $config "encryption" }}
+
 {{           includeTemplate $f | decrypt }}
+
 {{-        end }}
 
 {{-      end }}

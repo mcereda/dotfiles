@@ -5,10 +5,10 @@
 ## - the login shell;
 ## - the interactive non-login shell;
 ## - the non-interactive non-login shell.
-## Login shells read /etc/profile, and only the first one found between
+## Login shells read '/etc/profile', and only the first one found between
 ## '~/.bash_profile', '~/.bash_login' and '~/.profile' in this order.
 ## Interactive non-login shells read '/etc/bashrc' and '~/.bashrc'.
-## Non-interactive non-login shell read the file which name is the value of the
+## Non-interactive non-login shells read the file which name is the value of the
 ## '$BASH_ENV' variable.
 ## In this setup, '~/.bash_profile' sources '~/.bashrc', which means that all
 ## changes made here will also take effect in a login shell.
@@ -530,7 +530,9 @@ fi
 {{-      end }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
 {{         includeTemplate $f }}
+
 {{-      end }}
 
 {{-    end }}
@@ -562,7 +564,9 @@ fi
      */}}
 
 {{-        if hasKey $config "encryption" }}
+
 {{           includeTemplate $f | decrypt }}
+
 {{-        end }}
 
 {{-      end }}
