@@ -31,6 +31,13 @@ README.md
 
 {{-    end }}
 
+{{-    if not (lookPath "git") }}
+
+# Git not found in the user's PATH, ignore all the related files.
+.gitconfig
+
+{{-    end }}
+
 {{-    if not (lookPath "gpg") }}
 
 # GnuPG not found in the user's PATH, ignore all the related files.
