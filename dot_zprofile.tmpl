@@ -18,8 +18,8 @@
 {{-    $_ := set $defaults "data" dict }}
 
 {{-    if $debug }}
-{{       "defaults:" | comment "\" " }}
-{{       $defaults | toYaml | indent 4 | comment "\" " }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
 {{- /*
@@ -33,9 +33,9 @@
 {{-    $_ := mustMergeOverwrite $config $configFromFile }}
 
 {{-    if $debug }}
-{{       "merged with config file" | comment "\" " }}
-{{       "config:" | comment "\" " }}
-{{       $config | toYaml | indent 4 | comment "\" " }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
 {{- /* Host-specific additions and overrides. */}}
@@ -54,7 +54,7 @@
 {{-    range $f := $hostZprofileFiles }}
 
 {{-      if $debug }}
-{{         cat "looping on file" $f | comment "\" " }}
+{{         cat "looping on file" $f | comment "# " }}
 {{-      end }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
@@ -78,7 +78,7 @@
 {{-    range $f := $hostEncryptedZprofileFiles }}
 
 {{-      if $debug }}
-{{         cat "looping on file" $f | comment "\" " }}
+{{         cat "looping on file" $f | comment "# " }}
 {{-      end }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}

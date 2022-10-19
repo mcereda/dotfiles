@@ -18,8 +18,8 @@
 {{-    $_ := set $defaults "data" dict }}
 
 {{-    if $debug }}
-{{       "defaults:" | comment "\" " }}
-{{       $defaults | toYaml | indent 4 | comment "\" " }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
 {{- /*
@@ -33,9 +33,9 @@
 {{-    $_ := mustMergeOverwrite $config $configFromFile }}
 
 {{-    if $debug }}
-{{       "merged with config file" | comment "\" " }}
-{{       "config:" | comment "\" " }}
-{{       $config | toYaml | indent 4 | comment "\" " }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
 ########################################
@@ -69,14 +69,14 @@ path=(
      * in the order each appears in the list.
      */}}
 
-{{-    $hostZprofileFiles := list
-         (joinPath $config.data.hostDir ".zprofile.tmpl")
-         (joinPath $config.data.hostDir ".zprofile") }}
+{{-    $hostZshenvFiles := list
+         (joinPath $config.data.hostDir ".zshenv.tmpl")
+         (joinPath $config.data.hostDir ".zshenv") }}
 
-{{-    range $f := $hostZprofileFiles }}
+{{-    range $f := $hostZshenvFiles }}
 
 {{-      if $debug }}
-{{         cat "looping on file" $f | comment "\" " }}
+{{         cat "looping on file" $f | comment "# " }}
 {{-      end }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
@@ -91,16 +91,16 @@ path=(
      * more difficult. Just add your file path to this list eventually.
      */}}
 
-{{-    $hostEncryptedZprofileFiles := list
-         (joinPath $config.data.encryptedHostDir (print ".zprofile.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir (print ".zprofile.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $config.data.encryptedHostDir (print ".zprofile" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir (print ".zprofile" (dig "gpg" "suffix" ".asc" $config))) }}
+{{-    $hostEncryptedZshenvFiles := list
+         (joinPath $config.data.encryptedHostDir (print ".zshenv.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".zshenv.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".zshenv" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir (print ".zshenv" (dig "gpg" "suffix" ".asc" $config))) }}
 
-{{-    range $f := $hostEncryptedZprofileFiles }}
+{{-    range $f := $hostEncryptedZshenvFiles }}
 
 {{-      if $debug }}
-{{         cat "looping on file" $f | comment "\" " }}
+{{         cat "looping on file" $f | comment "# " }}
 {{-      end }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
