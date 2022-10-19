@@ -485,6 +485,13 @@ then
 	UPGRADE_ROUTINES=()
 fi
 
+{{-    if (lookPath "brew") }}
+
+{{       includeTemplate "homebrew.env" }}
+{{       includeTemplate "homebrew.sh" }}
+
+{{-    end }}
+
 {{-    if or
          (lookPath "python")
          (lookPath "python2")
