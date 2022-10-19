@@ -2,26 +2,8 @@
 ## ~/.screenrc
 ################################################################################
 
-defscrollback 1000000
-hardstatus alwayslastline
-hardstatus string '%{gk}[%{G}%H%{g}][%= %{wk}%?%-Lw%?%{=b kR}(%{W}%n*%f %t%?(%u)%?%{=b kR})%{= kw}%?%+Lw%?%?%= %{g}]%{=b C}[%m/%d/%y %C %A]%{W}'
-logfile flush
-logtstamp after 1
-logtstamp on
-shell -$SHELL
-startup_message off
-termcapinfo xterm ti@:te@
-termcapinfo xterm-color ti@:te@
-vbell off
-
-
-########################################
-# Host-specific additions and overrides.
-########################################
-
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
 {{-    $debug := false }}
-
 
 {{- /*
      * Compute or set default values for this file. Add yours here.
@@ -37,7 +19,6 @@ vbell off
 {{       "defaults:" | comment "# " }}
 {{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * Start from the defaults and overwrite them with the existing
@@ -55,6 +36,19 @@ vbell off
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
+defscrollback 1000000
+hardstatus alwayslastline
+hardstatus string '%{gk}[%{G}%H%{g}][%= %{wk}%?%-Lw%?%{=b kR}(%{W}%n*%f %t%?(%u)%?%{=b kR})%{= kw}%?%+Lw%?%?%= %{g}]%{=b C}[%m/%d/%y %C %A]%{W}'
+logfile flush
+logtstamp after 1
+logtstamp on
+shell -$SHELL
+startup_message off
+termcapinfo xterm ti@:te@
+termcapinfo xterm-color ti@:te@
+vbell off
+
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

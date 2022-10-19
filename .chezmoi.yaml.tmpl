@@ -5,14 +5,12 @@
 {{- /* Check the commented contents of the resulting file after init. */}}
 {{-    $debug := false }}
 
-
 {{- /*
      * Update the configuration file building upon what is already there.
      * The easiest way to do this is not to fiddle with the direct assignments,
      * but to create a new dict instead, fill it with the current settings, and
      * just print the contents of such dict at the end.
      */}}
-
 
 {{- /*
      * Compute or set default values for this file. Add yours here.
@@ -34,7 +32,6 @@
 {{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
-
 {{- /*
      * Start from the defaults and overwrite them with the existing
      * configuration from the configuration file, if it exists.
@@ -52,7 +49,6 @@
 {{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
@@ -143,7 +139,6 @@
 {{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * Write out the resulting configuration merge.

@@ -11,8 +11,42 @@
 ## - https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration
 ################################################################################
 
-{{- $email := dig "email" "" . }}
-{{- $name := dig "name" "" . }}
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    if $debug }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file.
+     */}}
+
+{{-    $config := $defaults }}
+
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{-    $email := dig "email" "" . }}
+{{-    $name := dig "name" "" . }}
 
 [alias]
 	branch-get-default = "!f() { \
@@ -109,15 +143,15 @@
 [submodule]
 	recurse = true
 
-{{- if or $email $name }}
+{{-    if or $email $name }}
 [user]
-{{    if $email }}	email = {{ .email }} {{- end }}
-{{    if $name }}	name = {{ .name }}   {{- end }}
-{{- end }}
+{{       if $email }}	email = {{ .email }} {{- end }}
+{{       if $name }}	name = {{ .name }}   {{- end }}
+{{-    end }}
 
-{{- if and
-        (lookPath "git-lfs")
-        (eq (output "git" "config" "--system" "--get" "--default" "NOT-SET" "filter.lfs.clean" | trim) "NOT-SET") }}
+{{-    if and
+         (lookPath "git-lfs")
+         (eq (output "git" "config" "--system" "--get" "--default" "NOT-SET" "filter.lfs.clean" | trim) "NOT-SET") }}
 
 # Enable LFS.
 [filter "lfs"]
@@ -126,49 +160,9 @@
 	process = git-lfs filter-process
 	required = true
 
-{{  end }}
-
-
-########################################
-# Host-specific additions and overrides.
-########################################
-
-{{- /* Check the commented content of the result of `chezmoi diff` */}}
-{{-    $debug := false }}
-
-
-{{- /*
-     * Compute or set default values for this file. Add yours here.
-     * I just find nice to have them handy here and reference them later, and
-     * setting them one per line feels more readable than a convoluted,
-     * all-in-one dict definition (I tried).
-     */}}
-
-{{-    $defaults := dict }}
-{{-    $_ := set $defaults "data" dict }}
-
-{{-    if $debug }}
-{{       "defaults:" | comment "# " }}
-{{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
-
-{{- /*
-     * Start from the defaults and overwrite them with the existing
-     * configuration from the configuration file.
-     */}}
-
-{{-    $config := $defaults }}
-
-{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
-{{-    $_ := mustMergeOverwrite $config $configFromFile }}
-
-{{-    if $debug }}
-{{       "merged with config file" | comment "# " }}
-{{       "config:" | comment "# " }}
-{{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

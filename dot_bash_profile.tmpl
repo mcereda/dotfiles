@@ -16,25 +16,8 @@
 ## This file is sourced by all Bash *login* shells on startup.
 ################################################################################
 
-# Debug.
-# echo "${BASH_SOURCE} is being sourced."
-
-# Load the user's interactive settings.
-# This lines are recommended by the Bash info pages.
-: "${BASHRC=$HOME/.bashrc}"
-if [[ -r "$BASHRC" ]]
-then
-	source "$BASHRC"
-fi
-
-
-########################################
-# Host-specific additions and overrides.
-########################################
-
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
 {{-    $debug := false }}
-
 
 {{- /*
      * Compute or set default values for this file. Add yours here.
@@ -50,7 +33,6 @@ fi
 {{       "defaults:" | comment "# " }}
 {{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * Start from the defaults and overwrite them with the existing
@@ -68,6 +50,18 @@ fi
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
+# Debug.
+# echo "${BASH_SOURCE} is being sourced."
+
+# Load the user's interactive settings.
+# This lines are recommended by the Bash info pages.
+: "${BASHRC=$HOME/.bashrc}"
+if [[ -r "$BASHRC" ]]
+then
+	source "$BASHRC"
+fi
+
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

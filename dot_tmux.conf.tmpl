@@ -2,6 +2,40 @@
 ## ~/.tmux.conf
 ################################################################################
 
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    if $debug }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file.
+     */}}
+
+{{-    $config := $defaults }}
+
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
 # Tmux behavior.
 set -g history-limit 100000   # scrollback size
 set -g mouse on               # enable mouse control (clickable windows, panes, resizable panes)
@@ -21,47 +55,7 @@ set-window-option -g automatic-rename on   # rename a window to the current prog
 set -g monitor-activity on   # highlight a window's tab when it has activity
 set -g visual-activity on    # notify of a window's activity in the status bar
 
-
-########################################
-# Host-specific additions and overrides.
-########################################
-
-{{- /* Check the commented content of the result of `chezmoi diff` */}}
-{{-    $debug := false }}
-
-
-{{- /*
-     * Compute or set default values for this file. Add yours here.
-     * I just find nice to have them handy here and reference them later, and
-     * setting them one per line feels more readable than a convoluted,
-     * all-in-one dict definition (I tried).
-     */}}
-
-{{-    $defaults := dict }}
-{{-    $_ := set $defaults "data" dict }}
-
-{{-    if $debug }}
-{{       "defaults:" | comment "# " }}
-{{       $defaults | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
-
-{{- /*
-     * Start from the defaults and overwrite them with the existing
-     * configuration from the configuration file.
-     */}}
-
-{{-    $config := $defaults }}
-
-{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
-{{-    $_ := mustMergeOverwrite $config $configFromFile }}
-
-{{-    if $debug }}
-{{       "merged with config file" | comment "# " }}
-{{       "config:" | comment "# " }}
-{{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

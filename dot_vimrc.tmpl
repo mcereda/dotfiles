@@ -5,6 +5,40 @@
 "" - http://vimdoc.sourceforge.net/htmldoc/filetype.html
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    if $debug }}
+{{       "defaults:" | comment "\" " }}
+{{       $defaults | toYaml | indent 4 | comment "\" " }}
+{{-    end }}
+
+{{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file.
+     */}}
+
+{{-    $config := $defaults }}
+
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "\" " }}
+{{       "config:" | comment "\" " }}
+{{       $config | toYaml | indent 4 | comment "\" " }}
+{{-    end }}
+
 " Attempt to determine the type of a file based on its name and possibly its
 " contents.
 " Allow intelligent auto-indenting for each filetype, and for plugins that are
@@ -52,7 +86,6 @@ set confirm
 " Leads to smoother and faster macros.
 set lazyredraw
 
-
 """"""""""""""""""""""""""""""""""""""""
 " Search.
 """"""""""""""""""""""""""""""""""""""""
@@ -73,7 +106,6 @@ set incsearch
 
 " Show matching words during a search.
 set showmatch
-
 
 """"""""""""""""""""""""""""""""""""""""
 " Indentation.
@@ -99,11 +131,9 @@ set shiftwidth=4
 " A negative value sets it to fall back to the value of 'shiftwidth'
 set softtabstop=-1
 
-
 " Overrides for shell files
 " Use tabs for indentation instead of spaces
 autocmd Filetype sh setlocal softtabstop=0 noexpandtab
-
 
 """"""""""""""""""""""""""""""""""""""""
 " Line wrap
@@ -121,47 +151,7 @@ highlight ColorColumn guibg=Black
 " See :help cterm-colors for a list of colors that can be used in the terminal.
 highlight ColorColumn ctermbg=DarkGrey
 
-
-""""""""""""""""""""""""""""""""""""""""
-" Host-specific additions and overrides.
-""""""""""""""""""""""""""""""""""""""""
-
-{{- /* Check the commented content of the result of `chezmoi diff` */}}
-{{-    $debug := false }}
-
-
-{{- /*
-     * Compute or set default values for this file. Add yours here.
-     * I just find nice to have them handy here and reference them later, and
-     * setting them one per line feels more readable than a convoluted,
-     * all-in-one dict definition (I tried).
-     */}}
-
-{{-    $defaults := dict }}
-{{-    $_ := set $defaults "data" dict }}
-
-{{-    if $debug }}
-{{       "defaults:" | comment "\" " }}
-{{       $defaults | toYaml | indent 4 | comment "\" " }}
-{{-    end }}
-
-
-{{- /*
-     * Start from the defaults and overwrite them with the existing
-     * configuration from the configuration file.
-     */}}
-
-{{-    $config := $defaults }}
-
-{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
-{{-    $_ := mustMergeOverwrite $config $configFromFile }}
-
-{{-    if $debug }}
-{{       "merged with config file" | comment "\" " }}
-{{       "config:" | comment "\" " }}
-{{       $config | toYaml | indent 4 | comment "\" " }}
-{{-    end }}
-
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

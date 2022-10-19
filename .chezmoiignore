@@ -6,7 +6,6 @@
 LICENSE
 README.md
 
-
 {{- /* Ignore files for applications absent from the host. */}}
 
 {{-    if not (lookPath "bash") }}

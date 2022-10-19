@@ -7,30 +7,8 @@
 ## This file is NOT used by ZSH.
 ################################################################################
 
-# The bell style used e.g. on error or tab completion, possible values
-# are `none', `visible', and `audible' the ringing the bell.
-# set bell-style none
-
-# If set to on, words which have more than one possible completion without
-# any possible partial completion cause the matches to be listed immediately
-# instead of ringing the bell.
-# set show-all-if-unmodified on
-
-# If set to on, words which have more than one possible completion cause the
-# matches to be listed immediately instead of ringing the bell.
-# set show-all-if-ambiguous on
-
-# If set to on, disable case sensitivity for completion purposes.
-set completion-ignore-case on
-
-
-########################################
-# Host-specific additions and overrides.
-########################################
-
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
 {{-    $debug := false }}
-
 
 {{- /*
      * Compute or set default values for this file. Add yours here.
@@ -46,7 +24,6 @@ set completion-ignore-case on
 {{       "defaults:" | comment "# " }}
 {{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * Start from the defaults and overwrite them with the existing
@@ -64,6 +41,23 @@ set completion-ignore-case on
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
+# The bell style used e.g. on error or tab completion, possible values
+# are `none', `visible', and `audible' the ringing the bell.
+# set bell-style none
+
+# If set to on, words which have more than one possible completion without
+# any possible partial completion cause the matches to be listed immediately
+# instead of ringing the bell.
+# set show-all-if-unmodified on
+
+# If set to on, words which have more than one possible completion cause the
+# matches to be listed immediately instead of ringing the bell.
+# set show-all-if-ambiguous on
+
+# If set to on, disable case sensitivity for completion purposes.
+set completion-ignore-case on
+
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

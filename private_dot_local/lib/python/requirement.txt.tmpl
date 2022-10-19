@@ -1,8 +1,5 @@
-wheel
-
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
 {{-    $debug := false }}
-
 
 {{- /*
      * Compute or set default values for this file. Add yours here.
@@ -20,7 +17,6 @@ wheel
 {{       $defaults | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
-
 {{- /*
      * Start from the defaults and overwrite them with the existing
      * configuration from the configuration file.
@@ -35,8 +31,9 @@ wheel
 {{       "merged with config file" | comment "# " }}
 {{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end }}
+{{-    end -}}
 
+wheel
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
