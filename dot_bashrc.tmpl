@@ -26,6 +26,24 @@
 ## - https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
 ################################################################################
 
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    if $debug }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
 # Debug.
 # echo "${BASH_SOURCE} is being sourced."
 
@@ -476,30 +494,7 @@ fi
 
 {{-    end }}
 
-
-########################################
-# Host-specific additions and overrides.
-########################################
-
-{{- /* Check the commented content of the result of `chezmoi diff` */}}
-{{-    $debug := false }}
-
-
-{{- /*
-     * Compute or set default values for this file. Add yours here.
-     * I just find nice to have them handy here and reference them later, and
-     * setting them one per line feels more readable than a convoluted,
-     * all-in-one dict definition (I tried).
-     */}}
-
-{{-    $defaults := dict }}
-{{-    $_ := set $defaults "data" dict }}
-
-{{-    if $debug }}
-{{       "defaults:" | comment "# " }}
-{{       $defaults | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
+{{- /* Host-specific additions and overrides. */}}
 
 {{- /*
      * Start from the defaults and overwrite them with the existing
@@ -516,7 +511,6 @@ fi
 {{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
-
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
