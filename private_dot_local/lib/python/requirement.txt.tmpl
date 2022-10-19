@@ -1,3 +1,7 @@
+################################################################################
+## ~/.local/lib/python/requirement.txt
+################################################################################
+
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
 {{-    $debug := false }}
 
@@ -31,7 +35,7 @@
 {{       "merged with config file" | comment "# " }}
 {{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end -}}
+{{-    end }}
 
 wheel
 
