@@ -39,26 +39,145 @@
 {{-    end }}
 
 ########################################
-# Shell settings.
+# Basic utility aliases and functions.
+#
+# Used to simplify checks later.
+# Needed in all shells.
+# Ordered alphabetically and by dependencies.
 ########################################
 
-# Require 'cd' to change directory.
-unsetopt auto_cd
+alias disable-xtrace='unsetopt xtrace'
+alias enable-xtrace='setopt xtrace'
+alias is-shell-interactive='[[ -o interactive ]]'
+alias is-shell-login='[[ -o login ]]'
+
+# Print the whole current environment.
+alias printallenv='setopt posixbuiltins && set'
+
+to-lower () {
+	echo "${1:l}"
+}
+
+to-upper () {
+	echo "${1:u}"
+}
+
+is-true () {
+	# Needs to return 0 or 1 and not `true` or `false`.
+	# Input's case is lowered to save on match options.
+
+	local LOWERED_INPUT="$(to-lower "$1")"
+	[[ "$LOWERED_INPUT" =~ '^1|on|true|yes$' ]]
+}
+
+path-add () {
+	is-true "$DEBUG" && enable-xtrace
+
+	local APPEND="${APPEND:-0}"
+	local PREPEND="${PREPEND:-1}"
+
+	if is-true "$APPEND"
+	then
+		path-append $@
+	fi
+
+	if is-true "$PREPEND"
+	then
+		path-prepend $@
+	fi
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+path-append () {
+	# Add the absolute paths the input entries refer to.
+	# Different loops to make it fail before adding the first entry. This avoids
+	# leaving the variable in an inconsistent state.
+
+	is-true "$DEBUG" && enable-xtrace
+
+	for ENTRY in $@
+	do
+		if [[ ! -d "$ENTRY" ]]
+		then
+			echo "error: $ENTRY does not exist" >&2
+			return 1
+		fi
+	done
+
+	path=(
+		${path[@]}
+		$@
+	)
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+path-prepend () {
+	# Add the absolute paths the input entries refer to.
+	# Different loops to make it fail before adding the first entry. This avoids
+	# leaving the variable in an inconsistent state.
+
+	is-true "$DEBUG" && enable-xtrace
+
+	for ENTRY in $@
+	do
+		if [[ ! -d "$ENTRY" ]]
+		then
+			echo "error: $ENTRY does not exist" >&2
+			return 1
+		fi
+	done
+
+	path=(
+		$@
+		${path[@]}
+	)
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+########################################
+# Pre-flight operations.
+########################################
+
+# Make PATHs' entries unique for better performances.
+typeset -aU {f,info,man,}path
 
 # Ensure PATH contains common binary directories.
 # Prefer user's and local paths.
-path=(
 {{-    $paths := list
            (joinPath (env "HOME") "bin")
            (joinPath (env "HOME") ".bin")
            (joinPath (env "HOME") ".local" "bin")
+           "/usr/local/sbin"
            "/usr/local/bin"
-           "/usr/bin" }}
-{{-    range $d := $paths | compact }}
-	{{  $d | quote }}
+           "/usr/sbin"
+           "/usr/bin"
+           "/sbin"
+           "/bin" }}
+{{-    range $p := $paths | compact | uniq }}
+{{-      if stat $p }}
+{{-        $paths = append $paths (quote $p) }}
+{{-      end }}
+{{-      $paths = without $paths $p }}
 {{-    end }}
-	${path[@]}
-)
+path-add {{ $paths | join " " }}
+
+########################################
+# Shell configuration.
+#
+# https://zsh.sourceforge.io/Doc/Release/Options.html
+########################################
+
+# Require 'cd' to change directory.
+unsetopt auto_cd
 
 ########################################
 # Applications' settings.
@@ -76,9 +195,12 @@ path=(
 
 {{-    end }}
 
-{{-    if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+{{-    if or
+         (lookPath "python")
+         (lookPath "python2")
+         (lookPath "python3") }}
 
-{{/*       includeTemplate "python.env" . */ -}}
+{{       includeTemplate "python.zshenv" . -}}
 
 {{-    end }}
 
