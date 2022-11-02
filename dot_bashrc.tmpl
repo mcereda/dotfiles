@@ -277,7 +277,7 @@ swap () {
 {{-        $paths = without $paths $p }}
 {{-      end }}
 {{-    end }}
-path-add {{ $paths | join " " }}
+path-prepend {{ $paths | join " " }}
 
 # Clean up PATH
 path-remove-duplicates
@@ -514,6 +514,7 @@ fi
          (lookPath "python2")
          (lookPath "python3") }}
 
+{{       includeTemplate "python.env" . }}
 {{       includeTemplate "python.sh" . }}
 
 {{-    end }}
