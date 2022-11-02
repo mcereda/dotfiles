@@ -51,7 +51,7 @@
 # Basic utility aliases and functions.
 #
 # Used to simplify checks later.
-# Needed in non-interactive shells too.
+# Needed in all shells.
 # Ordered alphabetically and by dependencies.
 ########################################
 
@@ -85,6 +85,15 @@ to-lower () {
 	echo "$(echo "$1" | tr '[:upper:]' '[:lower:]')"
 {{-    else }}
 	echo "${1,,}"
+{{-    end }}
+}
+to-upper () {
+{{- /* The shortened version is available since Bash 5. */}}
+{{-    if lt (atoi (output "bash" "-c" "echo ${BASH_VERSION:0:1}" | trim)) 5 }}
+	# Bash3 has no built-in means to convert case of a string, fallback to `tr`.
+	echo "$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+{{-    else }}
+	echo "${1^^}"
 {{-    end }}
 }
 
@@ -249,7 +258,8 @@ swap () {
 # Pre-flight operations.
 ########################################
 
-# Add common paths to PATH.
+# Ensure PATH contains common binary directories.
+# Prefer user's and local paths.
 # Each entry will be prepended in the given order.
 {{-    $paths := list
          "/bin"
@@ -489,6 +499,12 @@ fi
 
 {{       includeTemplate "homebrew.env" . }}
 {{       includeTemplate "homebrew.sh" . }}
+
+{{-    end }}
+
+{{-    if (lookPath "port") }}
+
+{{       includeTemplate "macports.env" . -}}
 
 {{-    end }}
 
