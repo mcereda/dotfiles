@@ -87,6 +87,7 @@ to-lower () {
 	echo "${1,,}"
 {{-    end }}
 }
+
 to-upper () {
 {{- /* The shortened version is available since Bash 5. */}}
 {{-    if lt (atoi (output "bash" "-c" "echo ${BASH_VERSION:0:1}" | trim)) 5 }}
