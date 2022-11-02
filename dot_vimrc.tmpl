@@ -172,7 +172,7 @@ highlight ColorColumn ctermbg=DarkGrey
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{         includeTemplate $f }}
+{{         includeTemplate $f . }}
 
 {{-      end }}
 
@@ -206,7 +206,7 @@ highlight ColorColumn ctermbg=DarkGrey
 
 {{-        if hasKey $config "encryption" }}
 
-{{           includeTemplate $f | decrypt }}
+{{           includeTemplate $f . | decrypt }}
 
 {{-        end }}
 

@@ -55,18 +55,30 @@ path=(
            "/usr/local/bin"
            "/usr/bin" }}
 {{-    range $d := $paths | compact }}
-	{{  $d }}
+	{{  $d | quote }}
 {{-    end }}
 	${path[@]}
 )
 
 ########################################
-# Applications settings.
+# Applications' settings.
 ########################################
 
 {{-    if (lookPath "brew") }}
 
-{{       includeTemplate "homebrew.env" }}
+{{       includeTemplate "homebrew.env" . -}}
+
+{{-    end }}
+
+{{-    if (lookPath "port") }}
+
+{{       includeTemplate "macports.env" . -}}
+
+{{-    end }}
+
+{{-    if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+
+{{/*       includeTemplate "python.env" . */ -}}
 
 {{-    end }}
 
@@ -91,7 +103,7 @@ path=(
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{         includeTemplate $f }}
+{{         includeTemplate $f . }}
 
 {{-      end }}
 
@@ -125,7 +137,7 @@ path=(
 
 {{-        if hasKey $config "encryption" }}
 
-{{           includeTemplate $f | decrypt }}
+{{           includeTemplate $f . | decrypt }}
 
 {{-        end }}
 

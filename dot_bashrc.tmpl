@@ -487,8 +487,8 @@ fi
 
 {{-    if (lookPath "brew") }}
 
-{{       includeTemplate "homebrew.env" }}
-{{       includeTemplate "homebrew.sh" }}
+{{       includeTemplate "homebrew.env" . }}
+{{       includeTemplate "homebrew.sh" . }}
 
 {{-    end }}
 
@@ -497,7 +497,7 @@ fi
          (lookPath "python2")
          (lookPath "python3") }}
 
-{{       includeTemplate "python.sh"}}
+{{       includeTemplate "python.sh" . }}
 
 {{-    end }}
 
@@ -538,7 +538,7 @@ fi
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{         includeTemplate $f }}
+{{         includeTemplate $f . }}
 
 {{-      end }}
 
@@ -572,7 +572,7 @@ fi
 
 {{-        if hasKey $config "encryption" }}
 
-{{           includeTemplate $f | decrypt }}
+{{           includeTemplate $f . | decrypt }}
 
 {{-        end }}
 

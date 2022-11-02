@@ -70,7 +70,7 @@
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{-        $hostConfig := includeTemplate $f | fromYaml }}
+{{-        $hostConfig := includeTemplate $f . | fromYaml }}
 {{-        $_ := mustMergeOverwrite $config $hostConfig }}
 
 {{-      end }}
@@ -118,7 +118,7 @@
              (stat $.chezmoi.configFile)
              (hasKey $config "encryption") }}
 
-{{-          $hostConfig := includeTemplate $f | decrypt | fromYaml }}
+{{-          $hostConfig := includeTemplate $f . | decrypt | fromYaml }}
 {{-          $_ := mustMergeOverwrite $config $hostConfig }}
 
 {{-        else }}

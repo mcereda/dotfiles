@@ -148,7 +148,7 @@ setopt hist_verify
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{         includeTemplate $f }}
+{{         includeTemplate $f . }}
 
 {{-      end }}
 
@@ -182,7 +182,7 @@ setopt hist_verify
 
 {{-        if hasKey $config "encryption" }}
 
-{{           includeTemplate $f | decrypt }}
+{{           includeTemplate $f . | decrypt }}
 
 {{-        end }}
 
