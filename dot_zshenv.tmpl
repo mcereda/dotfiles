@@ -182,8 +182,45 @@ path-prepend {{ $paths | join " " }}
 unsetopt auto_cd
 
 ########################################
-# Applications' settings.
+# Utility aliases and functions.
+#
+# Ordered and grouped by dependencies.
 ########################################
+
+alias decomment='grep -Ev "^#|^$"'
+
+{{-    if lookPath "sudo" }}
+
+alias please='sudo'
+
+{{-    end }}
+
+swap () {
+	is-true "$DEBUG" && enable-xtrace
+
+	if [[ ! $# -eq 2 ]]
+	then
+		echo "Usage: $0 file1 file2"
+		echo "Example: $0 /etc/resolv.conf resolv.new"
+		return 1
+	fi
+
+	local TMPFILE="tmp.$$"
+	mv "$1" "$TMPFILE"
+	mv "$2" "$1"
+	mv "$TMPFILE" "$2"
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+########################################
+# Applications' settings and shortcuts.
+########################################
+
+# Enable the recording of system upgrade routines for ease of use.
+typeset -aU UPGRADE_ROUTINES
 
 {{-    if (lookPath "brew") }}
 

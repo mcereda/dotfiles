@@ -49,7 +49,7 @@
 # zmodload zsh/zprof
 
 ########################################
-# Basic settings.
+# Shell configuration.
 # Sane defaults that could easily be overridden later.
 ########################################
 
@@ -126,6 +126,32 @@ setopt hist_reduce_blanks
 # Whenever the user enters a line with history expansion, perform history
 # expansion and reload the line into the editing buffer instead of executing it
 setopt hist_verify
+
+########################################
+# Utility aliases and functions.
+#
+# Ordered and grouped by dependencies.
+########################################
+
+ask-for-confirmation () {
+	is-true "$DEBUG" && enable-xtrace
+
+	local RETURN_VALUE=0
+
+	if ! read -qs "REPLY?Continue (y/N)? "
+	then
+		echo 'Aborting' >&2
+		RETURN_VALUE=1
+	fi
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+# History management.
+alias redo='$(history -p !!)'
+alias sedo='sudo $(history -p !!)'
 
 {{- /* Host-specific additions and overrides. */}}
 

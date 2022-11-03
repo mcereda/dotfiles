@@ -235,26 +235,6 @@ path-remove-duplicates () {
 
 {{-    end }}
 
-swap () {
-	is-true "$DEBUG" && enable-xtrace
-
-	if [[ ! $# -eq 2 ]]
-	then
-		echo "Usage: $0 file1 file2"
-		echo "Example: $0 /etc/resolv.conf resolv.new"
-		return 1
-	fi
-
-	local TMPFILE="tmp.$$"
-	mv "$1" "$TMPFILE"
-	mv "$2" "$1"
-	mv "$TMPFILE" "$2"
-
-	local RETURN_VALUE=$?
-	is-true "$DEBUG" && disable-xtrace
-	return $RETURN_VALUE
-}
-
 ########################################
 # Pre-flight operations.
 ########################################
@@ -349,8 +329,8 @@ shopt -s histverify
 # Ordered and grouped by dependencies.
 ########################################
 
+alias decomment='grep -Ev "^#|^$"'
 alias redo='$(history -p !!)'
-alias uncomment='grep -Ev "^#|^$"'
 
 {{-    if lookPath "notify-send" }}
 
@@ -382,6 +362,26 @@ ask-for-confirmation () {
 		echo "aborting"
 		return 1
 	fi
+
+	local RETURN_VALUE=$?
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+swap () {
+	is-true "$DEBUG" && enable-xtrace
+
+	if [[ ! $# -eq 2 ]]
+	then
+		echo "Usage: $0 file1 file2"
+		echo "Example: $0 /etc/resolv.conf resolv.new"
+		return 1
+	fi
+
+	local TMPFILE="tmp.$$"
+	mv "$1" "$TMPFILE"
+	mv "$2" "$1"
+	mv "$TMPFILE" "$2"
 
 	local RETURN_VALUE=$?
 	is-true "$DEBUG" && disable-xtrace
