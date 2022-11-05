@@ -272,6 +272,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "btrfs") }}
+
+####################
+# BTRFS.
+####################
+
+{{       includeTemplate "btrfs.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "gpg") }}
 
 ####################
