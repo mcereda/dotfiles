@@ -265,6 +265,16 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
+{{-    if (lookPath "minikube") }}
+
+####################
+# Minikube.
+####################
+
+{{       includeTemplate "minikube.env" . }}
+
+{{-    end }}
+
 ########################################
 # Prompt.
 ########################################
