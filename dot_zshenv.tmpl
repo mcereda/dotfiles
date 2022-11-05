@@ -224,6 +224,10 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    if (lookPath "brew") }}
 
+####################
+# Homebrew.
+####################
+
 {{       includeTemplate "homebrew.env" . -}}
 
 {{-    end }}

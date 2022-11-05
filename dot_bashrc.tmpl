@@ -48,6 +48,29 @@
 # echo "${BASH_SOURCE} is being sourced."
 
 ########################################
+# Ensure PATH contains common binary directories.
+# Prefer user's and local paths.
+########################################
+
+{{-    $paths := list
+         (joinPath (env "HOME") "bin")
+         (joinPath (env "HOME") ".bin")
+         (joinPath (env "HOME") ".local" "bin")
+         "/usr/local/sbin"
+         "/usr/local/bin"
+         "/usr/sbin"
+         "/usr/bin"
+         "/sbin"
+         "/bin" }}
+{{-    range $p := $paths | compact }}
+{{-      if not (stat $p) }}
+{{-        $paths = without $paths $p }}
+{{-      end }}
+{{-    end }}
+
+export PATH="{{ $paths | join ":" }}:$PATH"
+
+########################################
 # Basic utility aliases and functions.
 #
 # Used to simplify checks later.
@@ -203,7 +226,7 @@ path-remove-broken () {
 		printf %s "$PATH" \
 		| awk -vRS=: '$0' \
 		| xargs -I {} bash -c "[[ -e {} ]] && echo {}" \
-		| paste -s -d ':' \
+		| paste -s -d ':' - \
 	)"
 	export PATH
 
@@ -224,7 +247,7 @@ path-remove-duplicates () {
 	PATH="$(\
 		printf %s "$PATH" \
 		| awk -vRS=: '!a[$0]++' \
-		| paste -s -d ':' \
+		| paste -s -d ':' - \
 	)"
 	export PATH
 
@@ -238,26 +261,6 @@ path-remove-duplicates () {
 ########################################
 # Pre-flight operations.
 ########################################
-
-# Ensure PATH contains common binary directories.
-# Prefer user's and local paths.
-# Each entry will be prepended in the given order.
-{{-    $paths := list
-         "/bin"
-         "/sbin"
-         "/usr/bin"
-         "/usr/sbin"
-         "/usr/local/bin"
-         "/usr/local/sbin"
-         (joinPath (env "HOME") ".local" "bin")
-         (joinPath (env "HOME") ".bin")
-         (joinPath (env "HOME") "bin") }}
-{{-    range $p := $paths | compact }}
-{{-      if not (stat $p) }}
-{{-        $paths = without $paths $p }}
-{{-      end }}
-{{-    end }}
-path-prepend {{ $paths | join " " }}
 
 # Clean up PATH
 path-remove-duplicates
@@ -497,6 +500,10 @@ then
 fi
 
 {{-    if (lookPath "brew") }}
+
+####################
+# Homebrew.
+####################
 
 {{       includeTemplate "homebrew.env" . }}
 {{       includeTemplate "homebrew.sh" . }}
