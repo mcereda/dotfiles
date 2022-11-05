@@ -186,6 +186,26 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "brew") }}
+
+####################
+# Homebrew.
+####################
+
+{{       includeTemplate "homebrew.sh" . }}
+
+{{-    end }}
+
+{{-    if (lookPath "port") }}
+
+####################
+# Macports.
+####################
+
+{{       includeTemplate "macports.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "gpg") }}
 
 ####################

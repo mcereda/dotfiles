@@ -459,7 +459,12 @@ fi
 
 {{-    if (lookPath "port") }}
 
-{{       includeTemplate "macports.env" . -}}
+####################
+# Macports.
+####################
+
+{{       includeTemplate "macports.env" . }}
+{{       includeTemplate "macports.sh" . }}
 
 {{-    end }}
 
@@ -468,7 +473,11 @@ fi
          (lookPath "python2")
          (lookPath "python3") }}
 
-{{       includeTemplate "python.env" . }}
+####################
+# Python.
+####################
+
+{{-      includeTemplate "python.env" . }}
 {{       includeTemplate "python.sh" . }}
 
 {{-    end }}

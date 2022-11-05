@@ -234,6 +234,10 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    if (lookPath "port") }}
 
+####################
+# Macports.
+####################
+
 {{       includeTemplate "macports.env" . -}}
 
 {{-    end }}
@@ -243,7 +247,21 @@ typeset -aU UPGRADE_ROUTINES
          (lookPath "python2")
          (lookPath "python3") }}
 
-{{       includeTemplate "python.env" . -}}
+####################
+# Python.
+####################
+
+{{-      includeTemplate "python.env" . }}
+
+{{-    end }}
+
+{{-    if (lookPath "gpg") }}
+
+####################
+# GnuPG.
+####################
+
+{{       includeTemplate "gnupg.env" . }}
 
 {{-    end }}
 
