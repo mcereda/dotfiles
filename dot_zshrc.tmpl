@@ -323,6 +323,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "kerberos") }}
+
+####################
+# Kerberos.
+####################
+
+{{       includeTemplate "kerberos.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "ssh") }}
 
 ####################
