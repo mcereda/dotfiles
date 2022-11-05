@@ -440,11 +440,15 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-# Enable the recording of system upgrade routines for ease of use.
-if [[ -z "${UPGRADE_ROUTINES[@]}" ]]
-then
-	UPGRADE_ROUTINES=()
-fi
+{{-    if (lookPath "funtoo") }}
+
+####################
+# Funtoo.
+####################
+
+{{       includeTemplate "funtoo.sh" . }}
+
+{{-    end }}
 
 {{-    if and
          (eq $.chezmoi.os "linux")
