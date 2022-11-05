@@ -544,6 +544,16 @@ fi
 
 {{-    end }}
 
+{{-    if (lookPath "citrix") }}
+
+####################
+# Citrix.
+####################
+
+{{       includeTemplate "citrix.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "gpg") }}
 
 ####################
