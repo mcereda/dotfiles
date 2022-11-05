@@ -490,6 +490,16 @@ fi
 
 {{-    end }}
 
+{{-    if (lookPath "zypper") }}
+
+####################
+# Zypper.
+####################
+
+{{       includeTemplate "zypper.sh" . }}
+
+{{-    end }}
+
 {{-    if or
          (lookPath "python")
          (lookPath "python2")

@@ -228,6 +228,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "zypper") }}
+
+####################
+# Zypper.
+####################
+
+{{       includeTemplate "zypper.sh" . }}
+
+{{-    end }}
+
 {{-    if or
          (lookPath "python")
          (lookPath "python2")
