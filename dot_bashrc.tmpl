@@ -458,6 +458,16 @@ fi
 
 {{-    end }}
 
+{{-    if (lookPath "dnf") }}
+
+####################
+# DNF.
+####################
+
+{{       includeTemplate "dnf.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "brew") }}
 
 ####################

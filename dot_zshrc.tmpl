@@ -198,6 +198,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "dnf") }}
+
+####################
+# DNF.
+####################
+
+{{       includeTemplate "dnf.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "brew") }}
 
 ####################
