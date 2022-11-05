@@ -1,9 +1,5 @@
-####################
-# Python.
-#
 # See also:
 # - https://docs.python.org/3/using/cmdline.html#environment-variables
-####################
 
 PYTHONCACHE=1
 PYTHONGLOBALREQUIREMENTFILES=(
