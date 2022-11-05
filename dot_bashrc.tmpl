@@ -525,6 +525,16 @@ fi
 
 {{-    end }}
 
+{{-    if (lookPath "vault") }}
+
+####################
+# Hashicorp Vault.
+####################
+
+{{       includeTemplate "hashicorp-vault.zsh" . }}
+
+{{-    end }}
+
 ########################################
 # Host-specific additions and overrides.
 ########################################
