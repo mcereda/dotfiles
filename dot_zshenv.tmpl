@@ -265,7 +265,19 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
-{{- /* Host-specific additions and overrides. */}}
+########################################
+# Prompt.
+########################################
+
+####################
+# Oh My ZSH.
+####################
+
+export ZSH_THEME="romkatv/powerlevel10k"
+
+########################################
+# Host-specific additions and overrides.
+########################################
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
