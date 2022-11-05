@@ -480,6 +480,16 @@ fi
 
 {{-    end }}
 
+{{-    if (lookPath "snap") }}
+
+####################
+# Snap.
+####################
+
+{{       includeTemplate "snap.sh" . }}
+
+{{-    end }}
+
 {{-    if or
          (lookPath "python")
          (lookPath "python2")

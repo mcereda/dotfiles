@@ -218,6 +218,30 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "snap") }}
+
+####################
+# Snap.
+####################
+
+{{       includeTemplate "snap.sh" . }}
+
+{{-    end }}
+
+{{-    if or
+         (lookPath "python")
+         (lookPath "python2")
+         (lookPath "python3") }}
+
+####################
+# Python.
+####################
+
+{{-      includeTemplate "python.env" . }}
+{{       includeTemplate "python.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "gpg") }}
 
 ####################
