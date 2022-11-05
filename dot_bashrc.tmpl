@@ -490,6 +490,16 @@ fi
 
 {{-    end }}
 
+{{-    if (lookPath "mas") }}
+
+####################
+# MAS.
+####################
+
+{{       includeTemplate "mas.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "snap") }}
 
 ####################
