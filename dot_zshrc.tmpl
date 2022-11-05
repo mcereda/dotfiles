@@ -153,6 +153,50 @@ ask-for-confirmation () {
 alias redo='$(history -p !!)'
 alias sedo='sudo $(history -p !!)'
 
+{{-    if lookPath "notify-send" }}
+
+alias alert='\
+	notify-send --urgency=low -i \
+	"$( [ $? = 0 ] && echo terminal || echo error >&2 )" \
+	"$( \
+		history \
+			| tail -n1 \
+			| sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'' \
+		)"'
+
+{{-    end }}
+
+{{     includeTemplate "table-flip.sh" . }}
+
+########################################
+# Applications settings and shortcuts.
+########################################
+
+{{-    $editor := coalesce
+         (dig "editor" "" .)
+         (lookPath "vim")
+         (lookPath "vim.tiny")
+         (lookPath "nano")
+         (lookPath "vi")
+         (env "EDITOR") }}
+{{-    if $editor }}
+
+# Set the default editor.
+export EDITOR={{ $editor | quote }}
+
+{{-    end }}
+
+{{-    if (lookPath "gpg") }}
+
+####################
+# GnuPG.
+####################
+
+{{-      includeTemplate "gnupg.env" . }}
+{{       includeTemplate "gnupg.sh" . }}
+
+{{-    end }}
+
 {{- /* Host-specific additions and overrides. */}}
 
 {{- /*
