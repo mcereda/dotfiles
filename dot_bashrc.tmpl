@@ -446,6 +446,18 @@ then
 	UPGRADE_ROUTINES=()
 fi
 
+{{-    if and
+         (eq $.chezmoi.os "linux")
+         (lookPath "apt") }}
+
+####################
+# APT.
+####################
+
+{{       includeTemplate "apt.sh" . }}
+
+{{-    end }}
+
 {{-    if (lookPath "brew") }}
 
 ####################
