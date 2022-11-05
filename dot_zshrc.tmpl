@@ -313,6 +313,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "ssh") }}
+
+####################
+# SSH.
+####################
+
+{{       includeTemplate "ssh.sh" . }}
+
+{{-    end }}
+
 ########################################
 # Host-specific additions and overrides.
 ########################################
