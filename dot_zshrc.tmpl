@@ -343,6 +343,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if (lookPath "systemctl") }}
+
+####################
+# Systemd.
+####################
+
+{{       includeTemplate "systemd.sh" . }}
+
+{{-    end }}
+
 ########################################
 # Host-specific additions and overrides.
 ########################################
