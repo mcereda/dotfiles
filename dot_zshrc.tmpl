@@ -426,3 +426,32 @@ export EDITOR={{ $editor | quote }}
 {{-      end }}
 
 {{-    end }}
+
+########################################
+# Configuration freeze.
+# Finalize customizations and try to set the current configuration immutable.
+########################################
+
+[[ -n "${UPGRADE_ROUTINES[@]}" ]] && alias upgrade-routine="${(j:; echo -e "\n---\n"; :)UPGRADE_ROUTINES}"
+
+# Clean up PATHs.
+
+# Remove non-existing directories, follow symlinks and clean up remaining paths.
+if command which realpath >/dev/null 2>&1
+then
+	[[ -n "${fpath[@]}" ]]    && fpath=(    $(realpath --canonicalize-existing --no-symlinks --quiet ${fpath[@]})    )
+	[[ -n "${infopath[@]}" ]] && infopath=( $(realpath --canonicalize-existing --no-symlinks --quiet ${infopath[@]}) )
+	[[ -n "${manpath[@]}" ]]  && manpath=(  $(realpath --canonicalize-existing --no-symlinks --quiet ${manpath[@]})  )
+	[[ -n "${path[@]}" ]]     && path=(     $(realpath --canonicalize-existing --no-symlinks --quiet ${path[@]})     )
+fi
+
+# Freeze (-f) or unfreeze (-u) the tty. When the tty is frozen, no changes made
+# to the tty settings by external programs will be honored by the shell, except
+# for changes in the size of the screen; the shell will simply reset the
+# settings to their previous values as soon as each command exits or is
+# suspended.
+# Freezing the tty only causes future changes to the state to be blocked.
+ttyctl -f
+
+# Enable this and the module inclusion on the first line to debug performance.
+# zprof
