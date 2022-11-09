@@ -1,18 +1,8 @@
-# See also:
-# - https://docs.python.org/3/using/cmdline.html#environment-variables
-
-PYTHONCACHE=1
-PYTHONGLOBALREQUIREMENTFILES=(
-	"${HOME}/.local/lib/python/requirement.txt"
-)
-
-PYTHONCACHEDIROPTIONS=()
 if ! is-true "$PYTHONCACHE"
 then
 	PYTHONCACHEDIROPTIONS+=( '--no-cache-dir' )
 fi
 
-PYTHONGLOBALREQUIREMENTOPTIONS=()
 for FILE in ${PYTHONGLOBALREQUIREMENTFILES[@]}
 do
 	if [[ -r "$FILE" ]]
