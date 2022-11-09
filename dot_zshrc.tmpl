@@ -186,7 +186,17 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "funtoo") }}
+{{-    if eq $.chezmoi.os "darwin" }}
+
+####################
+# Darwin.
+####################
+
+{{       includeTemplate "darwin.sh" . }}
+
+{{-    end }}
+
+{{-    if (lookPath "portage") }}
 
 ####################
 # Funtoo.
