@@ -210,6 +210,16 @@ export EDITOR={{ $editor | quote }}
          (eq $.chezmoi.os "linux")
          (lookPath "apt") }}
 
+{{-    if (lookPath "systemctl") }}
+
+####################
+# Systemd.
+####################
+
+{{       includeTemplate "systemd.sh" . }}
+
+{{-    end }}
+
 ####################
 # APT.
 ####################
@@ -301,16 +311,6 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "citrix") }}
-
-####################
-# Citrix.
-####################
-
-{{       includeTemplate "citrix.sh" . }}
-
-{{-    end }}
-
 {{-    if (lookPath "gpg") }}
 
 ####################
@@ -319,16 +319,6 @@ export EDITOR={{ $editor | quote }}
 
 {{-      includeTemplate "gnupg.env" . }}
 {{       includeTemplate "gnupg.sh" . }}
-
-{{-    end }}
-
-{{-    if (lookPath "vault") }}
-
-####################
-# Hashicorp Vault.
-####################
-
-{{       includeTemplate "hashicorp-vault.zsh" . }}
 
 {{-    end }}
 
@@ -352,13 +342,23 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "systemctl") }}
+{{-    if (lookPath "az") }}
 
 ####################
-# Systemd.
+# Azure CLI.
 ####################
 
-{{       includeTemplate "systemd.sh" . }}
+{{       includeTemplate "azure-cli.sh" . }}
+
+{{-    end }}
+
+{{-    if (lookPath "citrix") }}
+
+####################
+# Citrix.
+####################
+
+{{       includeTemplate "citrix.sh" . }}
 
 {{-    end }}
 
