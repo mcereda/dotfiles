@@ -149,10 +149,6 @@ ask-for-confirmation () {
 	return $RETURN_VALUE
 }
 
-# History management.
-alias redo='$(history -p !!)'
-alias sedo='sudo $(history -p !!)'
-
 {{-    if lookPath "notify-send" }}
 
 alias alert='\
@@ -165,6 +161,17 @@ alias alert='\
 		)"'
 
 {{-    end }}
+
+####################
+# History management.
+####################
+
+alias redo='$(history -p !!)'
+alias sedo='sudo $(history -p !!)'
+
+####################
+# Table flip!
+####################
 
 {{     includeTemplate "table-flip.sh" . }}
 
@@ -349,6 +356,16 @@ export EDITOR={{ $editor | quote }}
 ####################
 
 {{       includeTemplate "azure-cli.sh" . }}
+
+{{-    end }}
+
+{{-    if (lookPath "boinccmd") }}
+
+####################
+# BOINC.
+####################
+
+{{       includeTemplate "boinc.sh" . }}
 
 {{-    end }}
 
