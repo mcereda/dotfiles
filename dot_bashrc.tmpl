@@ -440,7 +440,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "systemctl") }}
+{{-    if lookPath "systemctl" }}
 
 ####################
 # Systemd.
@@ -450,7 +450,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "portage") }}
+{{-    if eq (dig "id" "" $.chezmoi.osRelease) "funtoo" }}
 
 ####################
 # Funtoo.
@@ -472,7 +472,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "dnf") }}
+{{-    if lookPath "dnf" }}
 
 ####################
 # DNF.
@@ -482,7 +482,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "brew") }}
+{{-    if lookPath "brew" }}
 
 ####################
 # Homebrew.
@@ -493,7 +493,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "port") }}
+{{-    if lookPath "port" }}
 
 ####################
 # Macports.
@@ -504,7 +504,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "mas") }}
+{{-    if lookPath "mas" }}
 
 ####################
 # MAS.
@@ -514,7 +514,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "snap") }}
+{{-    if lookPath "snap" }}
 
 ####################
 # Snap.
@@ -524,7 +524,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "zypper") }}
+{{-    if lookPath "zypper" }}
 
 ####################
 # Zypper.
@@ -548,7 +548,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "btrfs") }}
+{{-    if lookPath "btrfs" }}
 
 ####################
 # BTRFS.
@@ -558,7 +558,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "ssh") }}
+{{-    if lookPath "ssh" }}
 
 ####################
 # SSH.
@@ -568,7 +568,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "citrix") }}
+{{-    if lookPath "citrix" }}
 
 ####################
 # Citrix.
@@ -578,7 +578,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "gpg") }}
+{{-    if lookPath "gpg" }}
 
 ####################
 # GnuPG.
@@ -589,7 +589,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "kerberos") }}
+{{-    if lookPath "kerberos" }}
 
 ####################
 # Kerberos.
@@ -599,7 +599,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "boinccmd") }}
+{{-    if lookPath "boinccmd" }}
 
 ####################
 # BOINC.
@@ -609,7 +609,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "vault") }}
+{{-    if lookPath "vault" }}
 
 ####################
 # Hashicorp Vault.
@@ -619,7 +619,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if (lookPath "minikube") }}
+{{-    if lookPath "minikube" }}
 
 ####################
 # Minikube.

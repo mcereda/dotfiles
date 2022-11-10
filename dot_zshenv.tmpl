@@ -222,7 +222,7 @@ swap () {
 # Enable the recording of unique system upgrade routines for ease of use.
 typeset -aU UPGRADE_ROUTINES
 
-{{-    if (lookPath "brew") }}
+{{-    if lookPath "brew" }}
 
 ####################
 # Homebrew.
@@ -232,7 +232,7 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
-{{-    if (lookPath "port") }}
+{{-    if lookPath "port" }}
 
 ####################
 # Macports.
@@ -255,7 +255,7 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
-{{-    if (lookPath "gpg") }}
+{{-    if lookPath "gpg" }}
 
 ####################
 # GnuPG.
@@ -265,7 +265,7 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
-{{-    if (lookPath "minikube") }}
+{{-    if lookPath "minikube" }}
 
 ####################
 # Minikube.
