@@ -213,10 +213,6 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if and
-         (eq $.chezmoi.os "linux")
-         (lookPath "apt") }}
-
 {{-    if lookPath "systemctl" }}
 
 ####################
@@ -226,6 +222,10 @@ export EDITOR={{ $editor | quote }}
 {{       includeTemplate "systemd.sh" . }}
 
 {{-    end }}
+
+{{-    if and
+         (eq $.chezmoi.os "linux")
+         (lookPath "apt") }}
 
 ####################
 # APT.
@@ -275,7 +275,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    lookPath "snap" }}
+{{-    if lookPath "snap" }}
 
 ####################
 # Snap.
