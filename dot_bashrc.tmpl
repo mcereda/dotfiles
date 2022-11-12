@@ -615,7 +615,17 @@ export EDITOR={{ $editor | quote }}
 # Hashicorp Vault.
 ####################
 
-{{       includeTemplate "hashicorp-vault.zsh" . }}
+{{       includeTemplate "hashicorp-vault.bash" . }}
+
+{{-    end }}
+
+{{-    if lookPath "kubectl" }}
+
+####################
+# Kubernetes.
+####################
+
+{{       includeTemplate "kubernetes.sh" . }}
 
 {{-    end }}
 
