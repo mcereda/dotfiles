@@ -7,7 +7,7 @@ for FILE in ${PYTHONGLOBALREQUIREMENTFILES[@]}
 do
 	if [[ -r "$FILE" ]]
 	then
-		PYTHONGLOBALREQUIREMENTOPTIONS+=( "--requirement $FILE" )
+		PYTHONGLOBALREQUIREMENTOPTIONS+=( '--requirement' "$FILE" )
 	fi
 done
 
