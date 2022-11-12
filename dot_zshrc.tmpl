@@ -203,6 +203,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if eq $.chezmoi.os "linux" }}
+
+####################
+# Linux.
+####################
+
+{{       includeTemplate "linux.sh" . }}
+
+{{-    end }}
+
 {{-    if eq (dig "id" "" $.chezmoi.osRelease) "funtoo" }}
 
 ####################

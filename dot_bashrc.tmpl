@@ -440,13 +440,23 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if lookPath "systemctl" }}
+{{-    if eq $.chezmoi.os "darwin" }}
 
 ####################
-# Systemd.
+# Darwin.
 ####################
 
-{{       includeTemplate "systemd.sh" . }}
+{{       includeTemplate "darwin.sh" . }}
+
+{{-    end }}
+
+{{-    if eq $.chezmoi.os "linux" }}
+
+####################
+# Linux.
+####################
+
+{{       includeTemplate "linux.sh" . }}
 
 {{-    end }}
 
@@ -457,6 +467,16 @@ export EDITOR={{ $editor | quote }}
 ####################
 
 {{       includeTemplate "funtoo.sh" . }}
+
+{{-    end }}
+
+{{-    if lookPath "systemctl" }}
+
+####################
+# Systemd.
+####################
+
+{{       includeTemplate "systemd.sh" . }}
 
 {{-    end }}
 

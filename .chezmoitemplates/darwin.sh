@@ -20,5 +20,3 @@ if ! [[ "${UPGRADE_ROUTINES[@]}" =~ 'darwin-system-upgrade-routine' ]]
 then
 	UPGRADE_ROUTINES+='darwin-system-upgrade-routine'
 fi
-
-{{- /* This line just removes all the extra space */ -}}

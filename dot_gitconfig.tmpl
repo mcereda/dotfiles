@@ -129,6 +129,9 @@
 	;} && f"
 	statis = status
 	statsu = status
+	switch-default-branch = "!f() { \
+		git switch $(git branch-get-default) \
+	;} && f"
 	top-level = "rev-parse --show-toplevel"
 [core]
 	# 'input' on unix, 'true' on windows
