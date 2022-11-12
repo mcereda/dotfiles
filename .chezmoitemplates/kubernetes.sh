@@ -80,7 +80,8 @@ alias kubectl-nodes-with-issues-in-yaml='kubectl-nodes-with-issues | yq -y "." -
 {{-    if lookPath "az" }}
 
 ##########
-# AKS (Microsoft Azure).
+# AKS.
+# Managed Kubernetes from Microsoft Azure.
 ##########
 
 alias aks-versions='\
@@ -90,7 +91,8 @@ alias aks-versions='\
 {{-    end }}
 
 ##########
-# EKS (Amazon Web Services).
+# EKS.
+# Managed Kubernetes from Amazon Web Services.
 ##########
 
 alias eks-dashboard='\
