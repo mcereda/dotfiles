@@ -476,10 +476,17 @@ export EDITOR={{ $editor | quote }}
 # Remove non-existing directories, follow symlinks and clean up remaining paths.
 if command which realpath >/dev/null 2>&1
 then
+{{-    if eq $.chezmoi.os "darwin" }}
+	[[ -n "${fpath[@]}" ]]    && fpath=(    $(realpath -q ${fpath[@]})    )
+	[[ -n "${infopath[@]}" ]] && infopath=( $(realpath -q ${infopath[@]}) )
+	[[ -n "${manpath[@]}" ]]  && manpath=(  $(realpath -q ${manpath[@]})  )
+	[[ -n "${path[@]}" ]]     && path=(     $(realpath -q ${path[@]})     )
+{{-    else }}
 	[[ -n "${fpath[@]}" ]]    && fpath=(    $(realpath --canonicalize-existing --no-symlinks --quiet ${fpath[@]})    )
 	[[ -n "${infopath[@]}" ]] && infopath=( $(realpath --canonicalize-existing --no-symlinks --quiet ${infopath[@]}) )
 	[[ -n "${manpath[@]}" ]]  && manpath=(  $(realpath --canonicalize-existing --no-symlinks --quiet ${manpath[@]})  )
 	[[ -n "${path[@]}" ]]     && path=(     $(realpath --canonicalize-existing --no-symlinks --quiet ${path[@]})     )
+{{-    end }}
 fi
 
 # Freeze (-f) or unfreeze (-u) the tty. When the tty is frozen, no changes made
