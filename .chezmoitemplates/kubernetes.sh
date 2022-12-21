@@ -90,6 +90,8 @@ alias aks-versions='\
 
 {{-    end }}
 
+{{-    if lookPath "awscli" }}
+
 ##########
 # EKS.
 # Managed Kubernetes from Amazon Web Services.
@@ -100,3 +102,5 @@ alias eks-dashboard='\
 		$(kubectl --namespace kube-system get secrets | grep eks-admin | awk "{print \$1}") \
 	&& echo "http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/ \
 	&& kubectl proxy"'
+
+{{-    end }}
