@@ -389,6 +389,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if lookPath "vault" }}
+
+####################
+# HashiCorp Vault.
+####################
+
+{{       includeTemplate "hashicorp-vault.zsh" . }}
+
+{{-    end }}
+
 {{-    if lookPath "kubectl" }}
 
 ####################
