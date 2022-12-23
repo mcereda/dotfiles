@@ -267,6 +267,16 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
+{{-    if lookPath "gcloud" }}
+
+####################
+# Google Cloud CLI.
+####################
+
+{{       includeTemplate "gcloud.env" . }}
+
+{{-    end }}
+
 {{-    if lookPath "minikube" }}
 
 ####################

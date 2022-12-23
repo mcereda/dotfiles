@@ -389,6 +389,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if lookPath "gcloud" }}
+
+####################
+# Google Cloud CLI.
+####################
+
+{{       includeTemplate "gcloud.sh" . }}
+
+{{-    end }}
+
 {{-    if lookPath "vault" }}
 
 ####################
