@@ -578,26 +578,6 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if lookPath "ssh" }}
-
-####################
-# SSH.
-####################
-
-{{       includeTemplate "ssh.sh" . }}
-
-{{-    end }}
-
-{{-    if lookPath "citrix" }}
-
-####################
-# Citrix.
-####################
-
-{{       includeTemplate "citrix.sh" . }}
-
-{{-    end }}
-
 {{-    if lookPath "gpg" }}
 
 ####################
@@ -619,6 +599,26 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if lookPath "ssh" }}
+
+####################
+# SSH.
+####################
+
+{{       includeTemplate "ssh.sh" . }}
+
+{{-    end }}
+
+{{-    if lookPath "az" }}
+
+####################
+# Azure CLI.
+####################
+
+{{       includeTemplate "azure-cli.sh" . }}
+
+{{-    end }}
+
 {{-    if lookPath "boinccmd" }}
 
 ####################
@@ -626,6 +626,16 @@ export EDITOR={{ $editor | quote }}
 ####################
 
 {{       includeTemplate "boinc.sh" . }}
+
+{{-    end }}
+
+{{-    if lookPath "citrix" }}
+
+####################
+# Citrix.
+####################
+
+{{       includeTemplate "citrix.sh" . }}
 
 {{-    end }}
 
