@@ -1,4 +1,5 @@
 alias az-login-again-if-expired='az account show >/dev/null || az login --use-device-code'
+alias az-sc-name-from-id='az-se-name-from-id'
 alias az-sp-displayName-from-id="az ad sp show --query 'displayName' -o tsv --id"
 
 az-helm-chart-versions () {
@@ -57,6 +58,26 @@ az-reset () {
 		az account set --subscription "$AZURE_SUBSCRIPTION"
 		RETURN_VALUE=$?
 	fi
+
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+az-se-name-from-id () {
+	is-true "$DEBUG" && enable-xtrace
+
+	local SERVICE_ENDPOINT_ID=${1:-${SERVICE_ENDPOINT_ID:?required but not set}}
+	local EXTRA_OPTIONS=()
+	if [[ -n "$AZURE_ORGANIZATION_NAME" ]]
+	then
+		EXTRA_OPTIONS+=( "--organization https://dev.azure.com/${AZURE_ORGANIZATION_NAME}" )
+	fi
+	if [[ -n "$AZURE_PROJECT_NAME" ]]
+	then
+		EXTRA_OPTIONS+=( "--project $AZURE_PROJECT_NAME" )
+	fi
+
+	az devops service-endpoint show --query 'displayName' -o tsv ${EXTRA_OPTIONS[@]} --id ${1}
 
 	is-true "$DEBUG" && disable-xtrace
 	return $RETURN_VALUE
