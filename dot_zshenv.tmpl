@@ -244,6 +244,16 @@ typeset -aU UPGRADE_ROUTINES
 
 {{-    end }}
 
+{{-    if lookPath "perl" }}
+
+####################
+# Perl.
+####################
+
+{{-      includeTemplate "perl.env" . }}
+
+{{-    end }}
+
 {{-    if or
          (lookPath "python")
          (lookPath "python2")

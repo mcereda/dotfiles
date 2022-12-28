@@ -554,6 +554,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if lookPath "perl" }}
+
+####################
+# Perl.
+####################
+
+{{-      includeTemplate "perl.env" . }}
+
+{{-    end }}
+
 {{-    if or
          (lookPath "python")
          (lookPath "python2")
