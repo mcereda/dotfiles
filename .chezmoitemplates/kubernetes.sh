@@ -86,7 +86,7 @@ alias kubectl-nodes-with-issues-in-yaml='kubectl-nodes-with-issues | yq -y "." -
 
 alias aks-versions='\
 	az aks get-versions --output table \
-		--location ${AZURE_LOCATION:?required but not set}'
+		--location "${AZURE_LOCATION:-${AZURE_DEFAULTS_LOCATION}:?required but not set}}'
 
 {{-    end }}
 

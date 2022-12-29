@@ -66,18 +66,24 @@ az-reset () {
 az-se-name-from-id () {
 	is-true "$DEBUG" && enable-xtrace
 
-	local SERVICE_ENDPOINT_ID=${1:-${SERVICE_ENDPOINT_ID:?required but not set}}
+	local SERVICE_ENDPOINT_ID="${1:-${SERVICE_ENDPOINT_ID:?required but not set}}"
 	local EXTRA_OPTIONS=()
 	if [[ -n "$AZURE_ORGANIZATION_NAME" ]]
 	then
-		EXTRA_OPTIONS+=( "--organization https://dev.azure.com/${AZURE_ORGANIZATION_NAME}" )
+		EXTRA_OPTIONS+=(
+			"--organization"
+			"https://dev.azure.com/${AZURE_ORGANIZATION_NAME}"
+		)
 	fi
 	if [[ -n "$AZURE_PROJECT_NAME" ]]
 	then
-		EXTRA_OPTIONS+=( "--project $AZURE_PROJECT_NAME" )
+		EXTRA_OPTIONS+=(
+			"--project"
+			"$AZURE_PROJECT_NAME"
+		)
 	fi
 
-	az devops service-endpoint show --query 'displayName' -o tsv ${EXTRA_OPTIONS[@]} --id ${1}
+	az devops service-endpoint show --query 'name' -o tsv ${EXTRA_OPTIONS[@]} --id "$SERVICE_ENDPOINT_ID"
 
 	is-true "$DEBUG" && disable-xtrace
 	return $RETURN_VALUE
