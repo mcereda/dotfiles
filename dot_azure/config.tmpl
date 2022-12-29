@@ -1,0 +1,113 @@
+################################################################################
+## ~/.azure/config
+##
+## Sources:
+## - https://learn.microsoft.com/en-us/cli/azure/azure-cli-configuration
+################################################################################
+
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $azureConfigDefaults := dict }}
+{{-    $_ := set $azureConfigDefaults "cloud" dict }}
+{{-    $_ := set $azureConfigDefaults.cloud "name" "AzureCloud" }}
+
+{{-    if $debug }}
+{{       "azure config defaults:" | comment "# " }}
+{{       $azureConfigDefaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{- /* Start from the defaults. */}}
+
+{{-    $config := dict }}
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{-    $azureConfig := $azureConfigDefaults }}
+
+{{- /*
+     * Load pieces of configuration from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will be templated, and the result will be added,
+     * in the order each appears in the list.
+     */}}
+
+{{-    $hostAzureConfigFiles := list
+         (joinPath $config.data.hostDir ".azure" "config.tmpl")
+         (joinPath $config.data.hostDir ".azure" "config") }}
+
+{{-    range $f := $hostAzureConfigFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
+{{-        $hostAzureConfig := includeTemplate $f . | fromIni }}
+{{-        $_ := mustMergeOverwrite $azureConfig $hostAzureConfig }}
+
+{{-      end }}
+
+{{-    end }}
+
+{{-    if $debug }}
+{{       "merged with the host's specific config files" | comment "# " }}
+{{       "azure config:" | comment "# " }}
+{{       $azureConfig | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{- /*
+     * It is useless to hash the default file's names, as this method is not
+     * a real encryption and doing it just makes identifying the right file
+     * more difficult. Just add your file path to this list eventually.
+     */}}
+
+{{-    $hostEncryptedAzureConfigFiles := list
+         (joinPath $config.data.encryptedHostDir ".azure" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".azure" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir ".azure" (print "config" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".azure" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
+
+{{-    range $f := $hostEncryptedAzureConfigFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
+{{- /*
+     *     For chezmoi to be able to decrypt any encrypted file which content
+     *     needs to be loaded, it requires the 'encryption' setting to be
+     *     present in the configuration file _before_ the run.
+     */}}
+
+{{-        if hasKey $config "encryption" }}
+
+{{-          $hostAzureConfig := includeTemplate $f . | decrypt | fromIni }}
+{{-          $_ := mustMergeOverwrite $azureConfig $hostAzureConfig }}
+
+{{-        end }}
+
+{{-      end }}
+
+{{-    end }}
+
+{{- /* The procedure adds a 'DEFAULT' section which is useless. */}}
+{{-    $azureConfig = omit $azureConfig "DEFAULT" }}
+
+{{     $azureConfig | toIni }}
