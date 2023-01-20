@@ -33,6 +33,7 @@ cask "firefox"
 cask "gpg-suite-no-mail"
 cask "iterm2"
 cask "keka"
+cask "little-snitch", args: { appdir: "/Applications" }
 cask "monitorcontrol"
 cask "openzfs"
 cask "skype"
@@ -40,6 +41,7 @@ cask "spotify"
 cask "steam"
 cask "vlc"
 
-mas "be focused",  id: 973134470
-mas "whatsapp",    id: 1147396723
+mas "be focused", id: 973134470
 mas "prime video", id: 545519333
+mas "whatsapp", id: 1147396723
+mas "xcode", id: 497799835
