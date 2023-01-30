@@ -1,0 +1,108 @@
+################################################################################
+## ~/.config/pip/pip.conf
+################################################################################
+
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{     $debug := false }}
+
+{{- /*
+     * Compute or set default values for this file. Add yours here.
+     * I just find nice to have them handy here and reference them later, and
+     * setting them one per line feels more readable than a convoluted,
+     * all-in-one dict definition (I tried).
+     */}}
+
+{{-    $pipConfigDefaults := dict }}
+
+{{-    if $debug }}
+{{       "pip config defaults:" | comment "# " }}
+{{       $pipConfigDefaults | toIni | indent 4 | comment "# " }}
+{{-    end }}
+
+{{- /* Start from the defaults. */}}
+
+{{-    $config := dict }}
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toIni | indent 4 | comment "# " }}
+{{-    end }}
+
+{{-    $pipConfig := $pipConfigDefaults }}
+
+{{- /*
+     * Load pieces of configuration from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will be templated, and the result will be added,
+     * in the order each appears in the list.
+     */}}
+
+{{-    $hostPipConfigFiles := list
+         (joinPath $config.data.hostDir ".config" "pip" "pip.conf.tmpl")
+         (joinPath $config.data.hostDir ".config" "pip" "pip.conf") }}
+
+{{-    range $f := $hostPipConfigFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
+{{-        $hostPipConfig := includeTemplate $f . | fromIni }}
+{{-        $_ := mustMergeOverwrite $pipConfig $hostPipConfig }}
+
+{{-      end }}
+
+{{-    end }}
+
+{{-    if $debug }}
+{{       "merged with the host's specific config files" | comment "# " }}
+{{       "pip config:" | comment "# " }}
+{{       $pipConfig | toIni | indent 4 | comment "# " }}
+{{-    end }}
+
+{{- /*
+     * It is useless to hash the default file's names, as this method is not
+     * a real encryption and doing it just makes identifying the right file
+     * more difficult. Just add your file path to this list eventually.
+     */}}
+
+{{-    $hostEncryptedPipConfigFiles := list
+         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf" (dig "gpg" "suffix" ".asc" $config))) }}
+
+{{-    range $f := $hostEncryptedPipConfigFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
+{{- /*
+     *     For chezmoi to be able to decrypt any encrypted file which content
+     *     needs to be loaded, it requires the 'encryption' setting to be
+     *     present in the configuration file _before_ the run.
+     */}}
+
+{{-        if hasKey $config "encryption" }}
+
+{{-          $hostPipConfig := includeTemplate $f . | decrypt | fromIni }}
+{{-          $_ := mustMergeOverwrite $pipConfig $hostPipConfig }}
+
+{{-        end }}
+
+{{-      end }}
+
+{{-    end }}
+
+{{- /* The procedure adds a 'DEFAULT' section which is useless. */}}
+{{-    $pipConfig = omit $pipConfig "DEFAULT" }}
+
+{{-    $pipConfig | toIni }}
