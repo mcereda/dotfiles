@@ -1,5 +1,5 @@
 ################################################################################
-## .chezmoi.yaml
+## ~/.config/chezmoi/.chezmoi.yaml
 ################################################################################
 
 {{- /* Check the commented contents of the resulting file after init. */}}
@@ -50,7 +50,10 @@
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
-{{- /* Host-specific additions and overrides. */}}
+{{- /*
+     * Host-specific additions and overrides.
+     * --------------------------------------
+     */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
