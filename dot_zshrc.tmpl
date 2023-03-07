@@ -334,7 +334,6 @@ export EDITOR={{ $editor | quote }}
 # GnuPG.
 ####################
 
-{{-      includeTemplate "gnupg.env" . }}
 {{       includeTemplate "gnupg.sh" . }}
 
 {{-    end }}
