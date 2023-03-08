@@ -1,6 +1,8 @@
 alias az-login-again-if-expired='az account show >/dev/null || az login --use-device-code'
 alias az-sc-name-from-id='az-se-name-from-id'
 alias az-sp-displayName-from-id="az ad sp show --query 'displayName' -o tsv --id"
+alias az-subscription-id-from-name="az account show --query 'id' -o 'tsv' -n"
+alias az-subscription-name-from-id="az account show --query 'name' -o 'tsv' -s"
 
 az-helm-chart-versions () {
 	is-true "$DEBUG" && enable-xtrace
