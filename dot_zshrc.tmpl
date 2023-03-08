@@ -58,6 +58,9 @@
 # This also applies to file expansion of an initial '~' or '='.
 setopt no_match
 
+# Treat '#' as a comment starter instead of matching patterns.
+setopt interactive_comments
+
 # Remind compinstall where it wrote zstyle statements last time.
 # This lets one run compinstall again to update them.
 zstyle ':compinstall' filename ~/.zshrc
