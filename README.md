@@ -3,17 +3,17 @@
 My dotfiles, for better/faster/simpler host management and more fun!
 
 1. [License](#license)
-2. [Status](#status)
-3. [Support and contributing](#support-and-contributing)
-4. [Contributing](#contributing)
-5. [Usage](#usage)
-6. [Design decisions](#design-decisions)
+1. [Status](#status)
+1. [Support and contributing](#support-and-contributing)
+1. [Contributing](#contributing)
+1. [Usage](#usage)
+1. [Design decisions](#design-decisions)
    1. [Encryption](#encryption)
-   2. [Shell-related files conventions](#shell-related-files-conventions)
-7. [Gotchas](#gotchas)
-8. [TODO](#todo)
-9. [Testing](#testing)
-10. [Further readings](#further-readings)
+   1. [Shell-related files conventions](#shell-related-files-conventions)
+1. [Gotchas](#gotchas)
+1. [TODO](#todo)
+1. [Testing](#testing)
+1. [Further readings](#further-readings)
 
 ## License
 
@@ -42,8 +42,8 @@ This repository is not open for contributions, but I might accept suggestions. P
    > just pick one, they are different mirrors of the same repository
 
    ```sh
-   chezmoi init https://gitlab.com/mckie/dotfiles.git [--branch chezmoi]
-   chezmoi init https://github.com/mcereda/dotfiles.git [--branch chezmoi]
+   chezmoi init 'https://gitlab.com/mckie/dotfiles.git' [--branch 'chezmoi']
+   chezmoi init 'https://github.com/mcereda/dotfiles.git' [--branch 'chezmoi']
    ```
 
    if encrypted files are found in the repository, this step will also enable encryption in the configuration file using the default value (`gpg`).
@@ -88,7 +88,7 @@ This repository is not open for contributions, but I might accept suggestions. P
    chezmoi apply
    ```
 
-The host-specific configuration files will merge with chezmoi's own configuration, and will be used by the templates.  
+The host-specific configuration files will merge with chezmoi's own configuration, and will be used by the templates.<br/>
 Encrypted host-specific configuration files will be decrypted and merged last, overwriting eventual values in the plaintext files.
 
 ## Design decisions
@@ -119,7 +119,7 @@ Due to less time in general, performance issues and the decision to not always d
 
 The default [encryption] method of choice is `gpg`.
 
-Some files are `decrypt`ed in the main templates and never used directly.  
+Some files are `decrypt`ed in the main templates and never used directly.<br/>
 Since those encrypted files are not registered in chezmoi, its `edit` command will **not** work transparently; use **something like** this instead:
 
 ```sh
@@ -179,7 +179,7 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 
 - ~~Due to a feature of a library used by [chezmoi], all custom variable names in the configuration file are converted to lowercase; see the [custom data fields appear as all lowercase strings] GitHub issue for more information.~~ solved in [2376](https://github.com/twpayne/chezmoi/pull/2376/files)
 
-- A value for `.encryption` **must** be set in chezmoi's configuration file **before execution** if the `decrypt` or `encrypt` functions are used in a template; this just sets a default application for encryption purposes, as the `decrypt` function will choose the appropriate application by itself.  
+- A value for `$.encryption` **must** be set in chezmoi's configuration file **before execution** if the `decrypt` or `encrypt` functions are used in a template; this just sets a default application for encryption purposes, as the `decrypt` function will choose the appropriate application by itself.<br/>
   The easiest solution to this is to skip those files if no encryption is set in the configuration file, and leverage the available init functions to notify the user to then re-run the 'init' step.
 
 - The [chezmoidata.format] data files are plain, and no templating is done on them; this means:
@@ -189,7 +189,7 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 
   due to this, they are a great way to store static data which is local to the executing host only
 
-- The [chezmoi.format] data files are read **and merged** in alphabetical order (`json`, then `toml`, then finally `yaml`)
+- The [chezmoidata.format] data files are read **and merged** in alphabetical order (`json`, then `toml`, then finally `yaml`)
 
 ## TODO
 
