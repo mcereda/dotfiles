@@ -47,13 +47,27 @@ tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
 
+brew "bash"
+brew "chezmoi"
+brew "coreutils"  # for `realpath`
+brew "gettext"    # for `envsubst`
 brew "git-lfs"
+brew "parallel"
+brew "rsync"
+brew "sponge"
+brew "tree"
+brew "watch"
 
 cask_args appdir: "~/Applications"
 
-########################################
-# Host-specific additions and overrides.
-########################################
+cask "monitorcontrol"  # for better control on external monitors
+cask "mos"             # for separated mouse scrolling control
+cask "rectangle"
+
+{{- /*
+     * Host-specific additions and overrides.
+     * --------------------------------------
+     */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
