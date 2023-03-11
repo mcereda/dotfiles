@@ -58,11 +58,16 @@ brew "sponge"
 brew "tree"
 brew "watch"
 
+
+{{-    if eq $.chezmoi.os "darwin" }}
+
 cask_args appdir: "~/Applications"
 
 cask "monitorcontrol"  # for better control on external monitors
 cask "mos"             # for separated mouse scrolling control
 cask "rectangle"
+
+{{-    end }}
 
 {{- /*
      * Host-specific additions and overrides.
