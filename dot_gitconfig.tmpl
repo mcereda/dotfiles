@@ -76,22 +76,22 @@
 	pull-from-all-remotes = "!f() { \
 		git remote show \
 		| xargs -I{} \
-			git pull {} ${1-$(git branch --show-current)} \
+			git pull {} ${1:-$(git branch --show-current)} \
 	;} && f"
 	pull-from-reachable-remotes = "!f() { \
 		git remote-show-reachable \
 		| xargs -I{} \
-			git pull {} ${1-$(git branch --show-current)} \
+			git pull {} ${1:-$(git branch --show-current)} \
 	;} && f"
 	push-to-all-remotes = "!f() { \
 		git remote show \
 		| xargs -I{} \
-			git push {} ${1-$(git branch --show-current)} \
+			git push {} ${1:-$(git branch --show-current)} \
 	;} && f"
 	push-to-reachable-remotes = "!f() { \
 		git remote-show-reachable \
 		| xargs -I{} \
-			git push {} ${1-$(git branch --show-current)} \
+			git push {} ${1:-$(git branch --show-current)} \
 	;} && f"
 	remote-show-reachable = "!f() { \
 		git remote show \
