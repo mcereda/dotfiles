@@ -83,6 +83,14 @@
 		| xargs -I{} \
 			git pull {} ${1:-$(git branch --show-current)} \
 	;} && f"
+	pull-push = "!f() { \
+		git pull-from-reachable-remotes \
+		&& git push-to-reachable-remotes \
+	;} && f"
+	pull-push-all-remotes = "!f() { \
+		git pull-from-all-remotes \
+		&& git push-to-all-remotes \
+	;} && f"
 	push-to-all-remotes = "!f() { \
 		git remote show \
 		| xargs -I{} \
