@@ -83,7 +83,8 @@
 		| xargs -I{} \
 			git pull {} ${1:-$(git branch --show-current)} \
 	;} && f"
-	pull-push = "!f() { \
+	pull-push = pull-push-reachable-remotes
+	pull-push-reachable-remotes = "!f() { \
 		git pull-from-reachable-remotes \
 		&& git push-to-reachable-remotes \
 	;} && f"
