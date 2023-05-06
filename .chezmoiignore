@@ -38,6 +38,31 @@ README.md
 
 {{-    end }}
 
+{{-    if not (or (lookPath "code") (lookPath "code-oss")) }}
+
+# Visual Studio Code not found in the user's PATH, ignore all its files.
+.config/Code/
+.config/Code - OSS/
+.vscode/
+.vscode-oss/
+
+{{-    else }}
+{{-      if ne .chezmoi.os "darwin" }}
+
+# Ignore Darwin's VSCode configuration.
+Library/Application Support/Code/
+Library/Application Support/Code - OSS/
+
+{{-      end}}
+{{-      if ne .chezmoi.os "linux" }}
+
+# Ignore Linux's VSCode configuration.
+.config/Code/
+.config/Code - OSS/
+
+{{-      end}}
+{{-    end}}
+
 {{-    if not (lookPath "git") }}
 
 # Git not found in the user's PATH, ignore all the related files.

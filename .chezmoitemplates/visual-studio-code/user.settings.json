@@ -1,0 +1,124 @@
+{{- $vscodeExtensions := output "code" "--list-extensions" | splitList "\n" | compact }}
+{{- $vscodeSettings := dict }}
+{{- $_ := set $vscodeSettings "editor.copyWithSyntaxHighlighting" false }}
+{{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
+{{- $_ := set $vscodeSettings "files.insertFinalNewline" true }}
+{{- $_ := set $vscodeSettings "files.trimFinalNewlines" true }}
+{{- $_ := set $vscodeSettings "git.autofetch" false }}
+{{- $_ := set $vscodeSettings "telemetry.telemetryLevel" "off" }}
+{{- $_ := set $vscodeSettings "terminal.integrated.cursorBlinking" true }}
+{{- $_ := set $vscodeSettings "terminal.integrated.cursorStyle" "line" }}
+{{- $_ := set $vscodeSettings "terminal.integrated.scrollback" 100000 }}
+
+
+{{- /* Ignore extensions requiring missing binaries. */}}
+
+{{- $ignoredExtensions := list }}
+
+{{- if not (lookPath "ansible") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "redhat.ansible" }}
+{{- end }}
+
+{{- if not (lookPath "az") }}
+{{-   $ignoredExtensions = concat $ignoredExtensions (list
+        "ms-azure-devops.azure-pipelines"
+        "ms-azuretools.vscode-azureterraform"
+        "ms-azuretools.vscode-bicep"
+        "ms-vscode.azure-account"
+        "ms-vscode.azurecli"
+        "msazurermtools.azurerm-vscode-tools"
+      ) }}
+{{- end }}
+
+{{- if not (lookPath "docker") }}
+{{-   $ignoredExtensions = concat $ignoredExtensions (list
+        "ms-azuretools.vscode-docker"
+        "ms-vscode-remote.remote-containers"
+      ) }}
+{{- end }}
+
+{{- if not (lookPath "git") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "eamodio.gitlens" }}
+{{- end }}
+
+{{- if not (lookPath "go") }}
+{{-   $ignoredExtensions = concat $ignoredExtensions (list
+        "casualjim.gotemplate"
+        "golang.go"
+      ) }}
+{{- end }}
+
+{{- if not (lookPath "gpg") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "JHeilingbrunner.vscode-gnupg-tool" }}
+{{- end }}
+
+{{- if not (lookPath "kubectl") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "ms-kubernetes-tools.vscode-kubernetes-tools" }}
+{{- end }}
+
+{{- if not (lookPath "make") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "ms-vscode.makefile-tools" }}
+{{- end }}
+
+{{- if not (lookPath "pwsh") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "ms-vscode.powershell" }}
+{{- end }}
+
+{{- if not (lookPath "shellcheck") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "timonwong.shellcheck" }}
+{{- end }}
+
+{{- if not (lookPath "terraform") }}
+{{-   $ignoredExtensions = append $ignoredExtensions "hashicorp.terraform" }}
+{{- end }}
+
+{{- /* Ignore extensions depending on the host's class. */}}
+
+{{- $class := dig "class" "private" . }}
+
+{{- if ne $class "work" }}
+{{-   $ignoredExtensions = concat $ignoredExtensions (list
+        "ms-vsliveshare.vsliveshare"
+        "ms-vsliveshare.vsliveshare-audio"
+        "ms-vsliveshare.vsliveshare-pack"
+      ) }}
+{{ end }}
+
+{{- $_ := set $vscodeSettings "settingsSync.ignoredExtensions" $ignoredExtensions }}
+
+
+{{- /* Extension-specific settings. */}}
+
+{{- if eq .chezmoi.os "darwin" }}
+{{-   $_ := set $vscodeSettings "terminal.integrated.defaultProfile.osx" "zsh" }}
+{{- else if eq .chezmoi.os "linux" }}
+{{-   $userShell := last (splitList "/" (env "SHELL")) }}
+{{-   $font := "NotoSansMono Nerd Font" }}
+{{-   $_ := set $vscodeSettings "terminal.integrated.defaultProfile.linux" $userShell }}
+{{-   $_ := set $vscodeSettings "terminal.integrated.fontFamily" $font }}
+{{- end }}
+
+{{- if has "angelo-breuer.clock" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "clock.alignment" "Right" }}
+{{-   $_ := set $vscodeSettings "clock.format" "yyyy-mm-dd HH:MM" }}
+{{- end }}
+
+{{- if has "redhat.vscode-yaml" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "redhat.telemetry.enabled" false }}
+{{- end }}
+
+{{- if has "travisthetechie.write-good-linter" $vscodeExtensions }}
+{{-   $writeGoodLanguages := list "markdown" "plaintext" "yaml"}}
+{{-   $_ := set $vscodeSettings "write-good.languages" $writeGoodLanguages }}
+{{- end }}
+
+{{- if has "yzhang.markdown-all-in-one" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "markdown.extension.orderedList.autoRenumber" false }}
+{{-   $_ := set $vscodeSettings "markdown.extension.orderedList.marker" "one" }}
+{{-   $_ := set $vscodeSettings "markdown.extension.toc.levels" "2..6" }}
+{{-   $_ := set $vscodeSettings "markdown.extension.toc.orderedList" true }}
+{{-   $_ := set $vscodeSettings "[markdown]" (dict "editor.defaultFormatter" "yzhang.markdown-all-in-one") }}
+{{- end }}
+
+
+{{- $vscodeSettings | toPrettyJson }}

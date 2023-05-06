@@ -431,6 +431,18 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-    if or
+         (lookPath "code")
+         (lookPath "code-oss") }}
+
+####################
+# Visual Studio Code.
+####################
+
+{{       includeTemplate "visual-studio-code/rc.sh" . }}
+
+{{-    end }}
+
 ########################################
 # Host-specific additions and overrides.
 ########################################
