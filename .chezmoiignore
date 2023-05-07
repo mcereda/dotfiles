@@ -6,7 +6,10 @@
 LICENSE
 README.md
 
-{{- /* Ignore files for applications absent from the host. */}}
+{{- /*
+     * Ignore files for applications absent from the host.
+     */}}
+
 
 {{-    if not (lookPath "asdf") }}
 
@@ -15,12 +18,14 @@ README.md
 
 {{-    end }}
 
+
 {{-    if not (lookPath "az") }}
 
 # Azure CLI not found in the user's PATH, ignore all the related files.
 .azure/
 
 {{-    end }}
+
 
 {{-    if not (lookPath "bash") }}
 
@@ -31,6 +36,7 @@ README.md
 
 {{-    end }}
 
+
 {{-    if not (lookPath "brew") }}
 
 # Brew not found in the user's PATH, ignore all the related files.
@@ -38,7 +44,10 @@ README.md
 
 {{-    end }}
 
-{{-    if not (or (lookPath "code") (lookPath "code-oss")) }}
+
+{{-    if not (or
+         (lookPath "code")
+         (lookPath "code-oss")) }}
 
 # Visual Studio Code not found in the user's PATH, ignore all its files.
 .config/Code/
@@ -53,15 +62,16 @@ README.md
 Library/Application Support/Code/
 Library/Application Support/Code - OSS/
 
-{{-      end}}
+{{-      end }}
 {{-      if ne .chezmoi.os "linux" }}
 
 # Ignore Linux's VSCode configuration.
 .config/Code/
 .config/Code - OSS/
 
-{{-      end}}
-{{-    end}}
+{{-      end }}
+{{-    end }}
+
 
 {{-    if not (lookPath "git") }}
 
@@ -70,12 +80,14 @@ Library/Application Support/Code - OSS/
 
 {{-    end }}
 
+
 {{-    if not (lookPath "gpg") }}
 
 # GnuPG not found in the user's PATH, ignore all the related files.
 .gnupg/
 
 {{-    end }}
+
 
 {{-    if not (lookPath "pip") }}
 
@@ -84,6 +96,7 @@ Library/Application Support/Code - OSS/
 .pip/
 
 {{-    end }}
+
 
 {{-    if and
          (not (lookPath "python"))
@@ -95,6 +108,7 @@ Library/Application Support/Code - OSS/
 
 {{-    end }}
 
+
 {{-    if not (lookPath "screen") }}
 
 # Screen not found in the user's PATH, ignore all the related files.
@@ -102,12 +116,14 @@ Library/Application Support/Code - OSS/
 
 {{-    end }}
 
+
 {{-    if not (lookPath "tmux") }}
 
 # Tmux not found in the user's PATH, ignore all the related files.
 .tmux.conf
 
 {{-    end }}
+
 
 {{-    if and
          (not (lookPath "vim"))
@@ -117,6 +133,7 @@ Library/Application Support/Code - OSS/
 .vimrc
 
 {{-    end }}
+
 
 {{-    if not (lookPath "zsh") }}
 
