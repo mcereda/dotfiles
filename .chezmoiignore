@@ -6,6 +6,20 @@
 LICENSE
 README.md
 
+
+{{- /*
+     * Ignore files specific to the host's OS.
+     */}}
+
+
+{{-    if ne .chezmoi.os "darwin" }}
+
+# Ignore Darwin's applications' configuration.
+Library/
+
+{{-    end }}
+
+
 {{- /*
      * Ignore files for applications absent from the host.
      */}}
@@ -58,14 +72,14 @@ README.md
 {{-    else }}
 {{-      if ne .chezmoi.os "darwin" }}
 
-# Ignore Darwin's VSCode configuration.
+# Ignore VSCode configuration files for Darwin.
 Library/Application Support/Code/
 Library/Application Support/Code - OSS/
 
 {{-      end }}
 {{-      if ne .chezmoi.os "linux" }}
 
-# Ignore Linux's VSCode configuration.
+# Ignore VSCode configuration files for Linux.
 .config/Code/
 .config/Code - OSS/
 
