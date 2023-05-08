@@ -421,16 +421,6 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
-{{-    if lookPath "minikube" }}
-
-####################
-# Minikube.
-####################
-
-{{       includeTemplate "minikube.sh" . }}
-
-{{-    end }}
-
 {{-    if or
          (lookPath "code")
          (lookPath "code-oss") }}
