@@ -1,6 +1,7 @@
 {{- $vscodeExtensions := output "code" "--list-extensions" | splitList "\n" | compact }}
 {{- $vscodeSettings := dict }}
 {{- $_ := set $vscodeSettings "editor.copyWithSyntaxHighlighting" false }}
+{{- $_ := set $vscodeSettings "extensions.autoCheckUpdates" false }}
 {{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
 {{- $_ := set $vscodeSettings "files.insertFinalNewline" true }}
 {{- $_ := set $vscodeSettings "files.trimFinalNewlines" true }}
