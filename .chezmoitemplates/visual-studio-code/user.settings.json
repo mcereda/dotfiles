@@ -1,6 +1,8 @@
 {{- $vscodeExtensions := output "code" "--list-extensions" | splitList "\n" | compact }}
 {{- $vscodeSettings := dict }}
 {{- $_ := set $vscodeSettings "editor.copyWithSyntaxHighlighting" false }}
+{{- $_ := set $vscodeSettings "editor.detectIndentation" true }}
+{{- $_ := set $vscodeSettings "editor.indentSize" "tabSize" }}
 {{- $_ := set $vscodeSettings "extensions.autoCheckUpdates" false }}
 {{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
 {{- $_ := set $vscodeSettings "files.insertFinalNewline" true }}
@@ -12,15 +14,33 @@
 {{- $_ := set $vscodeSettings "terminal.integrated.scrollback" 100000 }}
 {{- $_ := set $vscodeSettings "[json]" (dict
       "editor.detectIndentation" false
-      "editor.indentSize" 4
+      "editor.insertSpaces" true
+      "editor.tabSize" 4
     ) }}
 {{- $_ := set $vscodeSettings "[python]" (dict
       "editor.detectIndentation" false
-      "editor.indentSize" 4
+      "editor.insertSpaces" true
+      "editor.tabSize" 4
+    ) }}
+{{- $_ := set $vscodeSettings "[shellscript]" (dict
+      "editor.detectIndentation" false
+      "editor.insertSpaces" false
+      "editor.tabSize" 4
+    ) }}
+{{- $_ := set $vscodeSettings "[ssh_config]" (dict
+      "editor.detectIndentation" false
+      "editor.insertSpaces" false
+      "editor.tabSize" 4
+    ) }}
+{{- $_ := set $vscodeSettings "[terraform]" (dict
+      "editor.detectIndentation" false
+      "editor.insertSpaces" true
+      "editor.tabSize" 2
     ) }}
 {{- $_ := set $vscodeSettings "[yaml]" (dict
       "editor.detectIndentation" false
-      "editor.indentSize" 2
+      "editor.insertSpaces" true
+      "editor.tabSize" 2
     ) }}
 
 
