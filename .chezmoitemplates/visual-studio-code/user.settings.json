@@ -10,9 +10,23 @@
 {{- $_ := set $vscodeSettings "terminal.integrated.cursorBlinking" true }}
 {{- $_ := set $vscodeSettings "terminal.integrated.cursorStyle" "line" }}
 {{- $_ := set $vscodeSettings "terminal.integrated.scrollback" 100000 }}
+{{- $_ := set $vscodeSettings "[json]" (dict
+      "editor.detectIndentation" false
+      "editor.indentSize" 4
+    ) }}
+{{- $_ := set $vscodeSettings "[python]" (dict
+      "editor.detectIndentation" false
+      "editor.indentSize" 4
+    ) }}
+{{- $_ := set $vscodeSettings "[yaml]" (dict
+      "editor.detectIndentation" false
+      "editor.indentSize" 2
+    ) }}
 
 
-{{- /* Ignore extensions requiring missing binaries. */}}
+{{- /*
+     * Ignore extensions requiring missing binaries.
+     */}}
 
 {{- $ignoredExtensions := list }}
 
@@ -73,7 +87,10 @@
 {{-   $ignoredExtensions = append $ignoredExtensions "hashicorp.terraform" }}
 {{- end }}
 
-{{- /* Ignore extensions depending on the host's class. */}}
+
+{{- /*
+     * Ignore extensions depending on the host's class.
+     */}}
 
 {{- $class := dig "class" "private" . }}
 
@@ -88,7 +105,9 @@
 {{- $_ := set $vscodeSettings "settingsSync.ignoredExtensions" $ignoredExtensions }}
 
 
-{{- /* Extension-specific settings. */}}
+{{- /*
+     * Extension-specific settings.
+     */}}
 
 {{- if eq .chezmoi.os "darwin" }}
 {{-   $_ := set $vscodeSettings "terminal.integrated.defaultProfile.osx" "zsh" }}
@@ -121,5 +140,15 @@
 {{-   $_ := set $vscodeSettings "[markdown]" (dict "editor.defaultFormatter" "yzhang.markdown-all-in-one") }}
 {{- end }}
 
+
+{{- /*
+     * Host-specific overrides.
+     */}}
+{{- /* TODO */}}
+
+
+{{- /*
+     * Write settings down.
+     */}}
 
 {{- $vscodeSettings | toPrettyJson }}
