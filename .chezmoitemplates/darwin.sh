@@ -3,6 +3,8 @@ alias dead-links='broken-links'
 
 alias darwin-system-upgrade-routine='softwareupdate --install --recommended'
 
+alias dns-clear-cache='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+
 # Enable colors.
 alias grep='grep --color=always'
 alias ls='ls -G'
