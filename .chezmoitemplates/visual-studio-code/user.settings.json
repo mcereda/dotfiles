@@ -153,6 +153,7 @@
 {{- end }}
 
 {{- if has "yzhang.markdown-all-in-one" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "markdown.extension.italic.indicator" "_" }}
 {{-   $_ := set $vscodeSettings "markdown.extension.orderedList.autoRenumber" false }}
 {{-   $_ := set $vscodeSettings "markdown.extension.orderedList.marker" "one" }}
 {{-   $_ := set $vscodeSettings "markdown.extension.toc.levels" "2..6" }}
@@ -164,6 +165,7 @@
 {{- /*
      * Host-specific overrides.
      */}}
+
 {{- /* TODO */}}
 
 
