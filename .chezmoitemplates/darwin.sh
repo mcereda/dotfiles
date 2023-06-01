@@ -1,7 +1,7 @@
 alias broken-links='find . -type l -not -path "*/Library/*" -exec test ! -e {} \; -print'
 alias dead-links='broken-links'
 
-alias darwin-system-upgrade-routine='softwareupdate --install --recommended'
+alias darwin-system-upgrade-routine='softwareupdate --list'
 
 alias dns-clear-cache='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
 
