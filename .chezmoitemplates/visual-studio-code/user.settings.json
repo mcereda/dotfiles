@@ -37,6 +37,11 @@
       "editor.insertSpaces" true
       "editor.tabSize" 2
     ) }}
+{{- $_ := set $vscodeSettings "[xml]" (dict
+      "editor.detectIndentation" false
+      "editor.insertSpaces" true
+      "editor.tabSize" 2
+    ) }}
 {{- $_ := set $vscodeSettings "[yaml]" (dict
       "editor.detectIndentation" false
       "editor.insertSpaces" true
