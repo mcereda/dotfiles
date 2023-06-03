@@ -39,9 +39,13 @@
 
 wheel
 
-########################################
-# Host-specific additions and overrides.
-########################################
+{{-    if lookPath "git" }}
+diff-highlight
+{{-    end }}
+
+{{- /*
+     * Host-specific additions and overrides.
+     */}}
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,

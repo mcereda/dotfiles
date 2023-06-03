@@ -124,6 +124,13 @@
 	# 'input' on unix, 'true' on windows
 	# 'false' only if you know what you are doing
 	autocrlf = {{ ternary "true" "input" (eq .chezmoi.os "windows") }}
+{{-    $pager := "" }}
+{{-    if lookPath "diff-highlight" }}
+{{-      $pager = "diff-highlight" }}
+{{-    else if lookPath "wdiff" }}
+{{-      $pager = "wdiff" }}
+{{-    end }}
+{{     if $pager }}	pager = {{ $pager }} | less {{- end }}
 [diff]
 	wsErrorHighlight = all
 [init]
