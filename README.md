@@ -102,7 +102,7 @@ Due to less time in general, performance issues and the decision to not always d
 - applications fully supporting the [XDG Base Directory specification] (like `tmux`) shall find its files accordingly; [here][arch linux xdg base directory wiki page] is an index to simplify the check
 - host-specific files are looked for in a directory named as the hostname, inside the `$hostsDir` directory:
 
-  ```golang
+  ```go
   // file at $(chezmoi source-path)/dot_gitconfig
   {{ $hostsDir := dig "hostsDir" ".hosts" . }}
   {{ $hostGitConfigs := list (joinPath $hostsDir .chezmoi.hostname "dot_gitconfig") }}
@@ -132,7 +132,7 @@ rm /tmp/plaintext.yaml
 
 Host-specific encrypted files are looked for in a directory named as the hashed hostname, inside the `$hostsDir` directory:
 
-```golang
+```go
 // file at $(chezmoi source-path)/dot_gitconfig
 {{ $hashedHostname := dig "hashedHostname" (adler32sum (sha256sum .chezmoi.hostname)) . }}
 {{ $hostEncryptedGitConfigs := list
