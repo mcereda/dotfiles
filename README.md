@@ -99,6 +99,7 @@ Due to less time in general, performance issues and the decision to not always d
 - chezmoi's configuration files format of choice is **YAML**, because I find it is easy to read, write, and merge in the code
 - files containing any private data shall be encrypted; see [encryption](#encryption) for details
 - shell-related files shall focus on performance as I am easily annoyed by slow prompts; see [shell files conventions](#shell-files-conventions) for details
+- applications fully supporting the [XDG Base Directory specification] (like `tmux`) shall find its files accordingly; [here][arch linux xdg base directory wiki page] is an index to simplify the check
 - host-specific files are looked for in a directory named as the hostname, inside the `$hostsDir` directory:
 
   ```golang
@@ -227,7 +228,9 @@ chezmoi apply
 [gnu stow]: https://www.gnu.org/software/stow/
 [sprig]: https://masterminds.github.io/sprig/
 [text/template]: https://pkg.go.dev/text/template
+[xdg base directory specification]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 [yadm]: https://yadm.io/
 
+[arch linux xdg base directory wiki page]: https://wiki.archlinux.org/title/XDG_Base_Directory
 [custom data fields appear as all lowercase strings]: https://github.com/twpayne/chezmoi/issues/463
 [zsh and bash startup files loading order]: https://shreevatsa.wordpress.com/2008/03/30/zshbash-startup-files-loading-order-bashrc-zshrc-etc/
