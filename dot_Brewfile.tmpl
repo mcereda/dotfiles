@@ -45,8 +45,13 @@
 {{-    end }}
 
 tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/core"
+
+# Installing from the API is now the default behaviour!
+# You can save space and time by running:
+#   brew untap homebrew/core
+#   brew untap homebrew/cask
+#tap "homebrew/cask"
+#tap "homebrew/core"
 
 brew "bash"
 brew "chezmoi"
