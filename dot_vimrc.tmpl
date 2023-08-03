@@ -86,6 +86,13 @@ set confirm
 " Leads to smoother and faster macros.
 set lazyredraw
 
+{{-  if lookPath "fzf" }}
+
+" Use FZF.
+set rtp+={{ lookPath "fzf" }}
+
+{{- end }}
+
 """"""""""""""""""""""""""""""""""""""""
 " Search.
 """"""""""""""""""""""""""""""""""""""""

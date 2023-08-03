@@ -394,6 +394,16 @@ export EDITOR={{ $editor | quote }}
 
 {{-    end }}
 
+{{-  if lookPath "fzf" }}
+
+####################
+# FZF.
+####################
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+{{- end }}
+
 {{-    if lookPath "gcloud" }}
 
 ####################
