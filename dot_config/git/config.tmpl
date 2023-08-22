@@ -159,9 +159,11 @@
 
 {{-    end }}
 
-########################################
-# Host-specific additions and overrides.
-########################################
+
+{{- /*
+     * Host-specific additions and overrides.
+     */}}
+
 
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
@@ -172,7 +174,9 @@
 
 {{-    $hostGitconfigFiles := list
          (joinPath $config.data.hostDir ".gitconfig.tmpl")
-         (joinPath $config.data.hostDir ".gitconfig") }}
+         (joinPath $config.data.hostDir ".gitconfig")
+         (joinPath $config.data.hostDir ".config" "git" "config.tmpl")
+         (joinPath $config.data.hostDir ".config" "git" "config") }}
 
 {{-    range $f := $hostGitconfigFiles }}
 
@@ -198,7 +202,11 @@
          (joinPath $config.data.encryptedHostDir (print ".gitconfig.tmpl" (dig "age" "suffix" ".age" $config)))
          (joinPath $config.data.encryptedHostDir (print ".gitconfig.tmpl" (dig "gpg" "suffix" ".asc" $config)))
          (joinPath $config.data.encryptedHostDir (print ".gitconfig" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir (print ".gitconfig" (dig "gpg" "suffix" ".asc" $config))) }}
+         (joinPath $config.data.encryptedHostDir (print ".gitconfig" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "git" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "git" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "git" (print "config" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "git" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{-    range $f := $hostEncryptedGitconfigFiles }}
 
