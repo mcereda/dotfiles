@@ -1,5 +1,6 @@
 {{- $vscodeExtensions := output "code" "--list-extensions" | splitList "\n" | compact }}
 {{- $vscodeSettings := dict }}
+{{- $_ := set $vscodeSettings "diffEditor.ignoreTrimWhitespace" false }}
 {{- $_ := set $vscodeSettings "editor.copyWithSyntaxHighlighting" false }}
 {{- $_ := set $vscodeSettings "editor.detectIndentation" true }}
 {{- $_ := set $vscodeSettings "editor.indentSize" "tabSize" }}
@@ -146,6 +147,22 @@
 {{- if has "angelo-breuer.clock" $vscodeExtensions }}
 {{-   $_ := set $vscodeSettings "clock.alignment" "Right" }}
 {{-   $_ := set $vscodeSettings "clock.format" "yyyy-mm-dd HH:MM" }}
+{{- end }}
+
+{{- if has "foam.foam-vscode" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "foam.edit.linkReferenceDefinitions" "withExtensions" }}
+{{- end }}
+
+{{- if has "eamodio.gitlens" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "gitlens.codeLens.enabled" false }}
+{{- end }}
+
+{{- if has "rangav.vscode-thunder-client" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "thunder-client.requestLayout" "Top/Bottom" }}
+{{-   $_ := set $vscodeSettings "thunder-client.saveTokenPerEnvironment" true }}
+{{-   $_ := set $vscodeSettings "thunder-client.sidebar.defaultTab" "Collections" }}
+{{-   $_ := set $vscodeSettings "thunder-client.sidebar.layout" "compact" }}
+{{-   $_ := set $vscodeSettings "thunder-client.sidebar.treeIndentation" 10 }}
 {{- end }}
 
 {{- if has "redhat.vscode-yaml" $vscodeExtensions }}
