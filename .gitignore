@@ -3,7 +3,9 @@
 ################################################################################
 
 # IDE files.
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 
 # Data files are plain, non-templatable files.
 # Used here to store static data local to the executing host only.
