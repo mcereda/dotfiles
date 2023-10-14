@@ -3,50 +3,19 @@
 {{- $_ := set $vscodeSettings "diffEditor.ignoreTrimWhitespace" false }}
 {{- $_ := set $vscodeSettings "editor.copyWithSyntaxHighlighting" false }}
 {{- $_ := set $vscodeSettings "editor.detectIndentation" true }}
+{{- $_ := set $vscodeSettings "editor.guides.bracketPairs" "active" }}
 {{- $_ := set $vscodeSettings "editor.indentSize" "tabSize" }}
 {{- $_ := set $vscodeSettings "extensions.autoCheckUpdates" false }}
 {{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
-{{- $_ := set $vscodeSettings "files.insertFinalNewline" true }}
-{{- $_ := set $vscodeSettings "files.trimFinalNewlines" true }}
 {{- $_ := set $vscodeSettings "git.autofetch" false }}
 {{- $_ := set $vscodeSettings "telemetry.telemetryLevel" "off" }}
 {{- $_ := set $vscodeSettings "terminal.integrated.cursorBlinking" true }}
 {{- $_ := set $vscodeSettings "terminal.integrated.cursorStyle" "line" }}
 {{- $_ := set $vscodeSettings "terminal.integrated.scrollback" 100000 }}
-{{- $_ := set $vscodeSettings "[json]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" true
-      "editor.tabSize" 4
-    ) }}
-{{- $_ := set $vscodeSettings "[python]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" true
-      "editor.tabSize" 4
-    ) }}
-{{- $_ := set $vscodeSettings "[shellscript]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" false
-      "editor.tabSize" 4
-    ) }}
 {{- $_ := set $vscodeSettings "[ssh_config]" (dict
       "editor.detectIndentation" false
       "editor.insertSpaces" false
       "editor.tabSize" 4
-    ) }}
-{{- $_ := set $vscodeSettings "[terraform]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" true
-      "editor.tabSize" 2
-    ) }}
-{{- $_ := set $vscodeSettings "[xml]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" true
-      "editor.tabSize" 2
-    ) }}
-{{- $_ := set $vscodeSettings "[yaml]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" true
-      "editor.tabSize" 2
     ) }}
 
 
