@@ -2,5 +2,7 @@
     "recommendations": [
         "editorconfig.editorconfig",
         "nhoizey.gremlins",
+
+        "ms-vscode-remote.remote-ssh-edit",
     ]
 }
