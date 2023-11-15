@@ -48,20 +48,34 @@
 
 tap "homebrew/bundle"
 
-brew "bash"
+brew "bash" if OS.mac?
 brew "chezmoi"
-brew "commitlint"
 brew "coreutils"  # for `realpath`
 brew "fzf"
 brew "gettext"    # for `envsubst`
-brew "git"
 brew "git-lfs"
+brew "git" if OS.mac?
+brew "gnupg" if OS.mac?
 brew "parallel"
-brew "rsync"
+brew "rsync" if OS.mac?
 brew "sponge"
-brew "tag"
+brew "tag" if OS.mac?
+brew "tmux"
 brew "tree"
 brew "watch"
+
+{{-    if lookPath "docker" }}
+brew "hadolint"
+{{-    end }}
+
+{{-    if lookPath "git" }}
+brew "commitlint"
+brew "pre-commit"
+{{-    end }}
+
+{{-    if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+brew "pipx"
+{{-    end }}
 
 
 {{-    if eq $.chezmoi.os "darwin" }}
@@ -70,7 +84,7 @@ cask_args appdir: "~/Applications"
 
 cask "monitorcontrol"  # for better control on external monitors
 cask "mos"             # for separated mouse scrolling control
-cask "rectangle"
+cask "rectangle"       # for window snapping
 
 {{-    end }}
 
