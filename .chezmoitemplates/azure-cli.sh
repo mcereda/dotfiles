@@ -105,8 +105,7 @@ az-se-linked-sp-displayName-from-rg-name () {
 
     local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
 
-    az-se-linked-sp-id-from-rg-name $RESOURCE_GROUP_NAME \
-    | xargs az-sp-displayName-from-objectId
+    az-sp-displayName-from-objectId "$(az-se-linked-sp-id-from-rg-name "$RESOURCE_GROUP_NAME")"
 
 	is-true "$DEBUG" && disable-xtrace
 	return $RETURN_VALUE
