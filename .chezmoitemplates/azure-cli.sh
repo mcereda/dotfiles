@@ -75,8 +75,8 @@ az-reset () {
 az-se-linked-sp-id-from-rg-name () {
 	is-true "$DEBUG" && enable-xtrace
 
-    local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
-    local EXTRA_OPTIONS=()
+	local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
+	local EXTRA_OPTIONS=()
 	if [[ -n "$AZURE_ORGANIZATION_NAME" ]]
 	then
 		EXTRA_OPTIONS+=(
@@ -92,9 +92,9 @@ az-se-linked-sp-id-from-rg-name () {
 		)
 	fi
 
-    az devops service-endpoint list -o 'tsv' \
-        ${EXTRA_OPTIONS[@]} \
-        --query "[?@.name=='$RESOURCE_GROUP_NAME'].authorization.parameters.servicePrincipalId"
+	az devops service-endpoint list -o 'tsv' \
+		${EXTRA_OPTIONS[@]} \
+		--query "[?@.name=='$RESOURCE_GROUP_NAME'].authorization.parameters.servicePrincipalId"
 
 	is-true "$DEBUG" && disable-xtrace
 	return $RETURN_VALUE
@@ -103,9 +103,9 @@ az-se-linked-sp-id-from-rg-name () {
 az-se-linked-sp-displayName-from-rg-name () {
 	is-true "$DEBUG" && enable-xtrace
 
-    local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
+	local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
 
-    az-sp-displayName-from-objectId "$(az-se-linked-sp-id-from-rg-name "$RESOURCE_GROUP_NAME")"
+	az-sp-displayName-from-objectId "$(az-se-linked-sp-id-from-rg-name "$RESOURCE_GROUP_NAME")"
 
 	is-true "$DEBUG" && disable-xtrace
 	return $RETURN_VALUE
