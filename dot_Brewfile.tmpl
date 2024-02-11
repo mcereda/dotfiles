@@ -3,6 +3,8 @@
 ##
 ## If ~/.Brewfile, used as global file for homebrew.
 ## Gotchas:
+## - installing from the API is the default behaviour from a while now; no need
+##   to use the 'homebrew/core' and 'homebrew/cask' taps anymore
 ## - `moreutils` installs its own old version of parallel, which conflicts with
 ##   the `parallel` formula; install `gettext`, `parallel` and `sponge` instead
 ##
@@ -46,26 +48,34 @@
 
 tap "homebrew/bundle"
 
-# Installing from the API is now the default behaviour!
-# You can save space and time by running:
-#   brew untap homebrew/core
-#   brew untap homebrew/cask
-#tap "homebrew/cask"
-#tap "homebrew/core"
-
-brew "bash"
+brew "bash" if OS.mac?
 brew "chezmoi"
 brew "coreutils"  # for `realpath`
 brew "fzf"
 brew "gettext"    # for `envsubst`
-brew "git"
 brew "git-lfs"
+brew "git" if OS.mac?
+brew "gnupg" if OS.mac?
 brew "parallel"
-brew "rsync"
+brew "rsync" if OS.mac?
 brew "sponge"
-brew "tag"
+brew "tag" if OS.mac?
+brew "tmux"
 brew "tree"
 brew "watch"
+
+{{-    if lookPath "docker" }}
+brew "hadolint"
+{{-    end }}
+
+{{-    if lookPath "git" }}
+brew "commitlint"
+brew "pre-commit"
+{{-    end }}
+
+{{-    if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+brew "pipx"
+{{-    end }}
 
 
 {{-    if eq $.chezmoi.os "darwin" }}
@@ -74,7 +84,97 @@ cask_args appdir: "~/Applications"
 
 cask "monitorcontrol"  # for better control on external monitors
 cask "mos"             # for separated mouse scrolling control
-cask "rectangle"
+cask "rectangle"       # for window snapping
+
+{{-    end }}
+
+
+{{-    if lookPath "code" }}
+
+vscode "angelo-breuer.clock"
+vscode "EditorConfig.EditorConfig"
+vscode "esbenp.prettier-vscode"
+vscode "Gruntfuggly.todo-tree"
+vscode "nhoizey.gremlins"
+vscode "oderwat.indent-rainbow"
+vscode "streetsidesoftware.code-spell-checker"
+vscode "streetsidesoftware.code-spell-checker-british-english"
+
+{{- /*   markdown */}}
+vscode "bierner.markdown-mermaid"
+vscode "ianjsikes.md-graph"
+vscode "yzhang.markdown-all-in-one"
+
+{{- /*   common files */}}
+vscode "casualjim.gotemplate"
+vscode "redhat.vscode-yaml"
+
+{{-      if lookPath "ansible" }}
+vscode "redhat.ansible"
+{{-      end }}
+
+{{-      if lookPath "az" }}
+vscode "ms-azure-devops.azure-pipelines"
+vscode "ms-vscode.azure-account"
+vscode "ms-vscode.azurecli"
+vscode "msazurermtools.azurerm-vscode-tools"
+{{-        if lookPath "bicep" }}
+vscode "ms-azuretools.vscode-bicep"
+{{-        end }}
+{{-      end }}
+
+{{-      if lookPath "docker" }}
+vscode "ms-azuretools.vscode-docker"
+vscode "ms-vscode-remote.remote-containers"
+{{-      end }}
+
+{{-      if lookPath "git" }}
+vscode "codezombiech.gitignore"
+vscode "eamodio.gitlens"
+{{-      end }}
+
+{{-      if lookPath "go" }}
+vscode "golang.go"
+{{-      end }}
+
+{{-      if lookPath "gpg" }}
+vscode "JHeilingbrunner.vscode-gnupg-tool"
+{{-      end }}
+
+{{-      if lookPath "kubectl" }}
+vscode "ms-kubernetes-tools.vscode-kubernetes-tools"
+{{-        if lookPath "opa" }}
+vscode "plex.vscode-regolint"
+vscode "tsandall.opa"
+{{-        end }}
+{{-      end }}
+
+{{-      if lookPath "make" }}
+vscode "ms-vscode.makefile-tools"
+{{-      end }}
+
+{{-      if lookPath "pwsh" }}
+vscode "ms-vscode.powershell"
+{{-      end }}
+
+{{-      if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+vscode "ms-python.python"
+{{-      end }}
+
+{{-      if lookPath "shellcheck" }}
+vscode "timonwong.shellcheck"
+{{-      end }}
+
+{{-      if lookPath "ssh" }}
+vscode "ms-vscode-remote.remote-ssh-edit"
+{{-      end }}
+
+{{-      if lookPath "terraform" }}
+vscode "hashicorp.terraform"
+{{-        if lookPath "az" }}
+vscode "ms-azuretools.vscode-azureterraform"
+{{-        end }}
+{{-      end }}
 
 {{-    end }}
 

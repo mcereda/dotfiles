@@ -118,6 +118,10 @@
 {{-   $_ := set $vscodeSettings "clock.format" "yyyy-mm-dd HH:MM" }}
 {{- end }}
 
+{{- if has "streetsidesoftware.code-spell-checker-british-english" $vscodeExtensions }}
+{{-   $_ := set $vscodeSettings "cSpell.language" "en,en-GB" }}
+{{- end }}
+
 {{- if has "foam.foam-vscode" $vscodeExtensions }}
 {{-   $_ := set $vscodeSettings "foam.edit.linkReferenceDefinitions" "withExtensions" }}
 {{- end }}

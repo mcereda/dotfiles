@@ -1,6 +1,13 @@
 alias az-login-again-if-expired='az account show >/dev/null || az login --use-device-code'
+alias az-sc-linked-sp-displayName-from-rg-name='az-se-linked-sp-displayName-from-rg-name'
+alias az-sc-linked-sp-id-from-rg-name='az-se-linked-sp-id-from-rg-name'
 alias az-sc-name-from-id='az-se-name-from-id'
-alias az-sp-displayName-from-id="az ad sp show --query 'displayName' -o tsv --id"
+alias az-sp-appId-from-displayName="az ad sp list -o 'tsv' --query '[].appId' --display-name"
+alias az-sp-clientId-from-displayName='az-sp-appId-from-displayName'
+alias az-sp-displayName-from-id='az-sp-displayName-from-objectId'
+alias az-sp-displayName-from-objectId="az ad sp show --query 'displayName' -o 'tsv' --id"
+alias az-sp-id-from-displayName='az-sp-objectId-from-displayName'
+alias az-sp-objectId-from-displayName="az ad sp list -o 'tsv' --query '[].id' --display-name"
 alias az-subscription-id-from-name="az account show --query 'id' -o 'tsv' -n"
 alias az-subscription-name-from-id="az account show --query 'name' -o 'tsv' -s"
 
@@ -65,6 +72,45 @@ az-reset () {
 	return $RETURN_VALUE
 }
 
+az-se-linked-sp-id-from-rg-name () {
+	is-true "$DEBUG" && enable-xtrace
+
+	local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
+	local EXTRA_OPTIONS=()
+	if [[ -n "$AZURE_ORGANIZATION_NAME" ]]
+	then
+		EXTRA_OPTIONS+=(
+			"--organization"
+			"https://dev.azure.com/${AZURE_ORGANIZATION_NAME}"
+		)
+	fi
+	if [[ -n "$AZURE_PROJECT_NAME" ]]
+	then
+		EXTRA_OPTIONS+=(
+			"--project"
+			"$AZURE_PROJECT_NAME"
+		)
+	fi
+
+	az devops service-endpoint list -o 'tsv' \
+		${EXTRA_OPTIONS[@]} \
+		--query "[?@.name=='$RESOURCE_GROUP_NAME'].authorization.parameters.servicePrincipalId"
+
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
+az-se-linked-sp-displayName-from-rg-name () {
+	is-true "$DEBUG" && enable-xtrace
+
+	local RESOURCE_GROUP_NAME="${1:-${RESOURCE_GROUP_NAME:?required but not set}}"
+
+	az-sp-displayName-from-objectId "$(az-se-linked-sp-id-from-rg-name "$RESOURCE_GROUP_NAME")"
+
+	is-true "$DEBUG" && disable-xtrace
+	return $RETURN_VALUE
+}
+
 az-se-name-from-id () {
 	is-true "$DEBUG" && enable-xtrace
 
@@ -85,7 +131,7 @@ az-se-name-from-id () {
 		)
 	fi
 
-	az devops service-endpoint show --query 'name' -o tsv ${EXTRA_OPTIONS[@]} --id "$SERVICE_ENDPOINT_ID"
+	az devops service-endpoint show --query 'name' -o 'tsv' ${EXTRA_OPTIONS[@]} --id "$SERVICE_ENDPOINT_ID"
 
 	is-true "$DEBUG" && disable-xtrace
 	return $RETURN_VALUE
