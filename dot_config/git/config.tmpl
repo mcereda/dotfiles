@@ -74,6 +74,7 @@
 			sh -c 'printf \"{}=\" && git config --get {}' \
 	;} && f"
 	diff-words = diff --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+'
+	pull-all = pull-from-all-remotes
 	pull-from-all-remotes = "!f() { \
 		git remote show \
 		| xargs -I{} \
@@ -93,6 +94,9 @@
 		git pull-from-all-remotes \
 		&& git push-to-all-remotes \
 	;} && f"
+	pull-reachable = pull-from-reachable-remotes
+	push-all = push-to-all-remotes
+	push-reachable = push-to-reachable-remotes
 	push-to-all-remotes = "!f() { \
 		git remote show \
 		| xargs -I{} \
