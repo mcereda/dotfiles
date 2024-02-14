@@ -80,11 +80,12 @@ brew "pipx"
 
 {{-    if eq $.chezmoi.os "darwin" }}
 
-cask_args appdir: "~/Applications"
+# cask_args appdir: "~/Applications"
 
-cask "monitorcontrol"  # for better control on external monitors
-cask "mos"             # for separated mouse scrolling control
-cask "rectangle"       # for window snapping
+cask "keyboard-cleaner"
+cask "monitorcontrol"    # for better control on external monitors
+cask "mos"               # for separated mouse scrolling control
+cask "rectangle"         # for window snapping
 
 {{-    end }}
 
