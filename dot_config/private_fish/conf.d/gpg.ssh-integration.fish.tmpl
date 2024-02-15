@@ -1,0 +1,5 @@
+if status is-interactive
+	gpg-connect-agent updatestartuptty /bye > /dev/null
+	set GPG_TTY (tty)
+	export GPG_TTY
+end

@@ -55,6 +55,7 @@ Library/
 
 # Brew not found in the user's PATH, ignore all the related files.
 .Brewfile
+.config/fish/conf.d/*brew.fish
 
 {{-    end }}
 
@@ -144,6 +145,14 @@ Library/Application Support/Code - OSS/
 
 # Screen not found in the user's PATH, ignore all the related files.
 .screenrc
+
+{{-    end }}
+
+
+{{-    if not (lookPath "starship") }}
+
+# Starship not found in the user's PATH, ignore all the related files.
+.config/fish/conf.d/*starship.fish
 
 {{-    end }}
 
