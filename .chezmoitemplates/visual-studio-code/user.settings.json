@@ -158,8 +158,10 @@
 
 
 {{- /*
-     * Host-specific overrides.
+     * Host-specific additions and overrides.
+     * --------------------------------------
      */}}
+
 
 {{- /* TODO */}}
 
