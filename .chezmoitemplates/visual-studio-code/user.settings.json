@@ -104,12 +104,8 @@
      * Extension-specific settings.
      */}}
 
-{{- if eq .chezmoi.os "darwin" }}
-{{-   $_ := set $vscodeSettings "terminal.integrated.defaultProfile.osx" "zsh" }}
-{{- else if eq .chezmoi.os "linux" }}
-{{-   $userShell := last (splitList "/" (env "SHELL")) }}
+{{- if eq .chezmoi.os "linux" }}
 {{-   $font := "NotoSansMono Nerd Font" }}
-{{-   $_ := set $vscodeSettings "terminal.integrated.defaultProfile.linux" $userShell }}
 {{-   $_ := set $vscodeSettings "terminal.integrated.fontFamily" $font }}
 {{- end }}
 
