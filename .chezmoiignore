@@ -15,6 +15,7 @@ README.md
 {{-    if ne .chezmoi.os "darwin" }}
 
 # Ignore Darwin's applications' configuration.
+.config/fish/conf.d/osx.*
 Library/
 
 {{-    end }}
