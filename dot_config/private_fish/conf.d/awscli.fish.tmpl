@@ -30,7 +30,8 @@
 {{       "merged with config file" | comment "# " }}
 {{       "config:" | comment "# " }}
 {{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end }}
+{{-    end -}}
+
 
 alias ssm 'aws ssm start-session --target'
 
