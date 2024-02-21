@@ -34,6 +34,15 @@ Library/
 {{-    end }}
 
 
+{{-    if not (lookPath "aws") }}
+
+# AWS CLI not found in the user's PATH, ignore all the related files.
+.aws/
+.config/fish/conf.d/awscli.fish
+
+{{-    end }}
+
+
 {{-    if not (lookPath "az") }}
 
 # Azure CLI not found in the user's PATH, ignore all the related files.
