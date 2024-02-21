@@ -5,6 +5,7 @@
 {{- $_ := set $vscodeSettings "editor.detectIndentation" true }}
 {{- $_ := set $vscodeSettings "editor.guides.bracketPairs" "active" }}
 {{- $_ := set $vscodeSettings "editor.indentSize" "tabSize" }}
+{{- $_ := set $vscodeSettings "editor.occurrencesHighlight" "multiFile" }}
 {{- $_ := set $vscodeSettings "extensions.autoCheckUpdates" false }}
 {{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
 {{- $_ := set $vscodeSettings "git.autofetch" false }}
