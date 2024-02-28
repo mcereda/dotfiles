@@ -154,6 +154,9 @@
          (lookPath "git-lfs")
          (eq (output "git" "config" "--system" "--get" "--default" "NOT-SET" "filter.lfs.clean" | trim) "NOT-SET") }}
 
+[branch "main"]
+	remote = origin
+
 # Enable LFS.
 [filter "lfs"]
 	clean = git-lfs clean -- %f
