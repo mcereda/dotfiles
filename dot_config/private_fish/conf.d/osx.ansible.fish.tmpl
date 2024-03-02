@@ -1,0 +1,4 @@
+# Disable fork initialization safety features as shown in
+# https://ansiblepilot.medium.com/why-ansible-and-python-fork-break-on-macos-high-sierra-and-how-to-solve-d11540cd2a1b
+
+set -x 'OBJC_DISABLE_INITIALIZE_FORK_SAFETY' 'YES'
