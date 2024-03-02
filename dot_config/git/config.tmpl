@@ -108,10 +108,14 @@
 [submodule]
 	recurse = true
 
+[user]
+	email = {{ .email }}
+	name = {{ .name }}
+
 
 {{- /*
-     * Overrides
-     * ---------
+     * Includes
+     * --------
      */}}
 
 {{- $includePaths := list
@@ -127,9 +131,6 @@
 {{- range $path := $includePaths }}
 	path = {{ $path }}
 {{- end }}
-
-[includeIf "hasconfig:remote.*.url:*git.lan*/**"]
-	path = ~/.config/git/config.mine.inc
 
 
 {{- /*
