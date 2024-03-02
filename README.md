@@ -178,7 +178,7 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 
 ## Gotchas
 
-- ~~Due to a feature of a library used by [chezmoi], all custom variable names in the configuration file are converted to lowercase; see the [custom data fields appear as all lowercase strings] GitHub issue for more information.~~ solved in [2376](https://github.com/twpayne/chezmoi/pull/2376/files)
+- ~~Due to a feature of a library used by [chezmoi], all custom variable names in the configuration file are converted to lowercase; see the [custom data fields appear as all lowercase strings] GitHub issue for more information.~~ solved in [2376](https://github.com/twpayne/chezmoi/pull/2376/files).
 
 - A value for `$.encryption` **must** be set in chezmoi's configuration file **before execution** if the `decrypt` or `encrypt` functions are used in a template; this just sets a default application for encryption purposes, as the `decrypt` function will choose the appropriate application by itself.<br/>
   The easiest solution to this is to skip those files if no encryption is set in the configuration file, and leverage the available init functions to notify the user to then re-run the 'init' step.
@@ -188,9 +188,14 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
   - templates **cannot** be used in them
   - chezmoi **will not** generate them from templates
 
-  due to this, they are a great way to store static data which is local to the executing host only
+  due to this, they are a great way to store static data which is local to the executing host only.
 
-- The [chezmoidata.format] data files are read **and merged** in alphabetical order (`json`, then `toml`, then finally `yaml`)
+- The [chezmoidata.format] data files are read **and merged** in alphabetical order (`json`, then `toml`, then finally `yaml`).
+- When importing content from INI files (e.g. `include filePath | fromIni`), boolean values are stored as strings:
+  As such, they need to be converted back to booleans before use, or the INI string from `toIni` must be parsed and have the boolean parts unquoted.
+- The INI format does not allow null values.<br/>
+  As such, null values need to be removed (e.g. `dict | jq "del(..|nulls)" | first`) prior to the use of `toIni`.
+- Results of the `output` function must be trimmed before use.
 
 ## TODO
 

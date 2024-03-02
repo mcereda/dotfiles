@@ -4,5 +4,6 @@
         "nhoizey.gremlins",
 
         "ms-vscode-remote.remote-ssh-edit",
+        "golang.go",
     ]
 }
