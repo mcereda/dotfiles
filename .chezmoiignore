@@ -20,6 +20,13 @@ Library/
 
 {{-    end }}
 
+{{-    if ne .chezmoi.os "windows" }}
+
+# Ignore Windows's applications' configuration.
+.config/git/config.windows.inc
+
+{{-    end }}
+
 
 {{- /*
      * Ignore files for applications absent from the host.
