@@ -22,40 +22,40 @@
      * all-in-one dict definition (I tried).
      */}}
 
-{{-    $defaults := dict }}
-{{-    $_ := set $defaults "data" dict }}
+{{- $defaults := dict }}
+{{- $_ := set $defaults "data" dict }}
 
-{{-    if $debug }}
-{{       "defaults:" | comment "# " }}
-{{       $defaults | toYaml | indent 4 | comment "# " }}
-{{-    end }}
+{{- if $debug }}
+{{    "defaults:" | comment "# " }}
+{{    $defaults | toYaml | indent 4 | comment "# " }}
+{{- end }}
 
 {{- /*
      * Start from the defaults and overwrite them with the existing
      * configuration from the configuration file.
      */}}
 
-{{-    $config := $defaults }}
+{{- $config := $defaults }}
 
-{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
-{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+{{- $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{- $_ := mustMergeOverwrite $config $configFromFile }}
 
-{{-    if $debug }}
-{{       "merged with config file" | comment "# " }}
-{{       "config:" | comment "# " }}
-{{       $config | toYaml | indent 4 | comment "# " }}
-{{-    end }}
+{{- if $debug }}
+{{    "merged with config file" | comment "# " }}
+{{    "config:" | comment "# " }}
+{{    $config | toYaml | indent 4 | comment "# " }}
+{{- end }}
 
 tap "homebrew/bundle"
 
 brew "bash" if OS.mac?
 brew "chezmoi"
-brew "coreutils"  # for `realpath`
+brew "coreutils" if OS.mac?  # for `realpath`
+brew "fish"
 brew "fzf"
-brew "gettext"    # for `envsubst`
-brew "git-lfs"
-brew "git" if OS.mac?
-brew "gnupg" if OS.mac?
+brew "gettext" if OS.mac?    # for `envsubst`
+brew "gopass"
+brew "gopass-jsonapi"
 brew "parallel"
 brew "rsync" if OS.mac?
 brew "sponge"
@@ -64,33 +64,45 @@ brew "tmux"
 brew "tree"
 brew "watch"
 
-{{-    if lookPath "docker" }}
-brew "hadolint"
-{{-    end }}
+brew "gnupg" if OS.mac?
+brew "pinentry-mac" if OS.mac?
 
-{{-    if lookPath "git" }}
+brew "git-lfs"
+brew "git" if OS.mac?
 brew "commitlint"
 brew "pre-commit"
-{{-    end }}
 
-{{-    if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+{{- if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
 brew "pipx"
-{{-    end }}
+{{- end }}
+
+{{- if lookPath "docker" }}
+brew "hadolint"
+{{- end }}
 
 
-{{-    if eq $.chezmoi.os "darwin" }}
+{{- if eq $.chezmoi.os "darwin" }}
 
 # cask_args appdir: "~/Applications"
 
-cask "keyboard-cleaner"
+cask "bluesnooze"
+cask "firefox"
+cask "iterm2"
+cask "keepingyouawake"
+cask "keyboardcleantool"
 cask "monitorcontrol"    # for better control on external monitors
 cask "mos"               # for separated mouse scrolling control
 cask "rectangle"         # for window snapping
+cask "vlc"
 
-{{-    end }}
+brew "mas"
+mas "liuhai - hide notch", id: 1592293770
+mas "ibar - menubar icon control tool", id: 6443843900
+
+{{- end }}
 
 
-{{-    if lookPath "code" }}
+{{- if lookPath "code" }}
 
 vscode "angelo-breuer.clock"
 vscode "EditorConfig.EditorConfig"
@@ -101,83 +113,78 @@ vscode "oderwat.indent-rainbow"
 vscode "streetsidesoftware.code-spell-checker"
 vscode "streetsidesoftware.code-spell-checker-british-english"
 
-{{- /*   markdown */}}
+vscode "JHeilingbrunner.vscode-gnupg-tool"
+
+vscode "codezombiech.gitignore"
+vscode "eamodio.gitlens"
+
+{{- /*  markdown */}}
 vscode "bierner.markdown-mermaid"
 vscode "ianjsikes.md-graph"
 vscode "yzhang.markdown-all-in-one"
 
-{{- /*   common files */}}
+{{- /*  common files */}}
 vscode "casualjim.gotemplate"
+vscode "redhat.vscode-xml"
 vscode "redhat.vscode-yaml"
 
-{{-      if lookPath "ansible" }}
+{{-   if lookPath "ansible" }}
 vscode "redhat.ansible"
-{{-      end }}
+{{-   end }}
 
-{{-      if lookPath "az" }}
+{{-   if lookPath "az" }}
 vscode "ms-azure-devops.azure-pipelines"
 vscode "ms-vscode.azure-account"
 vscode "ms-vscode.azurecli"
 vscode "msazurermtools.azurerm-vscode-tools"
-{{-        if lookPath "bicep" }}
+{{-     if lookPath "bicep" }}
 vscode "ms-azuretools.vscode-bicep"
-{{-        end }}
-{{-      end }}
+{{-     end }}
+{{-   end }}
 
-{{-      if lookPath "docker" }}
+{{-   if lookPath "docker" }}
 vscode "ms-azuretools.vscode-docker"
 vscode "ms-vscode-remote.remote-containers"
-{{-      end }}
+{{-   end }}
 
-{{-      if lookPath "git" }}
-vscode "codezombiech.gitignore"
-vscode "eamodio.gitlens"
-{{-      end }}
-
-{{-      if lookPath "go" }}
+{{-   if lookPath "go" }}
 vscode "golang.go"
-{{-      end }}
+{{-   end }}
 
-{{-      if lookPath "gpg" }}
-vscode "JHeilingbrunner.vscode-gnupg-tool"
-{{-      end }}
-
-{{-      if lookPath "kubectl" }}
+{{-   if lookPath "kubectl" }}
 vscode "ms-kubernetes-tools.vscode-kubernetes-tools"
-{{-        if lookPath "opa" }}
+{{-     if lookPath "opa" }}
 vscode "plex.vscode-regolint"
 vscode "tsandall.opa"
-{{-        end }}
-{{-      end }}
+{{-     end }}
+{{-   end }}
 
-{{-      if lookPath "make" }}
+{{-   if lookPath "make" }}
 vscode "ms-vscode.makefile-tools"
-{{-      end }}
+{{-   end }}
 
-{{-      if lookPath "pwsh" }}
+{{-   if lookPath "pwsh" }}
 vscode "ms-vscode.powershell"
-{{-      end }}
+{{-   end }}
 
-{{-      if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
+{{-   if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
 vscode "ms-python.python"
-{{-      end }}
+{{-   end }}
 
-{{-      if lookPath "shellcheck" }}
+{{-   if lookPath "shellcheck" }}
 vscode "timonwong.shellcheck"
-{{-      end }}
+{{-   end }}
 
-{{-      if lookPath "ssh" }}
 vscode "ms-vscode-remote.remote-ssh-edit"
-{{-      end }}
 
-{{-      if lookPath "terraform" }}
+{{-   if lookPath "terraform" }}
 vscode "hashicorp.terraform"
-{{-        if lookPath "az" }}
+{{-     if lookPath "az" }}
 vscode "ms-azuretools.vscode-azureterraform"
-{{-        end }}
-{{-      end }}
+{{-     end }}
+{{-   end }}
 
-{{-    end }}
+{{- end }}
 
 
 {{- /*
