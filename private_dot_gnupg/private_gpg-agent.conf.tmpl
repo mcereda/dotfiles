@@ -42,6 +42,12 @@ max-cache-ttl 7200
 
 enable-ssh-support
 
+{{- $pinentry_mac_path := lookPath "pinentry-mac" }}
+{{  if $pinentry_mac_path }}
+{{    join " " (list "pinentry-program" $pinentry_mac_path) }}
+{{- end }}
+
+
 {{- /*
      * Load pieces of configuration from hosts-specific configuration files,
      * should any such file exist.
