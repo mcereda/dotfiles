@@ -36,6 +36,11 @@
 # Load the Homebrew framework.
 eval "$({{ lookPath "brew" }} shellenv)"
 
+# Set some useful shortcuts.
+alias brew-upgrade-all 'brew update && brew upgrade'
+alias brew-upgrade-bundle 'brew bundle --no-lock install --global'
+alias brew-upgrade-routine 'brew-upgrade-bundle && brew-upgrade-all && brew autoremove'
+
 
 {{- /*
      * Host-specific additions and overrides.
