@@ -33,7 +33,8 @@
 {{-    end -}}
 
 
-alias ssm 'aws ssm start-session --target'
+alias aws-caller-info 'aws sts get-caller-identity'
+alias aws-ssm 'aws ssm start-session --target'
 
 
 {{- /*
