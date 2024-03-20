@@ -3,7 +3,8 @@
         "editorconfig.editorconfig",
         "nhoizey.gremlins",
 
-        "ms-vscode-remote.remote-ssh-edit",
         "golang.go",
+        "ms-vscode-remote.remote-ssh-edit",
+        "sharat.vscode-brewfile",
     ]
 }
