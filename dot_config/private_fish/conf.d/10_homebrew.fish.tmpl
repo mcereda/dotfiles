@@ -35,6 +35,7 @@
 
 # Load the Homebrew framework.
 eval "$({{ lookPath "brew" }} shellenv)"
+fish_add_path -gmp $HOMEBREW_PREFIX/bin $HOMEBREW_PREFIX/sbin
 
 # Set some useful shortcuts.
 alias brew-upgrade-all 'brew update && brew upgrade'
