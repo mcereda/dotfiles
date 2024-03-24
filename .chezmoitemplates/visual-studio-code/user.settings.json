@@ -8,11 +8,15 @@
 {{- $_ := set $vscodeSettings "editor.occurrencesHighlight" "multiFile" }}
 {{- $_ := set $vscodeSettings "extensions.autoCheckUpdates" false }}
 {{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
+{{- $_ := set $vscodeSettings "files.trimFinalNewlines" true }}
 {{- $_ := set $vscodeSettings "git.autofetch" false }}
 {{- $_ := set $vscodeSettings "telemetry.telemetryLevel" "off" }}
 {{- $_ := set $vscodeSettings "terminal.integrated.cursorBlinking" true }}
 {{- $_ := set $vscodeSettings "terminal.integrated.cursorStyle" "line" }}
 {{- $_ := set $vscodeSettings "terminal.integrated.scrollback" 100000 }}
+{{- $_ := set $vscodeSettings "[json]" (dict "editor.defaultFormatter" "vscode.json-language-features" ) }}
+{{- $_ := set $vscodeSettings "[jsonc]" (dict "editor.defaultFormatter" "vscode.json-language-features" ) }}
+{{- $_ := set $vscodeSettings "[markdown]" (dict "editor.rulers" (list 120)) }}
 {{- $_ := set $vscodeSettings "[ssh_config]" (dict
       "editor.detectIndentation" false
       "editor.insertSpaces" false
@@ -96,7 +100,7 @@
         "ms-vsliveshare.vsliveshare-audio"
         "ms-vsliveshare.vsliveshare-pack"
       ) }}
-{{ end }}
+{{- end }}
 
 {{- $_ := set $vscodeSettings "settingsSync.ignoredExtensions" $ignoredExtensions }}
 
@@ -140,7 +144,7 @@
 {{- end }}
 
 {{- if has "travisthetechie.write-good-linter" $vscodeExtensions }}
-{{-   $writeGoodLanguages := list "markdown" "plaintext" "yaml"}}
+{{-   $writeGoodLanguages := list "markdown" "plaintext" "yaml" }}
 {{-   $_ := set $vscodeSettings "write-good.languages" $writeGoodLanguages }}
 {{- end }}
 
@@ -150,7 +154,6 @@
 {{-   $_ := set $vscodeSettings "markdown.extension.orderedList.marker" "one" }}
 {{-   $_ := set $vscodeSettings "markdown.extension.toc.levels" "2..6" }}
 {{-   $_ := set $vscodeSettings "markdown.extension.toc.orderedList" true }}
-{{-   $_ := set $vscodeSettings "[markdown]" (dict "editor.defaultFormatter" "yzhang.markdown-all-in-one") }}
 {{- end }}
 
 
