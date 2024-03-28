@@ -1,8 +1,3 @@
-function aws-iam-role-arn-from-name
-	aws iam list-roles --output 'text' \
-		--query "Roles[?RoleName == '$argv[1]'].Arn"
-end
-
 function aws-assume-role-by-name
 	set current_caller (aws-caller-info --output json | jq -r '.UserId' -)
 	aws-iam-role-arn-from-name "$argv[1]" \
