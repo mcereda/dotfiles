@@ -111,6 +111,13 @@ Library/Application Support/Code - OSS/
 .config/fish/
 .local/share/fish/
 
+{{-      if not (lookPath "kubectl") }}
+
+# Kubectl not found in the user's PATH, ignore all Fish-related files for it.
+.config/fish/conf.d/kubectl.fish
+
+{{-      end }}
+
 {{-    end }}
 
 
