@@ -21,7 +21,8 @@ The MIT license is used here, see [LICENSE].
 
 ## Status
 
-Development is always ongoing. Changes will be made when I need them, and they might be massive (like moving to a different dotfiles management system).
+Development is always ongoing. Changes will be made when I need them, and they might be massive (like moving to a
+different dotfiles management system).
 
 ## Support and contributing
 
@@ -29,11 +30,12 @@ Aaahm… Well… **Nope**. It's a private thing, so you are on your own, as I am
 
 ## Contributing
 
-This repository is not open for contributions, but I might accept suggestions. Please use the repository's hosting platform's tools for this.
+This repository is not open for contributions, but I might accept suggestions. Please use the repository's hosting
+platform's tools for this.
 
 ## Usage
 
-> Tested on Fedora 36 and Mac OS X.
+> Tested on Mac OS X and OpenSUSE Leap 15.5.
 
 1. install [chezmoi]
 1. import the `age`/`gpg` key you might need to decrypt the encrypted files and give it ultimate trust
@@ -42,11 +44,12 @@ This repository is not open for contributions, but I might accept suggestions. P
    > just pick one, they are different mirrors of the same repository
 
    ```sh
-   chezmoi init 'https://gitlab.com/mckie/dotfiles.git' [--branch 'chezmoi']
-   chezmoi init 'https://github.com/mcereda/dotfiles.git' [--branch 'chezmoi']
+   chezmoi init 'https://gitlab.com/mckie/dotfiles.git' --branch 'chezmoi'
+   chezmoi init 'https://github.com/mcereda/dotfiles.git' --branch 'chezmoi'
    ```
 
-   if encrypted files are found in the repository, this step will also enable encryption in the configuration file using the default value (`gpg`).
+   if encrypted files are found in the repository, this step will also enable encryption in the configuration file using
+   the default value (`gpg`).
 
 1. optionally, create the [chezmoidata.format] data file in the repository root folder:
 
@@ -58,7 +61,8 @@ This repository is not open for contributions, but I might accept suggestions. P
 
    values in here will be used to override the templates defaults; see [gotchas] for details
 
-1. optionally, create a chezmoi configuration file specific to the host in a dedicated folder in `$hostsDir` (which defaults to `.hosts`), with the `.chezmoi.yaml` name:
+1. optionally, create a chezmoi configuration file specific to the host in a dedicated folder in `$hostsDir` (which
+   defaults to `.hosts`), with the `.chezmoi.yaml` name:
 
    ```yaml
    # hostname is deepthought
@@ -67,7 +71,9 @@ This repository is not open for contributions, but I might accept suggestions. P
    gpg: …
    ```
 
-1. optionally, create an [encrypted][encryption] chezmoi configuration file specific to the destination in a dedicated folder with its hashed hostname in `$hostsDir` (which defaults to `.hosts`), with the name matching `encrypted_chezmoi.yaml.suffix`:
+1. optionally, create an [encrypted][encryption] chezmoi configuration file specific to the destination in a dedicated
+   folder with its hashed hostname in `$hostsDir` (which defaults to `.hosts`), with the name matching
+   `encrypted_chezmoi.yaml.suffix`:
 
    ```plaintext
    -----BEGIN PGP MESSAGE-----
@@ -89,18 +95,24 @@ This repository is not open for contributions, but I might accept suggestions. P
    ```
 
 The host-specific configuration files will merge with chezmoi's own configuration, and will be used by the templates.<br/>
-Encrypted host-specific configuration files will be decrypted and merged last, overwriting eventual values in the plaintext files.
+Encrypted host-specific configuration files will be decrypted and merged last, overwriting eventual values in the
+plaintext files.
 
 ## Design decisions
 
 Due to less time in general, performance issues and the decision to not always do everything by myself:
 
-- the files are managed using [chezmoi], just because it offers lots of features (templating and encryption, mostly) and I find it easier than [GNU stow] or other similar projects ([yadm])
-- chezmoi's configuration files format of choice is **YAML**, because I find it is easy to read, write, and merge in the code
-- files containing any private data shall be encrypted; see [encryption](#encryption) for details
-- shell-related files shall focus on performance as I am easily annoyed by slow prompts; see [shell files conventions](#shell-files-conventions) for details
-- applications fully supporting the [XDG Base Directory specification] (like `tmux`) shall find its files accordingly; [here][arch linux xdg base directory wiki page] is an index to simplify the check
-- host-specific files are looked for in a directory named as the hostname, inside the `$hostsDir` directory:
+- The files are managed using [chezmoi], just because it offers lots of features (templating and encryption, mostly) and
+  I find it easier than [GNU stow] or other similar projects ([yadm]).
+- Chezmoi's configuration files format of choice is **YAML**, because I find it is easier to read, write, and merge in
+  the code then JSON or TOML.
+- Files containing any private data shall be encrypted.<br/>
+  See [encryption](#encryption) for details.
+- Shell-related files shall focus on performance as I am easily annoyed by slow prompts.<br/>
+  See [shell files conventions](#shell-files-conventions) for details.
+- Applications fully supporting the [XDG Base Directory specification] (like `tmux`) shall find its files accordingly.
+  [Here][arch linux xdg base directory wiki page] is an index to simplify this check.
+- Host-specific files are looked for in a directory named as the hostname, inside the `$hostsDir` directory:
 
   ```go
   // file at $(chezmoi source-path)/dot_gitconfig
@@ -108,13 +120,17 @@ Due to less time in general, performance issues and the decision to not always d
   {{ $hostGitConfigs := list (joinPath $hostsDir .chezmoi.hostname "dot_gitconfig") }}
   ```
 
-  the `$hostsDir` variable can be manually defined using the `data.hostsDir` key in chezmoi's configuration:
+  The `$hostsDir` variable can be manually defined using the `data.hostsDir` key in chezmoi's configuration:
 
   ```yaml
   # file at $HOME/.config/chezmoi/chezmoi.yaml
   data:
     hostsDir: …
   ```
+
+- Use the custom `localOnly_` prefix to mark _local-only_ files that should be ignored by the repository but be managed
+  by chezmoi.<br/>
+  These will enable host-specific files to be saved in the repository in the near future.
 
 ### Encryption
 

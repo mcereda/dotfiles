@@ -16,3 +16,4 @@
 # Host-specific files.
 # This is not the place to store them.
 .hosts/
+**localOnly_**
