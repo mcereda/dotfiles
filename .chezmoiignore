@@ -45,7 +45,7 @@ Library/
 
 # AWS CLI not found in the user's PATH, ignore all the related files.
 .aws/
-.config/fish/conf.d/awscli.fish
+.config/fish/**/aws*
 
 {{-    end }}
 
@@ -111,13 +111,6 @@ Library/Application Support/Code - OSS/
 .config/fish/
 .local/share/fish/
 
-{{-      if not (lookPath "kubectl") }}
-
-# Kubectl not found in the user's PATH, ignore all Fish-related files for it.
-.config/fish/conf.d/kubectl.fish
-
-{{-      end }}
-
 {{-    end }}
 
 
@@ -137,6 +130,14 @@ Library/Application Support/Code - OSS/
 {{-    end }}
 
 
+{{-    if not (lookPath "kubectl") }}
+
+# Kubectl not found in the user's PATH, ignore all related files.
+.config/fish/**/kubectl*
+
+{{-    end }}
+
+
 {{-    if not (lookPath "pip") }}
 
 # Pip not found in the user's PATH, ignore all the related files.
@@ -150,6 +151,14 @@ Library/Application Support/Code - OSS/
 
 # Pipx not found in the user's PATH, ignore all the related files.
 .local/pipx
+
+{{-    end }}
+
+
+{{-    if not (lookPath "pulumi") }}
+
+# Pulumi not found in the user's PATH, ignore all related files.
+.config/fish/**/pulumi*
 
 {{-    end }}
 
