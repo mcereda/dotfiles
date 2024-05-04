@@ -109,6 +109,11 @@
      * Extension-specific settings.
      */}}
 
+{{- if eq .chezmoi.os "darwin" }}
+{{-   if stat "/Applications/iTerm.app" }}
+{{-     $_ := set $vscodeSettings "terminal.external.osxExec" "iTerm.app" }}
+{{-   end }}
+{{- end }}
 {{- if eq .chezmoi.os "linux" }}
 {{-   $font := "NotoSansMono Nerd Font" }}
 {{-   $_ := set $vscodeSettings "terminal.integrated.fontFamily" $font }}

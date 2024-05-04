@@ -19,6 +19,7 @@
         "cmdhist",
         "colorcolumn",
         "commitlint",
+        "commitlintrc",
         "compinit",
         "compinstall",
         "cterm",
