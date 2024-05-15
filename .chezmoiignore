@@ -37,6 +37,7 @@ Library/
 
 # Asdf not found in the user's PATH, ignore all the related files.
 .tool-versions
+.config/fish/**/*asdf*
 
 {{-    end }}
 
@@ -134,6 +135,14 @@ Library/Application Support/Code - OSS/
 
 # Kubectl not found in the user's PATH, ignore all related files.
 .config/fish/**/kubectl*
+
+{{-    end }}
+
+
+{{-    if not (lookPath "mas") }}
+
+# Mas not found in the user's PATH, ignore all related files.
+.config/fish/**/*mas*
 
 {{-    end }}
 
