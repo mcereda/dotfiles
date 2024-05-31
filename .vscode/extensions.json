@@ -5,6 +5,5 @@
 
         "golang.go",
         "ms-vscode-remote.remote-ssh-edit",
-        "sharat.vscode-brewfile",
     ]
 }

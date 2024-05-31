@@ -1,5 +1,5 @@
 function aws-assume-role-by-name
-	set current_caller (aws-caller-info --output json | jq -r '.UserId' -)
+	set current_caller (aws-caller-info --output 'json' | jq -r '.UserId' -)
 	aws-iam-role-arn-from-name "$argv[1]" \
 	| xargs -I {} \
 		aws sts assume-role \

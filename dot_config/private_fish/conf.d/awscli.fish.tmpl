@@ -34,6 +34,10 @@
 
 
 alias aws-caller-info 'aws sts get-caller-identity'
+alias aws-ec2-running-instanceIds "aws ec2 describe-instances --output 'text' \
+	--filters 'Name=instance-state-name,Values=running' \
+	--query 'Reservations[].Instances[0].InstanceId' \
+| sed -E 's/\t+/\n/g'"
 alias aws-ssm 'aws ssm start-session --target'
 
 
