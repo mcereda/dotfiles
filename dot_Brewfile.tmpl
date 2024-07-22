@@ -69,8 +69,6 @@ brew "pinentry-mac" if OS.mac?
 
 brew "git-lfs"
 brew "git" if OS.mac?
-brew "commitlint"
-brew "pre-commit"
 
 {{- if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
 brew "pipx"
@@ -86,7 +84,7 @@ brew "hadolint"
 # cask_args appdir: "~/Applications"
 
 cask "bluesnooze"
-cask "firefox"
+cask "firefox"  # use librewolf instead? cask "librewolf", args: { no_quarantine: true }
 cask "iterm2"
 cask "keepingyouawake"
 cask "keyboardcleantool"
