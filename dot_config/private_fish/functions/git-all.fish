@@ -1,6 +1,7 @@
 function git-all
 	argparse -s \
 		'c/command=' \
+		'D/debug' \
 		'e/executor=' \
 		'p/path=+' \
 		'r/recursive' \
@@ -21,24 +22,33 @@ function git-all
 		set '_flag_threads' (nproc)
 	end
 
-	echo "
-	command: $_flag_command
-	executor: $_flag_executor
-	path: $_flag_path
-	recursive: $_flag_recursive
-	threads: $_flag_threads
-	argv: $argv
-	" | column -t
+	if set -q '_flag_debug'
+		echo "
+			command: $_flag_command
+			debug: $_flag_debug
+			executor: $_flag_executor
+			path: $_flag_path
+			recursive: $_flag_recursive
+			threads: $_flag_threads
+			argv: $argv
+		" | column -t
+	end
 
 	if test "$_flag_recursive" = '-r' || test "$_flag_recursive" = '--recursive'
-		# echo 'recursive test returned true'
+		if set -q '_flag_debug'
+			echo 'DEBUG: recursive test returned true'
+		end
 		set repositories (find $_flag_path -type 'd' -name '.git' -exec dirname {} +)
 	else
-		# echo 'recursive test returned false'
+		if set -q '_flag_debug'
+			echo 'DEBUG: recursive test returned false'
+		end
 		set repositories $_flag_path
 	end
 
-	# echo repositories: $repositories
+	if set -q '_flag_debug'
+		echo "DEBUG: repositories: $repositories"
+	end
 
 	switch $_flag_executor
 		case 'parallel'
