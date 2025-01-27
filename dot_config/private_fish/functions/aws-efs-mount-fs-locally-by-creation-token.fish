@@ -1,4 +1,4 @@
-function aws-efs-mount-volume-locally-by-creation-token
+function aws-efs-mount-fs-locally-by-creation-token
 	mkdir -p "/tmp/efs/$argv[1]"
 	aws efs describe-file-systems --query 'FileSystems[].FileSystemId' --output 'text' --creation-token "$argv[1]" \
 	| xargs aws efs describe-mount-targets --query 'MountTargets[].IpAddress|[0]' --output 'text' --file-system-id \
