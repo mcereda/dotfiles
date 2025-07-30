@@ -46,8 +46,6 @@
 {{    $config | toYaml | indent 4 | comment "# " }}
 {{- end }}
 
-tap "homebrew/bundle"
-
 brew "bash" if OS.mac?
 brew "chezmoi"
 brew "coreutils" if OS.mac?  # for `realpath`
@@ -56,6 +54,7 @@ brew "fzf"
 brew "gettext" if OS.mac?    # for `envsubst`
 brew "gopass"
 brew "gopass-jsonapi"
+brew "mas" if OS.mac?
 brew "parallel"
 brew "rsync" if OS.mac?
 brew "sponge"
@@ -84,7 +83,7 @@ brew "hadolint"
 # cask_args appdir: "~/Applications"
 
 cask "bluesnooze"
-cask "firefox"  # use librewolf instead? cask "librewolf", args: { no_quarantine: true }
+cask "firefox"  # use librewolf instead? -> cask "librewolf", args: { no_quarantine: true }
 cask "iterm2"
 cask "keepingyouawake"
 cask "keyboardcleantool"
@@ -92,11 +91,6 @@ cask "monitorcontrol"    # for better control on external monitors
 cask "mos"               # for separated mouse scrolling control
 cask "rectangle"         # for window snapping
 cask "vlc"
-
-# For mac laptops with notch
-# brew "mas"
-# mas "liuhai - hide notch", id: 1592293770
-# mas "ibar - menubar icon control tool", id: 6443843900
 
 {{- end }}
 
