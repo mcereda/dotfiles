@@ -71,6 +71,7 @@ brew "git" if OS.mac?
 
 {{- if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
 brew "pipx"
+# brew "uv"  # might be better than pipx, need to check
 {{- end }}
 
 {{- if lookPath "docker" }}
@@ -80,11 +81,8 @@ brew "hadolint"
 
 {{- if eq $.chezmoi.os "darwin" }}
 
-# cask_args appdir: "~/Applications"
-
 cask "bluesnooze"
-# cask "firefox"  # use librewolf or zen instead? -> cask "librewolf", args: { no_quarantine: true }
-cask "zen"
+cask "zen"  # better than firefox, based on it
 cask "iterm2"
 cask "keepingyouawake"
 cask "keyboardcleantool"
