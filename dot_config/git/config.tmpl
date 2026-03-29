@@ -18,10 +18,15 @@
 ################################################################################
 
 [alias]
-	branch-get-default = "!f() { \
+	branch-get-default = branch-get-default-from-local-ref
+	branch-get-default-from-local-ref = "!f() { \
+		git symbolic-ref 'refs/remotes/origin/HEAD' \
+        | sed 's|refs/remotes/origin/||' \
+	;} && f"
+	branch-get-default-from-remote = "!f() { \
 		git remote show origin \
 		| awk '/HEAD branch/ {print $NF}' \
-	;} && f"
+	;} && f"  # makes network calls
 	branch-get-gone = "!f() { \
 		git fetch -p && \
 		git branch -vv \
