@@ -1,5 +1,10 @@
 ################################################################################
 ## ~/.tmux.conf
+## ~/.config/tmux/tmux.conf
+##
+## set -g configures all tmux components
+## set -s configures the server
+## set -w configures windows
 ################################################################################
 
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
@@ -40,9 +45,13 @@
 # Tmux behavior
 #################
 
-set -g xterm-keys on
+# reload the configuration with super-r without restarting tmux
+bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
 
-# scrollback size
+# increase key repetition speed
+set -s escape-time 0
+
+# increase scrollback buffer
 set -g history-limit 100000
 
 # enable mouse control (clickable windows, panes, resizable panes)
@@ -53,7 +62,7 @@ set -g mouse on
 # Tmux visuals
 #################
 
-set -g default-terminal "screen-256color"
+set -g default-terminal "tmux-256color"
 set -g status-right '#H %Y-%m-%d %H:%M'
 
 
@@ -68,21 +77,52 @@ set -g renumber-windows on
 set -g set-titles on
 
 # rename a window to the current program
-set-window-option -g automatic-rename on
+set -wg automatic-rename on
+
+# dim inactive window tabs
+set -wg window-status-style 'dim'
+
+# highlight the active window's tab
+set -wg window-status-current-style 'italics'
+
+# slightly lighter background for inactive panes
+set -wg window-style 'bg=#333333,fg=#a0a0a0'
+
+# active pane keeps the true terminal background
+set -wg window-active-style 'bg=terminal,fg=terminal'
+
+# Pane border colors
+set -g pane-border-style 'fg=#555555'
+set -g pane-active-border-style 'fg=green'
 
 
 ###
 # Activity monitor
 ####################
 
-# highlight the active window
-# set-window-option -g window-status-current-style 'bg=red dim'
-
 # highlight a window's tab when it has activity
 set -g monitor-activity on
 
 # notify of a window's activity in the status bar
 set -g visual-activity on
+
+
+###
+# User preferences
+####################
+
+# split panes using '|' and '-'
+# more intuitive than '%' and '"'
+bind | split-window -h
+bind - split-window -v
+unbind '"'
+unbind %
+
+# switch panes with `alt+arrow` (no prefix needed)
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
 
 
 {{- /*
