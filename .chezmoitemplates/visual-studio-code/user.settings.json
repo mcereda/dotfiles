@@ -1,27 +1,10 @@
 {{- $vscodeExtensions := output "code" "--list-extensions" | splitList "\n" | compact }}
-{{- $vscodeSettings := dict }}
-{{- $_ := set $vscodeSettings "diffEditor.ignoreTrimWhitespace" false }}
-{{- $_ := set $vscodeSettings "editor.copyWithSyntaxHighlighting" false }}
-{{- $_ := set $vscodeSettings "editor.detectIndentation" true }}
-{{- $_ := set $vscodeSettings "editor.guides.bracketPairs" "active" }}
-{{- $_ := set $vscodeSettings "editor.indentSize" "tabSize" }}
-{{- $_ := set $vscodeSettings "editor.occurrencesHighlight" "multiFile" }}
-{{- $_ := set $vscodeSettings "extensions.autoCheckUpdates" false }}
-{{- $_ := set $vscodeSettings "extensions.autoUpdate" false }}
-{{- $_ := set $vscodeSettings "files.trimFinalNewlines" true }}
-{{- $_ := set $vscodeSettings "git.autofetch" false }}
-{{- $_ := set $vscodeSettings "telemetry.telemetryLevel" "off" }}
-{{- $_ := set $vscodeSettings "terminal.integrated.cursorBlinking" true }}
-{{- $_ := set $vscodeSettings "terminal.integrated.cursorStyle" "line" }}
-{{- $_ := set $vscodeSettings "terminal.integrated.scrollback" 100000 }}
-{{- $_ := set $vscodeSettings "[json]" (dict "editor.defaultFormatter" "vscode.json-language-features" ) }}
-{{- $_ := set $vscodeSettings "[jsonc]" (dict "editor.defaultFormatter" "vscode.json-language-features" ) }}
-{{- $_ := set $vscodeSettings "[markdown]" (dict "editor.rulers" (list 120)) }}
-{{- $_ := set $vscodeSettings "[ssh_config]" (dict
-      "editor.detectIndentation" false
-      "editor.insertSpaces" false
-      "editor.tabSize" 4
-    ) }}
+
+{{- /*
+     * Load base user settings from user.settings.base.json.
+     */}}
+
+{{- $vscodeSettings := includeTemplate "visual-studio-code/user.settings.base.json" . | fromJson }}
 
 
 {{- /*
@@ -109,70 +92,120 @@
      * Extension-specific settings.
      */}}
 
-{{- if eq .chezmoi.os "darwin" }}
-{{-   if stat "/Applications/iTerm.app" }}
-{{-     $_ := set $vscodeSettings "terminal.external.osxExec" "iTerm.app" }}
-{{-   end }}
+{{- if and (eq .chezmoi.os "darwin") (stat "/Applications/iTerm.app") }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "terminal.external.osxExec" "iTerm.app"
+      ) }}
 {{- end }}
+
 {{- if eq .chezmoi.os "linux" }}
-{{-   $font := "NotoSansMono Nerd Font" }}
-{{-   $_ := set $vscodeSettings "terminal.integrated.fontFamily" $font }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "terminal.integrated.fontFamily" "NotoSansMono Nerd Font"
+      ) }}
 {{- end }}
 
 {{- if has "angelo-breuer.clock" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "clock.alignment" "Right" }}
-{{-   $_ := set $vscodeSettings "clock.format" "yyyy-mm-dd HH:MM" }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "clock.alignment" "Right"
+        "clock.format"    "yyyy-mm-dd HH:MM"
+      ) }}
 {{- end }}
 
 {{- if has "streetsidesoftware.code-spell-checker-british-english" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "cSpell.language" "en,en-GB" }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "cSpell.language" "en,en-GB"
+      ) }}
 {{- end }}
 
 {{- if has "foam.foam-vscode" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "foam.edit.linkReferenceDefinitions" "withExtensions" }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "foam.edit.linkReferenceDefinitions" "withExtensions"
+      ) }}
 {{- end }}
 
 {{- if has "eamodio.gitlens" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "gitlens.codeLens.enabled" false }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "gitlens.codeLens.enabled" false
+      ) }}
 {{- end }}
 
 {{- if has "rangav.vscode-thunder-client" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "thunder-client.requestLayout" "Top/Bottom" }}
-{{-   $_ := set $vscodeSettings "thunder-client.saveTokenPerEnvironment" true }}
-{{-   $_ := set $vscodeSettings "thunder-client.sidebar.defaultTab" "Collections" }}
-{{-   $_ := set $vscodeSettings "thunder-client.sidebar.layout" "compact" }}
-{{-   $_ := set $vscodeSettings "thunder-client.sidebar.treeIndentation" 10 }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "thunder-client.requestLayout"          "Top/Bottom"
+        "thunder-client.saveTokenPerEnvironment" true
+        "thunder-client.sidebar.defaultTab"     "Collections"
+        "thunder-client.sidebar.layout"         "compact"
+        "thunder-client.sidebar.treeIndentation" 10
+      ) }}
 {{- end }}
 
 {{- if has "redhat.vscode-yaml" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "redhat.telemetry.enabled" false }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "redhat.telemetry.enabled" false
+      ) }}
 {{- end }}
 
 {{- if has "travisthetechie.write-good-linter" $vscodeExtensions }}
-{{-   $writeGoodLanguages := list "markdown" "plaintext" "yaml" }}
-{{-   $_ := set $vscodeSettings "write-good.languages" $writeGoodLanguages }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "write-good.languages" (list "markdown" "plaintext" "yaml")
+      ) }}
 {{- end }}
 
 {{- if has "yzhang.markdown-all-in-one" $vscodeExtensions }}
-{{-   $_ := set $vscodeSettings "markdown.extension.italic.indicator" "_" }}
-{{-   $_ := set $vscodeSettings "markdown.extension.orderedList.autoRenumber" false }}
-{{-   $_ := set $vscodeSettings "markdown.extension.orderedList.marker" "one" }}
-{{-   $_ := set $vscodeSettings "markdown.extension.toc.levels" "2..6" }}
-{{-   $_ := set $vscodeSettings "markdown.extension.toc.orderedList" true }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "markdown.extension.italic.indicator"        "_"
+        "markdown.extension.orderedList.autoRenumber" false
+        "markdown.extension.orderedList.marker"      "one"
+        "markdown.extension.toc.levels"              "2..6"
+        "markdown.extension.toc.orderedList"          true
+      ) }}
 {{- end }}
 
 
 {{- /*
      * Host-specific additions and overrides.
      * --------------------------------------
+     * Load configuration overrides from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will be merged with the default settings, so that
+     * settings from the new files will override the ones from previous files.
      */}}
 
+{{- $defaults := dict }}
+{{- $_ := set $defaults "data" dict }}
+{{- $config := $defaults }}
+{{- $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{- $_ := mustMergeOverwrite $config $configFromFile }}
 
-{{- /* TODO */}}
+{{- $hostSettingsFiles := list
+     (joinPath $config.data.hostDir "Code" "User" "settings.json.tmpl")
+     (joinPath $config.data.hostDir "Code" "User" "settings.json") }}
+
+{{- range $f := $hostSettingsFiles }}
+{{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-     $override := includeTemplate $f $ | fromJson }}
+{{-     $_ := mustMergeOverwrite $vscodeSettings $override }}
+{{-   end }}
+{{- end }}
+
+{{- $hostEncryptedSettingsFiles := list
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json.tmpl" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json" (dig "gpg" "suffix" ".asc" $config))) }}
+
+{{- range $f := $hostEncryptedSettingsFiles }}
+{{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-     if hasKey $config "encryption" }}
+{{-       $override := includeTemplate $f $ | decrypt | fromJson }}
+{{-       $_ := mustMergeOverwrite $vscodeSettings $override }}
+{{-     end }}
+{{-   end }}
+{{- end }}
 
 
 {{- /*
      * Write settings down.
      */}}
 
-{{- $vscodeSettings | toPrettyJson }}
+{{- $vscodeSettings | toPrettyJson -}}

@@ -1,0 +1,31 @@
+{
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "editor.detectIndentation": true,
+    "editor.indentSize": "tabSize",
+    "editor.guides.bracketPairs": "active",
+    "editor.copyWithSyntaxHighlighting": false,
+    "editor.occurrencesHighlight": "multiFile",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "extensions.autoCheckUpdates": false,
+    "extensions.autoUpdate": false,
+    "files.trimFinalNewlines": true,
+    "git.autofetch": false,
+    "telemetry.telemetryLevel": "off",
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.scrollback": 100000,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[ssh_config]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    }
+}
