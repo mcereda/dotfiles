@@ -1,0 +1,75 @@
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    $config := $defaults }}
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file.
+     */}}
+
+{{-    $claudeSettings := includeTemplate "claude-code/settings.json" . | fromJson }}
+
+{{-    if $debug }}
+{{       "base settings:" | comment "# " }}
+{{       $claudeSettings | toJson | comment "# " }}
+{{-    end }}
+
+
+{{- /*
+     * Host-specific additions and overrides.
+     * --------------------------------------
+     */}}
+
+
+{{- /*
+     * Load configuration overrides from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will be merged with the default settings, so that
+     * settings from the new files will override the ones from previous files.
+     */}}
+
+{{-    $hostSettingsFiles := list
+         (joinPath $config.data.hostDir ".claude" "settings.json.tmpl")
+         (joinPath $config.data.hostDir ".claude" "settings.json") }}
+
+{{-    range $f := $hostSettingsFiles }}
+{{-      if $debug }}
+{{         cat "checking host file:" $f | comment "# " }}
+{{-      end }}
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-        $override := includeTemplate $f $ | fromJson }}
+{{-        $_ := mustMergeOverwrite $claudeSettings $override }}
+{{-        if $debug }}
+{{           cat "merged override from" $f | comment "# " }}
+{{-        end }}
+{{-      end }}
+{{-    end }}
+
+{{-    $hostEncryptedSettingsFiles := list
+         (joinPath $config.data.encryptedHostDir ".claude" (print "settings.json.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".claude" (print "settings.json.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir ".claude" (print "settings.json" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".claude" (print "settings.json" (dig "gpg" "suffix" ".asc" $config))) }}
+
+{{-    range $f := $hostEncryptedSettingsFiles }}
+{{-      if $debug }}
+{{         cat "checking encrypted host file:" $f | comment "# " }}
+{{-      end }}
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-        if hasKey $config "encryption" }}
+{{-          $override := includeTemplate $f $ | decrypt | fromJson }}
+{{-          $_ := mustMergeOverwrite $claudeSettings $override }}
+{{-          if $debug }}
+{{             cat "merged encrypted override from" $f | comment "# " }}
+{{-          end }}
+{{-        end }}
+{{-      end }}
+{{-    end }}
+
+{{- $claudeSettings | toPrettyJson -}}
