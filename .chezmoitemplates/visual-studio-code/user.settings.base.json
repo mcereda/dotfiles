@@ -15,13 +15,12 @@
     "files.trimFinalNewlines": true,
     "git.autofetch": false,
     "telemetry.telemetryLevel": "off",
+    "telemetry.editStats.enabled": false,
+    "telemetry.feedback.enabled": false,
     "terminal.integrated.cursorBlinking": true,
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.scrollback": 100000,
-    "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "[jsonc]": {
+    "[json][jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[ssh_config]": {
