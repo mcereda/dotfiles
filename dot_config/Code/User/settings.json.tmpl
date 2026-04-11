@@ -1,1 +1,15 @@
+{{- /*
+     * VSCode user settings for Linux and XDG targets (~/.config/Code/User/settings.json).
+     *
+     * Logic is deferred the shared template at `.chezmoitemplates/visual-studio-code/user.settings.json`.
+     * It also handles plain and encrypted host-specific overrides.
+     * Add per-host settings by creating one of:
+     *
+     *   .hosts/<hostname>/Code/User/settings.json.tmpl
+     *   .hosts/<hostname>/Code/User/settings.json
+     *
+     * Those files should contain only key-value pairs one wants to override.
+     * They will be deep-merged on top of the base settings via `mustMergeOverwrite`.
+     */ -}}
+
 {{- template "visual-studio-code/user.settings.json" . -}}
