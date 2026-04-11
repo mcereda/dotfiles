@@ -66,7 +66,7 @@
 {{-   $ignoredExtensions = append $ignoredExtensions "timonwong.shellcheck" }}
 {{- end }}
 
-{{- if not (lookPath "terraform") }}
+{{- if not (or (lookPath "terraform") (lookPath "tofu")) }}
 {{-   $ignoredExtensions = append $ignoredExtensions "hashicorp.terraform" }}
 {{- end }}
 
@@ -95,12 +95,6 @@
 {{- if and (eq .chezmoi.os "darwin") (stat "/Applications/iTerm.app") }}
 {{-   $_ := mustMergeOverwrite $vscodeSettings (dict
         "terminal.external.osxExec" "iTerm.app"
-      ) }}
-{{- end }}
-
-{{- if eq .chezmoi.os "linux" }}
-{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
-        "terminal.integrated.fontFamily" "NotoSansMono Nerd Font"
       ) }}
 {{- end }}
 
