@@ -1,4 +1,5 @@
 {
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Hack Nerd Font Mono', Menlo, Monaco, 'Courier New', monospace",
     "editor.rulers": [
         80,
         120
