@@ -70,8 +70,8 @@ brew "git-lfs"
 brew "git" if OS.mac?
 
 {{- if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
-brew "pipx"
-# brew "uv"  # might be better than pipx, need to check
+# brew "pipx"  # "uv" seems to be a better option
+brew "uv"
 {{- end }}
 
 {{- if lookPath "docker" }}
