@@ -1,0 +1,46 @@
+{{- /* Check the commented content of the result of `chezmoi diff` */}}
+{{-    $debug := false }}
+
+{{-    $defaults := dict }}
+{{-    $_ := set $defaults "data" dict }}
+
+{{-    if $debug }}
+{{       "defaults:" | comment "# " }}
+{{       $defaults | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+{{-    $config := $defaults }}
+
+{{-    $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{-    $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{-    if $debug }}
+{{       "merged with config file" | comment "# " }}
+{{       "config:" | comment "# " }}
+{{       $config | toYaml | indent 4 | comment "# " }}
+{{-    end }}
+
+
+{{- /*
+     * Host-specific Grafana environment variables.
+     * This file has no shared base content — everything lives in the host file.
+     */}}
+
+
+{{-    $hostFishConfigGrafanaFiles := list
+         (joinPath $config.data.hostDir ".config" "fish" "conf.d" "grafana.fish.tmpl")
+         (joinPath $config.data.hostDir ".config" "fish" "conf.d" "grafana.fish") }}
+
+{{-    range $f := $hostFishConfigGrafanaFiles }}
+
+{{-      if $debug }}
+{{         cat "looping on file" $f | comment "# " }}
+{{-      end }}
+
+{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
+
+{{         includeTemplate $f . }}
+
+{{-      end }}
+
+{{-    end }}
