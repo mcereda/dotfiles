@@ -53,6 +53,9 @@ The rules in this document about sycophancy, honesty about uncertainty, commit a
   If losing a memory on a different host would let the same failure recur, the memory belongs in `CLAUDE.md`, not only
   in auto-memory.
 
+For durable saves (CLAUDE.md, auto-memory), over-saving pollutes shared files and under-saving is recoverable on
+successive sessions. Bias toward skip when uncertain.
+
 Quick routing:
 
 - Cross-host behavioral rules that would not fire on a fresh host before auto-memory accumulates → `CLAUDE.md`.
