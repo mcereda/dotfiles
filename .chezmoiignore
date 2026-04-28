@@ -14,15 +14,22 @@ README.md
 
 {{-    if ne .chezmoi.os "darwin" }}
 
-# Ignore Darwin's applications' configuration.
+# Ignore Darwin-specific applications configurations.
 .config/fish/conf.d/osx.*
 Library/
 
 {{-    end }}
 
+{{-    if ne .chezmoi.os "linux" }}
+
+# Ignore Linux-specific applications configurations.
+.config/fish/conf.d/linux.*
+
+{{-    end }}
+
 {{-    if ne .chezmoi.os "windows" }}
 
-# Ignore Windows's applications' configuration.
+# Ignore Windows-specific applications configurations.
 .config/git/config.windows.inc
 
 {{-    end }}
@@ -168,6 +175,14 @@ Library/Application Support/Code - OSS/
 
 # Pipx not found in the user's PATH, ignore all the related files.
 .local/pipx
+
+{{-    end }}
+
+
+{{-    if not (lookPath "psql") }}
+
+# psql not found in the user's PATH, ignore all the related files.
+.config/fish/conf.d/osx.postgresql.fish
 
 {{-    end }}
 
