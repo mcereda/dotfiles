@@ -84,7 +84,7 @@
 	remote-show-reachable = "!f() { \
 		git remote show \
 		| xargs -I{} \
-			sh -c \"timeout 3 git ls-remote -hq {} HEAD >/dev/null 2>&1 && echo {} || true\" \
+			sh -c \"timeout 15 git ls-remote -hq {} HEAD >/dev/null 2>&1 && echo {} || true\" \
 	;} && f"
 	remote-show-unique = "!f() { \
 		git remote -v \
