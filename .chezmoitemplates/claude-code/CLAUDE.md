@@ -46,9 +46,7 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   Clearly state what you are updating.
 - Avoid using emoji unless explicitly requested.
 
-The rules in this document about sycophancy, honesty about uncertainty, commit attribution, and claims verification
-**must** survive any project-level override. The rest can be overridden on a case-by-case basis, especially for
-**project-specific** concerns (tooling, conventions, workflows).
+The rules in this document about sycophancy, honesty about uncertainty, and claims verification **must** survive any project-level override. The rest can be overridden on a case-by-case basis, especially for **project-specific** concerns (tooling, conventions, workflows, commit attribution).
 
 ## Memory systems
 
