@@ -33,11 +33,17 @@
             "Agent(Explore)",
             "Bash(git diff*)",
             "Bash(git log*)",
-            "Bash(git remote get-url*)",
-            "Bash(git switch*)",
+            "Bash(git remote get-url *)",
+            "Bash(git status)",
+            "Bash(git switch -c *)",
+            "Bash(head *)",
+            "Bash(ls *)",
+            "Bash(tail *)",
+            "Bash(wc *)",
             "Glob(/**)",
             "Grep(/**)",
             "Read(/**)",
+            "Search",
             "TodoWrite"
         ]
     },
@@ -46,17 +52,12 @@
         "autoAllowBashIfSandboxed": false
     },
     "hooks": {
-        "PreToolUse": [
+        "UserPromptSubmit": [
             {
-                "matcher": "Bash(git commit*)",
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "current=$(git branch --show-current 2>/dev/null); default=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||'); if [[ -z \"$default\" ]]; then default=$(git remote show origin 2>/dev/null | awk '/HEAD branch/{print $NF}'); fi; [[ -z \"$default\" ]] && default=\"master\"; if [[ \"$current\" == \"$default\" ]]; then echo \"BLOCKED: direct commits to '$default' are not allowed — create a feature branch first.\"; exit 2; fi; exit 0"
-                    },
-                    {
-                        "type": "agent",
-                        "prompt": "Was Edit, Write, or NotebookEdit used in this conversation?\n  No  → \"LGTM\"\n  Yes → does the pending git commit mention \"Claude Code\" (in --author or Co-Authored-By)?\n    Yes → \"LGTM\"\n    No  → \"BLOCK: Commit has no Claude attribution. Reconsider your contribution:\n- Wrote most or all code: --author='Claude Code (<model>) on behalf of <user.name> <noreply@anthropic.com>' + 'Co-Authored-By: <user.name> <user.email>'\n- Minor fixes or review only: 'Co-Authored-By: Claude Code (<model>) <noreply@anthropic.com>'\nResolve user.name and user.email via git config. Never guess.\""
+                        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Before writing your response, call TodoWrite to add this task: Update docs (project, wikis, KBs), if needed, before committing. Skip if it is already in your task list.\"}}'"
                     }
                 ]
             }
