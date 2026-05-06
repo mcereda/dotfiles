@@ -225,6 +225,15 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 - The INI format does not allow null values.<br/>
   As such, null values need to be removed (e.g. `dict | jq "del(..|nulls)" | first`) prior to the use of `toIni`.
 - Results of the `output` function must be trimmed before use.
+- `| toPrettyJson` sorts keys alphabetically. It uses Go's `json.MarshalIndent`, which always sorts (does not allow
+  opt-out). Tools that rewrite their live file (e.g. Claude Code) use their own ordering, so `chezmoi diff` reports
+  reorder noise when there is no real content change.<br/>
+  The current mitigation is to configure `chezmoi`'s `diff.command` in `.chezmoi.yaml.tmpl` to a wrapper at
+  `~/.local/bin/chezmoi-diff` (from `private_dot_local/bin/executable_chezmoi-diff`) that normalizes both the target and
+  the temporary files via `jq -S` when both parse as JSON, falling back to `git diff --no-index` for everything else.
+  The wrapper uses `git --no-pager diff --no-index --no-ext-diff` to avoid interacting with chezmoi's own `diff.pager`,
+  work outside any git repository, and ignore `diff.external` so a future gitconfig change can't redirect chezmoi's diff
+  to another tool.
 
 ## TODO
 

@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+###
+# External diff tool to normalize JSON key ordering before diffing.
+#
+# Live JSON files might be rewritten directly by the tool using them, and can
+# drift from chezmoi's rendered output just by key order.
+# Chezmoi templates using `| toPrettyJson` call Go's json.MarshalIndent by
+# design, which *always* sorts keys alphabetically with no opt-out. Without
+# normalization, `chezmoi diff` reports reorder churn when no content changed.
+#
+# Chezmoi needs wiring. Invoke this file via `diff.command` in
+# `.chezmoi.yaml.tmpl` with:
+#   $1 = destination (live file in $HOME, possibly unsorted)
+#   $2 = target      (rendered file in chezmoi's temp area, sorted)
+# Stdout becomes `chezmoi diff`'s output; chezmoi's `diff.pager` (if set)
+# wraps it. Exit code follows diff(1): 0 same, 1 different, >=128 error.
+#
+# Design:
+# - JSON branch:
+#   - Use `jq empty $f` as the cheapest parse check (emits nothing).
+#   - When both files pass the check, normalize each with `jq -S '.'` to a
+#     named temp file.
+#   - Use `git diff --no-index` on those files to produce unified output with
+#     readable labels.
+#     Process substitution would also work, but yields labels like `/dev/fd/63`.
+# - Fallback: any non-JSON file goes straight through `git diff --no-index`.
+#   Behavior identical to the built-in diff.
+#
+# Flags:
+# - `git --no-pager` prevents `core.pager` from spawning `less` inside chezmoi.
+# - `--no-index` operates on raw paths so that no working git repo is required.
+# - `--no-ext-diff` ignores any future `diff.external` setting.
+###
+
+set -u
+
+DESTINATION=$1
+TARGET=$2
+
+if jq empty "$DESTINATION" 2>/dev/null && jq empty "$TARGET" 2>/dev/null
+then
+	TEMP_DIR=$(mktemp -d) && trap 'rm -rf "$TEMP_DIR"' EXIT
+	jq -S '.' "$DESTINATION" > "$TEMP_DIR/live.json"
+	jq -S '.' "$TARGET"      > "$TEMP_DIR/target.json"
+	git --no-pager diff --no-index --no-ext-diff \
+		"$TEMP_DIR/live.json" "$TEMP_DIR/target.json"
+else
+	git --no-pager diff --no-index --no-ext-diff "$DESTINATION" "$TARGET"
+fi
