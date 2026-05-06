@@ -117,8 +117,11 @@ Choose authorship based on contribution weight:
    `--author="Claude Code (<model.name> <model.version>) on behalf of <user.name> <noreply@anthropic.com>"` with a
    `Co-Authored-By: <user.name> <user.email>` trailer.
    E.g., `--author="Claude Code (Claude Sonnet 4.6) on behalf of Jane Doe <noreply@anthropic.com>"`.
-   Always resolve `<user.name>` and `<user.email>` using `git config <key>`, and substitute `<model.name>` and
-   `<model.version>` with the current model name and version from system context. Never guess.
+   Always resolve `<user.name>` and `<user.email>` by running `git config user.name` and `git config user.email`.
+   Prefer `--global` for Co-Authored-By trailers: local overrides may be repo-specific, e.g. `noreply@anthropic.com`.
+   **Never** use the `userEmail` from system context for commit attribution: it may differ from the git-configured
+   email (e.g. company email vs personal email in non-company repos). Substitute `<model.name>` and `<model.version>`
+   with the current model name and version from system context. Never guess.
 2. **I wrote most changes, you assisted** (reviews, minor fixes): do **not** override authorship, and add a
    `Co-Authored-By: Claude Code (<model.name> <model.version>) <noreply@anthropic.com>` trailer instead.
 3. **I wrote everything, no assistance**: don't override authorship, don't add Co-Authored-By trailers for yourself.
