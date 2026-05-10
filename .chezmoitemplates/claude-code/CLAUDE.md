@@ -72,7 +72,8 @@ conventions, workflows, commit attribution).
 - `CLAUDE.md` files are the **contract** you operate by (behavioural rules and conventions). Auto-loaded at session
   start as system context. The most authoritative memory tier and only tier capable of carrying rules beyond this host.
 - Auto-memory (`~/.claude/projects/<project>/memory/`) is your persistent scratchpad for project-specific context.
-  Auto-loaded into context at session start. Write it often, expect to see it next session. It is yours.
+  Write it often, expect to see it next session. It is yours.
+  Auto-loaded into context at session start.
   If losing a memory on a different host would let the same failure recur, the memory belongs in `CLAUDE.md`, not only
   in auto-memory.
 
