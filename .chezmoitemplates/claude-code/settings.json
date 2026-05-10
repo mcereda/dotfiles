@@ -5,6 +5,7 @@
     "outputStyle": "Explanatory",
     "autoDreamEnabled": true,
     "voiceEnabled": true,
+    "verbose": true,
 
     "model": "opusplan",
     "alwaysThinkingEnabled": true,
