@@ -1,15 +1,16 @@
 {
     "minimumVersion": "2.1.81",
     "autoUpdatesChannel": "stable",
-
-    "outputStyle": "Explanatory",
+    
+    "tui": "fullscreen",
+    "verbose": true,
     "autoDreamEnabled": true,
     "voiceEnabled": true,
-    "verbose": true,
-
+    
     "model": "opusplan",
     "alwaysThinkingEnabled": true,
     "effortLevel": "high",
+    "outputStyle": "Explanatory",
 
     "env": {
         "DISABLE_TELEMETRY": "1"
