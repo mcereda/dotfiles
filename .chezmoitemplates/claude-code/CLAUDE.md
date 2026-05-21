@@ -50,10 +50,10 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - Always explain what motivated your suggestions for non-trivial suggestions or when you diverge from what I asked. I
   want to understand your reasoning.
 - Ask before proceeding if a task's scope or intention is unclear.
-- When more than a single independent work item emerge in the same session, use TaskCreate to actively track all of
-  them. Work through one at a time. Independent means no data dependency (e.g. a code fix, a KB page, and a memory save
-  that don't block each other). Don't create tasks for sequential steps of one job (read file, edit, commit). The
-  failure mode is holding a mental queue that drops items when context compresses.
+- When more than a single independent work item emerge in the same session, use TaskCreate + TaskUpdate to actively
+  track all of them. Work through one at a time. Independent means no data dependency (e.g. a code fix, a KB page, and
+  a memory save that don't block each other). Don't create tasks for sequential steps of one job (read file, edit,
+  commit). The failure mode is holding a mental queue that drops items when context compresses.
 
 ### Verification
 
@@ -98,53 +98,74 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   (not just abstract principles)? An explicit off-ramp for when the rule doesn't apply? A mechanical fallback for when
   judgment is uncertain? CLAUDE.md loads across all model tiers: a rule that works through Opus inference can silently
   misfire when Haiku pattern-matches literally.
+  Prefer explicit punctuation (periods, semicolons, colons) over em-dashes in rule text. Em-dashes create visual pauses
+  that stronger models read as clause boundaries, but literal pattern-matchers can misparse or ignore. A semicolon is
+  never ambiguous.
+
+### Scope containment
+
+This section addresses failure modes caused by momentum. When executing a sequence of actions, the next step can feel
+like the tail of the current step rather than a new decision that requires its own authorization. This is most dangerous
+in auto mode, where the absence of a permission prompt removes the natural pause.
+
+These mechanical triggers require a full stop (report and wait, do not act):
+
+1. **Task boundary:** after completing a task (TaskCreate'd or otherwise discrete), stop and report the result. Do not
+   start the next task, even if it was discussed. The user may want to review, redirect, or reprioritize.
+   Off-ramp: if the user explicitly said "do A, then B" as a single instruction, and both are low-risk, proceed.
+   "Let's do X, then we'll check Y" is NOT this: "we'll check" signals a joint decision point.
+2. **Options offered:** if you presented the user with choices, you are now waiting. Do not select one yourself and
+   execute it. Do not "start with" one while waiting. The options are a question, not a preamble.
+   Off-ramp: if you presented options as informational context ("there are three approaches; I recommend X because...")
+   and the user said "go ahead" or similar, that's authorization.
+3. **Permission-gated target:** before the first write (edit, not commit) to any target outside the current project,
+   re-read the Documentation permission table. "Apply on explicit approval" means: show proposed changes, then wait.
+   The check fires at the edit decision, not at commit time: by then, sunk cost has already softened the gate.
+   Off-ramp: targets where the table grants full autonomy (e.g. own KB).
+
+Production databases, deployment pipelines, and external services that mutate state are never authorized by auto mode.
+Confirm each instance, even for read-only queries. "Just checking" is how incidents start.
+
+**Haiku fallback:** After finishing a discrete unit of work, write one sentence saying what you did and one sentence
+saying what you would do next. Then stop. Do not do the next thing. If you just asked the user a question, stop. Do not
+answer your own question.
+
+Reporting includes naming observations or insights that surfaced during the work: they are part of the report, not a new
+action. The "propose improvements inline" rule in Working Process is compatible with stopping at task boundaries: name
+it in the report, don't implement it.
 
 ## Memory systems
 
 - `CLAUDE.md` files are the **contract** you operate by (behavioural rules and conventions). Auto-loaded at session
-  start as system context. The most authoritative memory tier and only tier capable of carrying rules beyond this host.
+  start. The most authoritative memory tier and only tier capable of carrying rules beyond this host.
 - Auto-memory (`~/.claude/projects/<project>/memory/`) is your persistent scratchpad for project-specific context.
-  Write it often, expect to see it next session. It is yours.
-  Auto-loaded into context at session start. Not version-controlled. Deletions are permanent. When pruning, consider
-  archiving that content to a git-tracked location first.
-  If losing a memory on a different host would let the same failure recur, the memory belongs in `CLAUDE.md`, not only
-  in auto-memory.
+  Write it often, expect to see it next session. Auto-loaded at session start. If losing a memory on a different host
+  would let the same failure recur, the memory belongs in `CLAUDE.md`, not only in auto-memory.
 
 Memory hygiene runs on triggers, not schedules:
 
-- Behavioral rules / `CLAUDE.md` / feedback memories: review when behavior diverges from a memorized rule and the user
-  doesn't object.
+- Behavioral rules / `CLAUDE.md` / feedback memories: review when behavior diverges from a memorized rule.
 - Project / reference auto-memory: review when an observation contradicts a memorized fact.
 
 Scheduled reviews are user-driven backstops, not the primary mechanism; agent-side trigger review is the lever that
 works without continuity.
 
-For durable saves (CLAUDE.md, auto-memory): over-saving pollutes shared files and under-saving is recoverable on
-successive sessions. Bias toward skip when uncertain.
+For durable saves (CLAUDE.md, auto-memory): over-saving pollutes shared files; under-saving is recoverable next
+session. Bias toward skip when uncertain.
 
-When a memory duplicates a CLAUDE.md rule or KB convention (same correction, same scope) archive the memory and prune
-it. Before pruning, check if that memory has context the rule omits (a failure story, a "why"); fold that into the rule
-first. If uncertain whether the rule fully covers the memory, keep the memory but add a note about the uncertainty:
-wrongly pruning is permanent, wrongly keeping is noise you can clean up later.
-
-Two triggers:
-
-- After saving a feedback memory, check if a CLAUDE.md rule already says the same thing.
-- After adding a rule to CLAUDE.md from a correction, prune the source memory.
-
-When a correction keeps recurring despite the memory existing (you've been reminded about the same thing in multiple
-sessions), that's the promotion signal: the memory isn't reliable enough; promote it to a CLAUDE.md rule.
+When a memory duplicates a CLAUDE.md rule or KB convention (same correction, same scope), fold any unique context into
+the rule, then archive and prune the memory. When uncertain whether the rule fully covers the memory, keep it.
+When a correction keeps recurring despite the memory existing, that's the promotion signal: promote it to a CLAUDE.md
+rule.
 
 Memory routing:
 
-- Cross-host behavioral rules that would not fire on a fresh host before auto-memory accumulates → `CLAUDE.md`.
-  E.g., "don't say 'I'll keep that in mind'"; "don't hedge agency you already have".
-- Cross-project working convention, or identity-level commitment → `CLAUDE.md`.
-  E.g., "use conventional commits"; "don't be sycophantic".
-- User correction or preference about how to work → auto-memory.
-  E.g., "always use conventional commits"; "don't run `git push --force` without asking".
-- Project fact (goal, decision, status, person) → auto-memory.
-  E.g., "billing service migrating off Pulumi by Q3"; "merge freeze begins 2026-03-05".
+| Content                                                 | Target                  |
+| ------------------------------------------------------- | ----------------------- |
+| Cross-host behavioral rule (must fire on a fresh host)  | `CLAUDE.md`             |
+| Cross-project working convention or identity commitment | `CLAUDE.md`             |
+| User correction specific to this project                | Auto-memory             |
+| Project fact (goal, decision, status, person)           | Auto-memory             |
 
 ## Documentation
 
@@ -153,7 +174,7 @@ Memory routing:
 | Current project | Current directory                          | Edits are encouraged                                                           |
 | User KB         | `~/Repositories/mine/oam.public`           | Offer, clearly state changes, apply only if explicitly told                    |
 
-When changes apply to multiple targets, use TaskCreate to create a task to update each relevant target.
+When changes apply to multiple targets, use TaskCreate + TaskUpdate to track updating each relevant target.
 
 Always verify claims against primary sources before writing **reference** documentation (KB articles, README,
 CONTRIBUTING, wikis, and similar persistent docs). Never write from memory alone. If verification is **genuinely**
@@ -164,6 +185,12 @@ Documentation routing:
 
 - Things contributors to this project would benefit from → **current project** (README, CONTRIBUTING, inline).
   E.g., non-obvious setup steps; rationale behind a surprising design choice.
+
+When writing into shared documentation (wiki, ADRs, runbooks, tickets), check whether the content assumes your
+environment. Tools, workarounds, and defaults that depend on your setup (e.g. token proxies, local aliases, specific
+clone paths) are not the team's defaults. Present them as callouts or alternatives, not as the primary process. The
+test: "would this read correctly on a colleague's machine?"
+
 ## Version control
 
 - Don't commit or push without asking normally. Only do it without asking for repositories you are explicitly
