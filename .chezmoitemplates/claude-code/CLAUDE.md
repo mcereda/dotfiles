@@ -50,10 +50,10 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - Always explain what motivated your suggestions for non-trivial suggestions or when you diverge from what I asked. I
   want to understand your reasoning.
 - Ask before proceeding if a task's scope or intention is unclear.
-- When 3+ independent work items emerge in the same session, use TaskCreate to track them and work through one at a
-  time. Independent means no data dependency (e.g. a code fix, a KB page, and a memory save that don't block each
-  other). Don't create tasks for sequential steps of one job (read file, edit, commit). The failure mode is holding a
-  mental queue that drops items when context compresses.
+- When more than a single independent work item emerge in the same session, use TaskCreate to actively track all of
+  them. Work through one at a time. Independent means no data dependency (e.g. a code fix, a KB page, and a memory save
+  that don't block each other). Don't create tasks for sequential steps of one job (read file, edit, commit). The
+  failure mode is holding a mental queue that drops items when context compresses.
 
 ### Verification
 
@@ -94,6 +94,10 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - An output style that encourages explanation is a floor for helpfulness, not a target for length. Surface genuine
   insights; skip forced ones. One genuine insight is the correct output when only one exists.
 - Avoid using emoji unless explicitly requested.
+- When adding or proposing rules for any CLAUDE.md file, check Haiku robustness: does the rule have concrete examples
+  (not just abstract principles)? An explicit off-ramp for when the rule doesn't apply? A mechanical fallback for when
+  judgment is uncertain? CLAUDE.md loads across all model tiers: a rule that works through Opus inference can silently
+  misfire when Haiku pattern-matches literally.
 
 ## Memory systems
 
@@ -101,7 +105,8 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   start as system context. The most authoritative memory tier and only tier capable of carrying rules beyond this host.
 - Auto-memory (`~/.claude/projects/<project>/memory/`) is your persistent scratchpad for project-specific context.
   Write it often, expect to see it next session. It is yours.
-  Auto-loaded into context at session start.
+  Auto-loaded into context at session start. Not version-controlled. Deletions are permanent. When pruning, consider
+  archiving that content to a git-tracked location first.
   If losing a memory on a different host would let the same failure recur, the memory belongs in `CLAUDE.md`, not only
   in auto-memory.
 
@@ -116,6 +121,19 @@ works without continuity.
 
 For durable saves (CLAUDE.md, auto-memory): over-saving pollutes shared files and under-saving is recoverable on
 successive sessions. Bias toward skip when uncertain.
+
+When a memory duplicates a CLAUDE.md rule or KB convention (same correction, same scope) archive the memory and prune
+it. Before pruning, check if that memory has context the rule omits (a failure story, a "why"); fold that into the rule
+first. If uncertain whether the rule fully covers the memory, keep the memory but add a note about the uncertainty:
+wrongly pruning is permanent, wrongly keeping is noise you can clean up later.
+
+Two triggers:
+
+- After saving a feedback memory, check if a CLAUDE.md rule already says the same thing.
+- After adding a rule to CLAUDE.md from a correction, prune the source memory.
+
+When a correction keeps recurring despite the memory existing (you've been reminded about the same thing in multiple
+sessions), that's the promotion signal: the memory isn't reliable enough; promote it to a CLAUDE.md rule.
 
 Memory routing:
 
@@ -161,7 +179,8 @@ Choose authorship based on contribution weight:
    `Co-Authored-By: <user.name> <user.email>` trailer.
    E.g., `--author="Claude Code (Claude Opus 4.6) on behalf of Jane Doe <noreply@anthropic.com>"`.
    Always resolve `<user.name>` and `<user.email>` by running `git config user.name` and `git config user.email`.
-   Prefer `--global` for Co-Authored-By trailers: local overrides may be repo-specific, e.g. `noreply@anthropic.com`.
+   Use the user name and email from `git config --global` for Co-Authored-By trailers: local overrides may be
+   repo-specific, e.g. `noreply@anthropic.com`.
    **Never** use the `userEmail` from system context for commit attribution: it may differ from the git-configured
    email (e.g. company email vs personal email in non-company repos). Substitute `<model.name>` and `<model.version>`
    with the current model name and version from system context. Never guess.
