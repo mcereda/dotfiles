@@ -1,28 +1,33 @@
 {
+    "editor.detectIndentation": true,
+    "editor.indentSize": "tabSize",
+    "files.trimFinalNewlines": true,
+    "editor.guides.bracketPairs": "active",
     "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Hack Nerd Font Mono', Menlo, Monaco, 'Courier New', monospace",
     "editor.rulers": [
         80,
         120
     ],
-    "editor.detectIndentation": true,
-    "editor.indentSize": "tabSize",
-    "editor.guides.bracketPairs": "active",
-    "editor.copyWithSyntaxHighlighting": false,
     "editor.occurrencesHighlight": "multiFile",
-    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.copyWithSyntaxHighlighting": false,
+    "terminal.integrated.scrollback": 100000,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.cursorBlinking": true,
+    
     "extensions.autoCheckUpdates": false,
     "extensions.autoUpdate": false,
-    "files.trimFinalNewlines": true,
+
+    "diffEditor.ignoreTrimWhitespace": false,
     "git.autofetch": false,
+
     "telemetry.telemetryLevel": "off",
     "telemetry.editStats.enabled": false,
     "telemetry.feedback.enabled": false,
-    "terminal.integrated.cursorBlinking": true,
-    "terminal.integrated.cursorStyle": "line",
-    "terminal.integrated.scrollback": 100000,
+    
     "[json][jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
+    
     "[ssh_config]": {
         "editor.detectIndentation": false,
         "editor.insertSpaces": false,
