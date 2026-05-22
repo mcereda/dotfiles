@@ -9,7 +9,7 @@
     
     "model": "opusplan",
     "alwaysThinkingEnabled": true,
-    "effortLevel": "high",
+    "effortLevel": "xhigh",
     "outputStyle": "Explanatory",
 
     "env": {
