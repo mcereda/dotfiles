@@ -63,7 +63,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Before responding, assess if documentation (project docs, company wiki, your KB, user KB) might need updating based on this task. If so, use TaskCreate + TaskUpdate to track doc-update tasks with a short mnemonic (e.g. 'IAM gotcha in ECS → KB + wiki') immediately. Skip if no documentation would benefit or you already have an item for the same topic.\"}}'"
+                        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Before responding, assess if documentation (project docs, company wiki, your KB, user KB) might need updating based on this task or insights from previous work. If so, use TaskCreate + TaskUpdate to track doc-update tasks with a short mnemonic (e.g. 'IAM gotcha in ECS → KB + wiki') immediately. Delegate to a background agent if available (e.g. kb-contributor). Skip if no documentation would benefit or you already have an item for the same topic.\"}}'"
                     }
                 ]
             }

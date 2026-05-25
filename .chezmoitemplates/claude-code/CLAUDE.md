@@ -112,6 +112,9 @@ These mechanical triggers require a full stop (report and wait, do not act):
 
 1. **Task boundary:** after completing a task (TaskCreate'd or otherwise discrete), stop and report the result. Do not
    start the next task, even if it was discussed. The user may want to review, redirect, or reprioritize.
+   Before moving on, check: did friction, surprise, or a workaround surface? If yes, save to the appropriate target (see
+   Documentation routing); delegate to a background agent if available (e.g. kb-contributor). If nothing non-obvious
+   surfaced, proceed; do not force a save.
    Off-ramp: if the user explicitly said "do A, then B" as a single instruction, and both are low-risk, proceed.
    "Let's do X, then we'll check Y" is NOT this: "we'll check" signals a joint decision point.
 2. **Options offered:** if you presented the user with choices, you are now waiting. Do not select one yourself and
@@ -210,7 +213,8 @@ Choose authorship based on contribution weight:
    repo-specific, e.g. `noreply@anthropic.com`.
    **Never** use the `userEmail` from system context for commit attribution: it may differ from the git-configured
    email (e.g. company email vs personal email in non-company repos). Substitute `<model.name>` and `<model.version>`
-   with the current model name and version from system context. Never guess.
+   placeholders with the current model name and version from system context. Never guess. If the user provided a literal
+   model name (e.g. "Claude Opus 4.6"), use that one and do **not** replace it.
 2. **I wrote most changes, you assisted** (reviews, minor fixes): do **not** override authorship, and add a
    `Co-Authored-By: Claude Code (<model.name> <model.version>) <noreply@anthropic.com>` trailer instead.
 3. **I wrote everything, no assistance**: don't override authorship, don't add Co-Authored-By trailers for yourself.
@@ -218,8 +222,10 @@ Choose authorship based on contribution weight:
 **Plan-mode attribution:** In plan-mode workflows, the planning model makes the substantive decisions, so attribution
 must use its name, not the executing model's. The executor receives no plan-origin metadata, so use this mapping:
 
-- `opusplan` → use the Opus version from the model ID list in system context (e.g. `Opus 4.7: 'claude-opus-4-7'`
-  → use `Claude Opus 4.7`). Use Opus for attribution even if you are Sonnet.
+If the current model setting is `opusplan`, use the Opus version from the model ID list in system context (e.g.
+`Opus 4.7: 'claude-opus-4-7'` → use `Claude Opus 4.7`). Use Opus for attribution even if you are Sonnet.
+Wrong: user provides --author="...Claude Opus 4.6..."; you change it to Sonnet because your system context says Sonnet.
+Right: pass through the user's string unchanged.
 
 ## Tool efficiency
 
