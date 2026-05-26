@@ -25,18 +25,20 @@
     "permissions": {
         "defaultMode": "plan",
         "ask": [
-            "Bash(git branch*)",
-            "Bash(git checkout*)",
-            "Bash(git commit*)",
             "Edit(/**)",
             "Write(/**)"
         ],
         "allow": [
             "Agent(Explore)",
-            "Bash(git config user.email)",
-            "Bash(git config user.name)",
-            "Bash(git diff*)",
-            "Bash(git log*)",
+            "Bash(git config user.*)",
+            "Bash(git config --global user.*)",
+            "Bash(git config --local user.*)",
+            "Bash(git diff)",
+            "Bash(git diff *)",
+            "Bash(git log)",
+            "Bash(git log *)",
+            "Bash(git -C * log)",
+            "Bash(git -C * log *)",
             "Bash(git remote get-url *)",
             "Bash(git status)",
             "Bash(git switch -c *)",
