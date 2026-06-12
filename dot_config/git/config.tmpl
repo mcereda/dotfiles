@@ -1,4 +1,4 @@
-{{- /* Print debug statements as commented contentin the file */}}
+{{- /* Print debug statements as commented content in the file */}}
 {{- $debug := false -}}
 
 ################################################################################
@@ -18,10 +18,13 @@
 ################################################################################
 
 [alias]
-	branch-get-default = branch-get-default-from-local-ref
+	branch-get-default = "\
+		!git branch-get-default-from-local-ref \
+        || git branch-get-default-from-remote \
+    "
 	branch-get-default-from-local-ref = "!f() { \
-		git symbolic-ref 'refs/remotes/origin/HEAD' \
-        | sed 's|refs/remotes/origin/||' \
+		ref=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null) && \
+		echo \"${ref#refs/remotes/origin/}\" \
 	;} && f"
 	branch-get-default-from-remote = "!f() { \
 		git remote show origin \
@@ -29,16 +32,32 @@
 	;} && f"  # makes network calls
 	branch-get-gone = "!f() { \
 		git fetch -p && \
-		git branch -vv \
-		| awk '/origin/&&/gone/{print $1}' \
+		git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads/ \
+		| awk '$2 == \"[gone]\" {print $1}' \
+	;} && f"
+	branch-get-merged = "!f() { \
+		default_branch="$(git branch-get-default)" && \
+		git fetch -p && \
+		git for-each-ref --format='%(refname:short)' --merged=\"$default_branch\" refs/heads/ \
+		| grep -v \"^$default_branch$\" \
 	;} && f"
 	branch-prune-gone = "!f() { \
 		git branch-get-gone \
-		| xargs \
-			git branch -D \
+		| xargs -I{} \
+			git branch -D {} \
+	;} && f"
+	branch-prune-merged = "!f() { \
+		git branch-get-merged \
+		| xargs -I{} \
+			git branch -d {} \
 	;} && f"
 	checkout-default-branch = "!f() { \
 		git checkout $(git branch-get-default) \
+	;} && f"
+	commit-move = "!f() { \
+		git branch \"$1\" && \
+		git reset --hard \"${2:-HEAD~1}\" && \
+		git switch \"$1\" \
 	;} && f"
 	config-show-final = "!f() { \
 		git config --list \
@@ -83,14 +102,13 @@
 	;} && f"
 	remote-show-reachable = "!f() { \
 		git remote show \
-		| xargs -I{} \
+		| xargs -P0 -I{} \
 			sh -c \"timeout 30 git ls-remote -q {} HEAD >/dev/null 2>&1 && echo {} || true\" \
 	;} && f"
 	remote-show-unique = "!f() { \
 		git remote -v \
-		| sort -k2 -u \
+		| sort -k2,2 -u \
 		| awk '{print $1}' \
-		| sort -u \
 	;} && f"
 	statis = status
 	statsu = status
@@ -98,6 +116,12 @@
 		git switch $(git branch-get-default) \
 	;} && f"
 	top-level = "rev-parse --show-toplevel"
+	worktree-prune-all = "!f() { \
+		git worktree prune && \
+		git worktree list \
+		| awk 'NR>1 {print $1}' \
+		| xargs -I{} git worktree remove {} \
+	;} && f"
 
 [branch "main"]
 	remote = origin
