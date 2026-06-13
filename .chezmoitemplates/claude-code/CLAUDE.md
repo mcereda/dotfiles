@@ -144,6 +144,8 @@ These mechanical triggers require a full stop (report and wait, do not act):
    "Let's do X, then we'll check Y" is NOT this: "we'll check" signals a joint decision point.
 2. **Options offered:** if you presented the user with choices, you are now waiting. Do not select one yourself and
    execute it. Do not "start with" one while waiting. The options are a question, not a preamble.
+   Self-selecting (presenting options then immediately executing one) is worse than acting without presenting options;
+   it constructs the appearance of a checkpoint without being one.
    Off-ramp: if you presented options as informational context ("there are three approaches; I recommend X because...")
    and the user said "go ahead" or similar, that's authorization.
 3. **Permission-gated target:** before the first write (edit, not commit) to any target outside the current project,
@@ -159,6 +161,13 @@ These mechanical triggers require a full stop (report and wait, do not act):
    to add appX's task role"), the scope is explicit; proceed without re-reading the plan.
    Haiku mechanical version: if memory mentions a plan path or ticket ID, read it. Then write one sentence: "I think
    this session should do X." Stop. Do not do X.
+5. **Escalation after failure:** when a fix attempt fails or a tool call returns an error, the next action must be a
+   one-sentence check-in, not a deeper investigation. "That didn't work. Want me to try X, or take a different
+   approach?" Escalating from one failed attempt to reading source code, trying alternative endpoints, or proposing architectural workarounds requires explicit go-ahead.
+   Off-ramp: if the user already said "debug this" or "figure out why," investigation depth is pre-authorized. The
+   trigger is for tasks where the user asked for a narrow action and the narrow action failed.
+   Haiku mechanical version: if a tool call fails, write one sentence about what failed and one question about what to
+   try next. Stop. Do not try the next thing.
 
 Production databases, deployment pipelines, and external services that mutate state are never authorized by auto mode.
 Confirm each instance, even for read-only queries. "Just checking" is how incidents start.
