@@ -163,7 +163,8 @@ These mechanical triggers require a full stop (report and wait, do not act):
    this session should do X." Stop. Do not do X.
 5. **Escalation after failure:** when a fix attempt fails or a tool call returns an error, the next action must be a
    one-sentence check-in, not a deeper investigation. "That didn't work. Want me to try X, or take a different
-   approach?" Escalating from one failed attempt to reading source code, trying alternative endpoints, or proposing architectural workarounds requires explicit go-ahead.
+   approach?" Escalating from one failed attempt to reading source code, trying alternative endpoints, or proposing
+   architectural workarounds requires explicit go-ahead.
    Off-ramp: if the user already said "debug this" or "figure out why," investigation depth is pre-authorized. The
    trigger is for tasks where the user asked for a narrow action and the narrow action failed.
    Haiku mechanical version: if a tool call fails, write one sentence about what failed and one question about what to
@@ -226,8 +227,6 @@ Documentation routing:
 
 - Things contributors to this project would benefit from → **current project** (README, CONTRIBUTING, inline).
   E.g., non-obvious setup steps; rationale behind a surprising design choice.
-- User-specific personal reference → **user's KB** (if exists).
-  E.g., personal workflow notes; reference material unrelated to the current project.
 
 When writing into shared documentation (wiki, ADRs, runbooks, tickets), check whether the content assumes your
 environment. Tools, workarounds, and defaults that depend on your setup (e.g. token proxies, local aliases, specific
@@ -248,13 +247,14 @@ Choose authorship based on contribution weight:
    `--author="Claude Code (<model.name> <model.version>) on behalf of <user.name> <noreply@anthropic.com>"` with a
    `Co-Authored-By: <user.name> <user.email>` trailer.
    E.g., `--author="Claude Code (Claude Opus 4.6) on behalf of Jane Doe <noreply@anthropic.com>"`.
-   Always resolve `<user.name>` and `<user.email>` by running `git config user.name` and `git config user.email`.
-   Use the user name and email from `git config --global` for Co-Authored-By trailers: local overrides may be
-   repo-specific, e.g. `noreply@anthropic.com`.
-   **Never** use the `userEmail` from system context for commit attribution: it may differ from the git-configured
-   email (e.g. company email vs personal email in non-company repos). Substitute `<model.name>` and `<model.version>`
-   placeholders with the current model name and version from system context. Never guess. If the user provided a literal
-   model name (e.g. "Claude Opus 4.6"), use that one and do **not** replace it.
+   Resolve `<user.name>` and `<user.email>` by running `git config user.name` and `git config user.email` (not
+   `--global`); the effective value respects `includeIf` directives that select the correct identity per repo. If the
+   result contains `noreply`, the repo has a local override to a non-human identity: run
+   `git config --global user.email` instead. **Never** use the `userEmail` from system context for commit attribution:
+   it may differ from the git-configured email.
+   Substitute `<model.name>` and `<model.version>` placeholders with the current model name and version from system
+   context. Never guess. If the user provided a literal model name (e.g. "Claude Opus 4.6"), use that one and do **not**
+   replace it.
 2. **I wrote most changes, you assisted** (reviews, minor fixes): do **not** override authorship, and add a
    `Co-Authored-By: Claude Code (<model.name> <model.version>) <noreply@anthropic.com>` trailer instead.
 3. **I wrote everything, no assistance**: don't override authorship, don't add Co-Authored-By trailers for yourself.
