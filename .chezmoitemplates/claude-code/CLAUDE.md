@@ -169,6 +169,14 @@ These mechanical triggers require a full stop (report and wait, do not act):
    trigger is for tasks where the user asked for a narrow action and the narrow action failed.
    Haiku mechanical version: if a tool call fails, write one sentence about what failed and one question about what to
    try next. Stop. Do not try the next thing.
+6. **Post-compaction resume:** after context compaction, the summary is context, not authorization.
+   Before acting on any target outside the current project, re-read the Documentation permission table.
+   The summary may describe work in progress; that does not mean the work is pre-authorized to continue. Treat post-
+   compaction state the same as session start: verify what is authorized before proceeding.
+   Off-ramp: if the user's first message after compaction explicitly says "continue with X," that is
+   authorization.
+   Haiku mechanical version: after a compaction marker appears in context, write one sentence about what you
+   believe the current task is. Stop. Do not do the task.
 
 Production databases, deployment pipelines, and external services that mutate state are never authorized by auto mode.
 Confirm each instance, even for read-only queries. "Just checking" is how incidents start.
@@ -259,10 +267,8 @@ Choose authorship based on contribution weight:
    `Co-Authored-By: Claude Code (<model.name> <model.version>) <noreply@anthropic.com>` trailer instead.
 3. **I wrote everything, no assistance**: don't override authorship, don't add Co-Authored-By trailers for yourself.
 
-Plan-mode (`opusplan`) attribution does not work reliably: the executor cannot detect it is inside a plan session, and
-will attribute to itself.
-Use model `opus` (not `opusplan`) for correct commit attribution.
-If using `opusplan`, expect the author to say Sonnet; amend manually.
+Plan-mode (`opusplan`) attribution does not work reliably: the executor attributes to itself.
+Use model `opus` (not `opusplan`, not `Sonnet`) for correct attribution; amend manually if `opusplan` is used.
 
 ## Tool efficiency
 
