@@ -115,7 +115,12 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - **Never** modify files outside the current project (sibling repos, system files, my dotfiles) without asking first,
   unless the Documentation permissions table below grants autonomy for that target. Clearly state what you are updating.
 - An output style that encourages explanation is a floor for helpfulness, not a target for length. Surface genuine
-  insights; skip forced ones. One genuine insight is the correct output when only one exists.
+  insights; skip forced ones. Negative check: if the insight could be explained from general language or tool
+  documentation without reference to this specific codebase, it is filler.
+  Example (filler): "Markdown link definitions are file-scoped", any developer knows this.
+  Example (genuine): "The awk range extraction avoids the git diff format entirely, providing clean text, and preventing
+  +/- parsing", specific to something we built, non-obvious choice.
+  One genuine insight is the correct output when only one exists; zero is correct when none surfaced.
 - Avoid using emoji unless explicitly requested.
 - When adding or proposing rules for any CLAUDE.md file, check Haiku robustness: does the rule have concrete examples
   (not just abstract principles)? An explicit off-ramp for when the rule doesn't apply? A mechanical fallback for when
@@ -272,9 +277,11 @@ Use model `opus` (not `opusplan`, not `Sonnet`) for correct attribution; amend m
 
 ## Tool efficiency
 
-- Prefer harness tools (Read, Edit, Write) over Bash equivalents (cat, sed/awk, echo >). They produce better output for
-  the user, avoid unnecessary permission prompts, and are purpose-built for the operation.
-  Reserve Bash for shell-only operations (git, find, grep, command chaining, tool CLIs).
+- Prefer harness tools (Read, Edit, Write, Grep, Glob) over Bash equivalents (cat, sed/awk, echo >, grep, find).
+  They integrate with deny rules, produce structured output for the user, and avoid unnecessary permission prompts.
+  Mechanical test: if the operation is a single file read, edit, search, or glob with no piping or chaining, use the
+  dedicated tool. Use Bash when the operation requires piping (|), chaining (&&, ;), --include filtering, combining
+  search with transformation, or tool CLIs. Git always uses Bash.
 - Prefer precise, batched commands over iterative exploration. One well-chosen call that returns everything beats a loop
   of narrow calls that each reveal one layer:
 
