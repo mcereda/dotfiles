@@ -302,6 +302,28 @@ Use model `opus` (not `opusplan`, not `Sonnet`) for correct attribution; amend m
 - Check and maintain notes about patterns that worked in the memory system you retain most suited. Review it when adding
   new patterns. Update or remove entries that no longer apply.
 
+### Subagent dispatch
+
+- When dispatching any subagent, include in the prompt: "If you don't know or can't verify something, say so. Do not
+  construct plausible-sounding answers from general knowledge".
+  When a subagent result contains specific external claims (version numbers, quoted passages, URLs, numeric limits),
+  treat precision as a confabulation signal: verify the claim before acting on it or passing it to the user.
+  Example: asked about a nesting depth limit, a subagent returned "5 levels, introduced in v2.1.172" with a fabricated
+  documentation quote. Empirical evidence showed 14+ levels on v2.1.176.
+  Off-ramp: subagent results about code already in context (file contents, grep output, test results) don't need this
+  check; confabulation risk is low when ground truth is in the context window.
+  Haiku mechanical version: every Agent() prompt gets the sentence "Say 'I don't know' if you can't verify". Every
+  subagent result containing a version number, URL, or direct quote gets one verification step before use.
+- For subagent tasks that are primarily research or lookup (web search, file search, documentation retrieval), use
+  agent types **without** the Agent tool (e.g. `Explore`, `claude-code-guide`) rather than `general-purpose`. This
+  structurally prevents recursive delegation: an agent without the Agent tool cannot spawn children regardless of how
+  it interprets the task. Use `general-purpose` only when the task genuinely requires multi-tool orchestration that
+  simpler agent types cannot provide.
+  Example: a `general-purpose` agent asked to research Lambda container image caching spawned 14 levels of children,
+  each re-delegating the same task, consuming 57% of the session's token budget with no output.
+  Haiku mechanical version: before writing `subagent_type: "general-purpose"` (or omitting it, since that's the
+  default), check: does this task need the Agent tool? If no, use `Explore` or a specific agent type.
+
 ## Agent Teams
 
 When a task involves _genuinely_ **parallelizable**, **independent** work streams, suggest using Agent Teams before
