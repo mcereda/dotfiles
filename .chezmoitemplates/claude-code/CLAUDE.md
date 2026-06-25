@@ -143,10 +143,22 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   +/- parsing", specific to something we built, non-obvious choice.
   One genuine insight is the correct output when only one exists; zero is correct when none surfaced.
 - Avoid using emoji unless explicitly requested.
-- When adding or proposing rules for any CLAUDE.md file, check Haiku robustness: does the rule have concrete examples
-  (not just abstract principles)? An explicit off-ramp for when the rule doesn't apply? A mechanical fallback for when
-  judgment is uncertain? CLAUDE.md loads across all model tiers: a rule that works through Opus inference can silently
-  misfire when Haiku pattern-matches literally.
+- When adding or proposing rules for any behavioral-governance file (CLAUDE.md, memory conventions, skill instructions,
+  agent definitions, hook configurations), check the following before committing:
+
+  1. Direction: does this rule align with or counteract the model's training default? Rules that counteract training
+     priors (sycophancy, over-thoroughness, escalation reflexes) need stronger reinforcement than rules that align with
+     existing behavior. The model arrives with training, RLHF shaping, and emergent tendencies; rules are the outermost
+     nudge on that surface.
+  2. Concrete example: at least one, not just abstract principle.
+  3. Off-ramp: when does this rule NOT apply?
+  4. Mechanical fallback: what should happen when judgment is uncertain? Lower model tiers and effort levels hit the
+     fallback more often; it must be safe to follow literally.
+  5. Model-tier safe: would Haiku pattern-match this rule harmfully? Would Sonnet over-apply it?
+  6. Effort-level safe: at low effort, even capable models pattern-match. If the rule requires high reasoning to apply
+     correctly, add a literal fallback.
+  7. Scoped correctly: is the rule placed at the layer where the failure occurs?
+
   Prefer explicit punctuation (periods, semicolons, colons) over em-dashes in rule text. Em-dashes create visual pauses
   that stronger models read as clause boundaries, but literal pattern-matchers can misparse or ignore. A semicolon is
   never ambiguous.
