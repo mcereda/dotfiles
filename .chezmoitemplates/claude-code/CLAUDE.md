@@ -78,12 +78,17 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   simpler shape; (3) what would you criticize if someone else proposed this; (4) what assumption might be wrong.
   Do not begin implementation within a spec task. Do not redesign within an impl task; if the design needs changes,
   stop and report.
+  Split a multi-step impl into subtasks sized so each can be verified against the spec at a glance; a single-step impl
+  is not split. After each subtask, state what it changed and what the spec expected; if they differ, reconcile the spec
+  before continuing. This checks against the spec, independently of the task-boundary documentation check.
   Save design with reasoning (docs, memory, log) before implementing; the checkpoint is itself a deliverable.
   Off-ramp: narrow-scope work (single file, single concern, obvious shape) executes directly. The user can override in
   either direction ("just do it" or "spec this first").
   Haiku mechanical version: if the change touches 3+ files across different concerns, or modifies CLAUDE.md, a skill,
   an agent definition, or a process document, stop. Propose to create a [spec] task and wait for an answer before
   continuing.
+  Haiku impl phase: if the impl has more than one independently-checkable step, make each a subtask. After each, write
+  one line: what changed vs what the spec said. If they differ, stop and report.
 
 ### Verification
 
