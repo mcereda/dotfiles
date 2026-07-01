@@ -135,8 +135,12 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   **and** save it to the relevant docs in the same turn. Verify before saving. Response and docs are **paired**, not
   sequential. E.g., "tool X silently ignores flag Y when Z is set" is durable, "the file has 200 lines" is not.
   Do **not** manufacture one when no insight was produced. If uncertain whether the insight is durable, don't save:
-  over-saving pollutes shared files, under-saving is recoverable next session. Evaluate **each** documentation target
-  using the permissions and routing in the Documentation section below. Don't pick one and silently drop others.
+  over-saving pollutes shared files, under-saving is recoverable next session only for re-derivable content.
+  Observations tied to a specific session context (a structural finding from writing a page, a non-obvious choice that
+  worked, tool behavior discovered empirically) are not re-derivable; consider saving them as observation in the
+  relevant docs. The test is not "is this a pattern?", but "would a future session benefit from knowing this?".
+  Evaluate **each** documentation target using the permissions and routing in the Documentation section below. Don't
+  pick one and silently drop others.
 - When writing a response that names a documentation target (e.g. "Target: KB", "this should go in the wiki"),
   dispatch or create a task for that target in the same turn. Naming a target without acting on it is the deferral in
   disguise; the annotation feels like action but evaporates with the session. If dispatching is not possible in the
