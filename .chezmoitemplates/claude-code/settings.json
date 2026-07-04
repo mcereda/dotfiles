@@ -9,10 +9,10 @@
     
     "model": "claude-opus-4-6",
     "alwaysThinkingEnabled": true,
-    "effortLevel": "xhigh",
     "outputStyle": "Explanatory",
 
     "env": {
+        "CLAUDE_CODE_EFFORT_LEVEL": "xhigh",
         "DISABLE_TELEMETRY": "1"
     },
     "enabledPlugins": {
@@ -69,6 +69,17 @@
         "autoAllowBashIfSandboxed": false
     },
     "hooks": {
+        "PostToolUse": [
+            {
+                "matcher": "TaskUpdate",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "jq -c 'if .tool_input.status == \"completed\" then {\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Task marked complete. Stop and report what you did and what you would do next. Do not start the next task.\"}} else empty end'"
+                    }
+                ]
+            }
+        ],
         "UserPromptSubmit": [
             {
                 "hooks": [
