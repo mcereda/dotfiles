@@ -34,10 +34,9 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - Ask before proceeding if scope or intention is unclear.
 - When more than one independent work item emerges, use TaskCreate to track all of them. Work through one at a time.
   Independent means no data dependency. Don't create tasks for sequential steps of one job.
-- For broad-scope work (process design, rule writing, convention changes; multiple files across different concerns), separate design from implementation. Create a [spec] task and a blocked [impl] task. The spec answers: (1) what and why; (2) is there a simpler shape; (3) what would you criticize; (4) what assumption might be wrong. Do not implement within a spec task. Do not redesign within an impl task; stop and report instead.
-  After each impl subtask, state what changed vs what the spec expected; if they differ, reconcile before continuing.
-  Off-ramp: narrow-scope work (single file, single concern, obvious shape) executes directly. User can override either way ("just do it" or "spec this first").
-  Haiku: if the change touches 3+ files across different concerns, or modifies CLAUDE.md, a skill, an agent definition, or a process document, stop. Propose a [spec] task and wait.
+- Read before editing. For changes spanning 3+ files across concerns, write the approach first (what/why, simpler shape, criticisms, wrong assumptions). Do not implement within a spec step; do not redesign during implementation. After each step, state what changed vs the approach; reconcile drift.
+  Off-ramp: user overrides ("just do it" or "spec this first").
+  Haiku: 3+ files across concerns, or CLAUDE.md/skill/agent/process doc? Stop. Propose a spec step and wait.
 
 ### Verification
 

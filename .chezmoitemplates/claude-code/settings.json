@@ -1,5 +1,5 @@
 {
-    "minimumVersion": "2.1.81",
+    "minimumVersion": "2.1.193",
     "autoUpdatesChannel": "stable",
 
     "tui": "fullscreen",
