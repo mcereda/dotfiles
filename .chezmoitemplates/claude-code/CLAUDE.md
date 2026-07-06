@@ -94,28 +94,30 @@ These triggers address momentum: the next step feeling like the tail of the curr
 
 Mechanical triggers; full stop (report and wait, do not act):
 
-1. **Task boundary:** after completing a task, stop and report. Do not start the next one. Check: did a non-obvious insight surface? If yes, save it to project docs or auto-memory. If nothing surfaced, don't force a save.
-   Off-ramp: user explicitly said "do A, then B" as a single instruction, both local file edits.
-   "Let's do X, then we'll check Y" is NOT this: "we'll check" signals a joint decision point.
-2. **Options offered:** if you presented choices, you are waiting. Do not select one. The options are a question, not a preamble. Self-selecting is worse than acting without presenting options; it constructs a checkpoint appearance without being one.
+1. Task boundary: after completing a task, stop and report. Do not start the next one.
+   Off-ramp: user explicitly said "do A, then B" as a single instruction, both local file edits. "Let's do X, then we'll check Y" is NOT this: "we'll check" signals a joint decision point.
+2. Options offered: if you presented choices, you are waiting. Do not select one. Self-selecting constructs a checkpoint appearance without the checkpoint.
    Off-ramp: options as informational context + user said "go ahead" = authorization.
-3. **Permission-gated target:** before the first write to any target outside the current project, confirm with the user. The check fires at the edit decision, not at commit time; sunk cost softens the gate.
-4. **Cross-project task pickup:** when a memory or plan references a multi-repo task, read the artifact in full before acting. State what you believe this session's scope is, then wait.
+3. Permission-gated target: before the first write to any target outside the current project, re-read the Documentation permission table. The check fires at the edit decision, not at commit time.
+   Off-ramp: targets where the table grants full autonomy (e.g. own KB).
+4. Cross-project task pickup: when a memory references a shared plan or multi-repo task, read the artifact in full before acting. State what you believe this session's scope is, then wait. The memory is a bookmark, not instructions.
    Off-ramp: user's opening message specifies exactly what to do; scope is explicit.
-5. **Escalation after failure:** when a fix fails, the next action is a one-sentence check-in, not deeper investigation.
-   "That didn't work. Want me to try X?" Escalating to source code or architectural workarounds requires explicit go-ahead.
+   Haiku: read the plan path. Write "I think this session should do X." Stop. Do not do X.
+5. Escalation after failure: when a fix fails, the next action is a one-sentence check-in, not deeper investigation. "That didn't work. Want me to try X?"
    Off-ramp: user said "debug this" or "figure out why" pre-authorizes investigation depth.
-   Haiku: if a tool call fails, write what failed and ask what to try next. Stop. Do not try the next thing.
-6. **Mid-task discovery:** note findings in the response; do not offer to act on them. Surface discoveries as proposals in the task-completion report. Finding + action offer is scope expansion in disguise.
+   Haiku: write what failed and ask what to try next. Stop. Do not try the next thing.
+6. Mid-task discovery: note findings in the response; do not offer to act on them. Finding + action offer is scope expansion in disguise.
    Off-ramp: user asks "anything else?" or "see any improvements?" = invitation to propose.
    Haiku: write "Finding:" not "I can also:".
-7. **Post-compaction resume:** the summary is context, not authorization. Treat post-compaction state the same as session start.
+7. Post-compaction resume: the summary is context, not authorization. Re-read the Documentation permission table. Treat post-compaction state the same as session start.
    Off-ramp: user's first message after compaction says "continue with X" = authorization.
-   Haiku: after compaction, write one sentence about the current task. Stop. Do not do it.
+   Haiku: write one sentence about the current task. Stop. Do not do it.
+
+After reporting on any trigger, assess whether a durable insight surfaced. If yes, evaluate each Documentation target independently; delegate to background agents when possible. If nothing surfaced, don't force a save.
 
 Production databases, deployment pipelines, and external services are never authorized by auto mode. Confirm each instance, even for read-only queries. "Just checking" is how incidents start.
 
-**Haiku fallback:** After finishing a unit of work, write what you did and what you'd do next. Stop. If you asked a question, stop. Do not answer your own question.
+**Haiku fallback**: After finishing a unit of work, write what you did and what you'd do next. Stop. If you asked a question, stop. Do not answer your own question.
 
 Reporting includes naming observations; they are part of the report, not a new action.
 
@@ -142,7 +144,7 @@ Memory routing:
 | --- | --- | --- |
 | Current project | Current directory | Required when relevant. No approval needed. Surface the diff. |
 
-Verify claims against primary sources before writing reference docs.
+Track multiple targets with TaskCreate. Verify claims against primary sources before writing reference docs.
 If verification is genuinely impossible, mark `[unverified]`; convenience is not impossibility.
 
 ## Version control
@@ -179,13 +181,11 @@ Choose authorship by contribution weight:
 
 ## Tool efficiency
 
-- Prefer harness tools (Read, Edit, Write, Grep, Glob) over Bash equivalents. Use Bash for piping, chaining, `--include` filtering, or tool CLIs. Git always uses Bash.
-- Prefer precise, batched commands over iterative exploration:
-  - `find . -name '*.md'` over per-directory `ls`. Exclude `node_modules`, `.git`, `venv` with `-not -path`.
-  - `grep -rn 'pattern' dir/ --include='*.ext'` over per-file grep.
-  - `git -C <path>` over `cd && git`. Not needed when already in the target directory.
-  - Chain with `;` or `&&` in one Bash call. Issue parallel tool calls when no data dependency.
-  Iterative exploration is fine when each step genuinely informs the next. Signal: 3+ similar calls a single command could have covered.
+- Harness tools (Read, Edit, Write) over Bash equivalents. Bash for piping, chaining, or tool CLIs. Git always uses Bash.
+- One precise command over iterative exploration. `find` over per-directory `ls`; `grep -rn` over per-file grep; `git -C` over `cd &&`; chain with `;` or `&&`. Signal: 3+ similar calls a single command could have covered.
+- Read's default limit is 2000 lines; don't chunk files that fit in one call.
+- Unfamiliar data format: probe shape first (`head -3 file | jq -c keys`), then parse. Each failed parse attempt is a wasted round-trip.
+- Maintain patterns in `llm-agent-tool-efficiency.md` (KB).
 
 @RTK.md
 
