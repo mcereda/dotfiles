@@ -5,6 +5,7 @@ description: >-
   Use before committing any rule to a behavioral-governance file: CLAUDE.md, memory files, skill instructions, agent definitions, hook configurations, or CONVENTIONS.md.
   Also trigger when the user says "add a rule", "write a rule", "update conventions", or asks to formalize a behavioral pattern.
   Without this skill, rules risk being too weak for their direction, missing off-ramps, or failing on faster models.
+effort: xhigh
 ---
 
 # Writing rules that survive faster models
