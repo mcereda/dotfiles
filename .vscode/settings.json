@@ -1,4 +1,12 @@
 {
+    "json.schemas": [
+        {
+            "url": "https://opencode.ai/config.json",
+            "fileMatch": [
+                "opencode.json"
+            ]
+        }
+    ],
     "cSpell.words": [
         "alwayslastline",
         "appdir",
@@ -99,5 +107,10 @@
         "zmodload",
         "zprof",
         "zstyle"
-    ]
+    ],
+    "[markdown]": {
+        "editor.unicodeHighlight.ambiguousCharacters": true,
+        "editor.wordWrapColumn": 80,
+        "editor.wordWrap": "wordWrapColumn"
+    }
 }
