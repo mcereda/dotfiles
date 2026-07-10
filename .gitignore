@@ -17,3 +17,6 @@
 # This is not the place to store them.
 .hosts/
 **localOnly_**
+
+# Agent stills not ready for publishing.
+**/skills/aws
