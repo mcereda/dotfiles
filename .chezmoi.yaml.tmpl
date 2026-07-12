@@ -28,11 +28,13 @@
      */}}
 
 {{-    $defaults := dict }}
+
 {{-    $_ := set $defaults "data" dict }}
 {{-    $_ := set $defaults.data "hashedHostname" (adler32sum (sha256sum $.chezmoi.hostname)) }}
 {{-    $_ := set $defaults.data "hostsDir" ".hosts" }}
 {{-    $_ := set $defaults.data "hostDir" (joinPath $defaults.data.hostsDir $.chezmoi.hostname) }}
 {{-    $_ := set $defaults.data "encryptedHostDir" (joinPath $defaults.data.hostsDir $defaults.data.hashedHostname) }}
+
 {{-    $_ := set $defaults "encryption" "gpg" }}
 
 {{- /*
@@ -42,16 +44,15 @@
      * noise from tools that rewrite the live file (e.g. Claude Code on
      * ~/.claude/settings.json). Falls back to `git diff` for non-JSON files.
      *
+     * The command requires a path. Absolute ones work better. Variables break. 
      * Arguments use chezmoi's {{ .Destination }} / {{ .Target }} template
      * variables. Because this YAML is itself rendered as a template, the
      * placeholders must be backtick raw string literals (not "...") so they
      * survive the first render as literal text. See README.md "Gotchas".
-     *
-     * $_ := set $defaults "diff" (dict
-     *         "command" (joinPath $.chezmoi.homeDir ".local/bin/chezmoi-diff")
-     *         "args"    (list `{{ .Destination }}` `{{ .Target }}`)
-     * )
-     */ }}
+     */}}
+{{-    $_ := set $defaults "diff" dict }}
+{{-    $_ := set $defaults.diff "command" (joinPath $.chezmoi.homeDir ".local/bin/chezmoi-diff") }}
+{{-    $_ := set $defaults.diff "args" (list `{{ .Destination }}` `{{ .Target }}`) }}
 
 {{-    if $debug }}
 {{       "defaults:" | comment "# " }}
