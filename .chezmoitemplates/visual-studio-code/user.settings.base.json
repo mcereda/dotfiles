@@ -33,5 +33,11 @@
         "editor.detectIndentation": false,
         "editor.insertSpaces": false,
         "editor.tabSize": 4
+    },
+
+    "[markdown]": {
+        "editor.unicodeHighlight.ambiguousCharacters": true,
+        "editor.wordWrapColumn": 120,
+        "editor.wordWrap": "wordWrapColumn"
     }
 }
