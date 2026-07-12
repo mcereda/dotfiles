@@ -57,7 +57,7 @@
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{-        $hostAzureConfig := includeTemplate $f . | fromIni }}
+{{-        $hostAzureConfig := includeTemplate $f $ | fromIni }}
 {{-        $_ := mustMergeOverwrite $azureConfig $hostAzureConfig }}
 
 {{-      end }}
@@ -98,7 +98,7 @@
 
 {{-        if hasKey $config "encryption" }}
 
-{{-          $hostAzureConfig := includeTemplate $f . | decrypt | fromIni }}
+{{-          $hostAzureConfig := includeTemplate $f $ | decrypt | fromIni }}
 {{-          $_ := mustMergeOverwrite $azureConfig $hostAzureConfig }}
 
 {{-        end }}

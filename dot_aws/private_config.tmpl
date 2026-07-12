@@ -56,7 +56,7 @@
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{-        $hostAwsConfig := includeTemplate $f . | fromIni }}
+{{-        $hostAwsConfig := includeTemplate $f $ | fromIni }}
 {{-        $_ := mustMergeOverwrite $awsConfig $hostAwsConfig }}
 
 {{-      end }}
@@ -97,7 +97,7 @@
 
 {{-        if hasKey $config "encryption" }}
 
-{{-          $hostAwsConfig := includeTemplate $f . | decrypt | fromIni }}
+{{-          $hostAwsConfig := includeTemplate $f $ | decrypt | fromIni }}
 {{-          $_ := mustMergeOverwrite $awsConfig $hostAwsConfig }}
 
 {{-        end }}

@@ -6,7 +6,7 @@
 ################################################################################
 
 {{- /* Check the commented content of the result of `chezmoi diff` */}}
-{{     $debug := false }}
+{{-    $debug := false }}
 
 {{- /*
      * Compute or set default values for this file. Add yours here.
@@ -55,7 +55,7 @@
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{-        $hostPipConfig := includeTemplate $f . | fromIni }}
+{{-        $hostPipConfig := includeTemplate $f $ | fromIni }}
 {{-        $_ := mustMergeOverwrite $pipConfig $hostPipConfig }}
 
 {{-      end }}
@@ -96,7 +96,7 @@
 
 {{-        if hasKey $config "encryption" }}
 
-{{-          $hostPipConfig := includeTemplate $f . | decrypt | fromIni }}
+{{-          $hostPipConfig := includeTemplate $f $ | decrypt | fromIni }}
 {{-          $_ := mustMergeOverwrite $pipConfig $hostPipConfig }}
 
 {{-        end }}

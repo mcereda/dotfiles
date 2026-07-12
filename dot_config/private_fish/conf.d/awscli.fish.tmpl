@@ -68,7 +68,7 @@ alias aws-whoami 'aws-caller-info'
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{         includeTemplate $f . }}
+{{         includeTemplate $f $ }}
 
 {{-      end }}
 
@@ -102,7 +102,7 @@ alias aws-whoami 'aws-caller-info'
 
 {{-        if hasKey $config "encryption" }}
 
-{{           includeTemplate $f . | decrypt }}
+{{           includeTemplate $f $ | decrypt }}
 
 {{-        end }}
 

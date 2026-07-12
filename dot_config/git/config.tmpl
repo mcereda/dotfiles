@@ -203,7 +203,7 @@
 {{-     end }}
 {{-     if stat (joinPath $.chezmoi.sourceDir $f) }}
 {{/*        newline */}}
-{{          includeTemplate $f . }}
+{{          includeTemplate $f $ }}
 {{/*        newline */}}
 {{-     end }}
 {{- end }}
@@ -239,7 +239,7 @@
 
 {{-         if hasKey $config "encryption" }}
 {{/*            newline */}}
-{{              includeTemplate $f . | decrypt }}
+{{              includeTemplate $f $ | decrypt }}
 {{/*            newline */}}
 {{-         end }}
 {{-     end }}

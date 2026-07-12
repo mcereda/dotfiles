@@ -768,7 +768,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{         includeTemplate $f . }}
+{{         includeTemplate $f $ }}
 
 {{-      end }}
 
@@ -802,7 +802,7 @@ export EDITOR={{ $editor | quote }}
 
 {{-        if hasKey $config "encryption" }}
 
-{{           includeTemplate $f . | decrypt }}
+{{           includeTemplate $f $ | decrypt }}
 
 {{-        end }}
 
