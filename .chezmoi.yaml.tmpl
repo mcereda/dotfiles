@@ -46,10 +46,12 @@
      * variables. Because this YAML is itself rendered as a template, the
      * placeholders must be backtick raw string literals (not "...") so they
      * survive the first render as literal text. See README.md "Gotchas".
-     */}}
-{{-    $_ := set $defaults "diff" (dict
-           "command" (joinPath $.chezmoi.homeDir ".local/bin/chezmoi-diff")
-           "args"    (list `{{ .Destination }}` `{{ .Target }}`)) }}
+     *
+     * $_ := set $defaults "diff" (dict
+     *         "command" (joinPath $.chezmoi.homeDir ".local/bin/chezmoi-diff")
+     *         "args"    (list `{{ .Destination }}` `{{ .Target }}`)
+     * )
+     */ }}
 
 {{-    if $debug }}
 {{       "defaults:" | comment "# " }}
@@ -101,7 +103,7 @@
 
 {{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
 
-{{-        $hostConfig := includeTemplate $f . | fromYaml }}
+{{-        $hostConfig := includeTemplate $f $ | fromYaml }}
 {{-        $_ := mustMergeOverwrite $config $hostConfig }}
 
 {{-      end }}
@@ -149,7 +151,7 @@
              (stat $.chezmoi.configFile)
              (hasKey $config "encryption") }}
 
-{{-          $hostConfig := includeTemplate $f . | decrypt | fromYaml }}
+{{-          $hostConfig := includeTemplate $f $ | decrypt | fromYaml }}
 {{-          $_ := mustMergeOverwrite $config $hostConfig }}
 
 {{-        else }}
