@@ -121,6 +121,14 @@ Library/Application Support/Code - OSS/
 {{-    end }}
 
 
+{{-    if not (lookPath "dblab") }}
+
+# DBLab CLI not found in the user's PATH, ignore all the related files.
+.config/fish/functions/dblab*.fish
+
+{{-    end }}
+
+
 {{-    if not (lookPath "fish") }}
 
 # Fish not found in the user's PATH, ignore all the related files.
@@ -210,6 +218,14 @@ Library/Application Support/Code - OSS/
 
 # Screen not found in the user's PATH, ignore all the related files.
 .screenrc
+
+{{-    end }}
+
+
+{{-    if not (lookPath "snow") }}
+
+# Snowflake CLI not found in the user's PATH, ignore all the related files.
+.config/fish/conf.d/*snowflake.fish
 
 {{-    end }}
 

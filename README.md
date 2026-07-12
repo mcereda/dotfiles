@@ -110,9 +110,9 @@ Due to less time in general, performance issues and the decision to not always d
 - Files containing any private data shall be encrypted.<br/>
   See [encryption](#encryption) for details.
 - Shell-related files shall focus on performance as I am easily annoyed by slow prompts.<br/>
-  See [shell files conventions](#shell-files-conventions) for details.
+  See [shell-related files conventions] for details.
 - Applications fully supporting the [XDG Base Directory specification] (like `tmux`) shall find its files accordingly.
-  [Here][arch linux xdg base directory wiki page] is an index to simplify this check.
+  See the [arch linux xdg base directory wiki page] for an index to simplify this check.
 - Host-specific files are looked for in a directory named as the hostname, inside the `$hostsDir` directory:
 
   ```go
@@ -228,7 +228,7 @@ chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 - `| toPrettyJson` sorts keys alphabetically. It uses Go's `json.MarshalIndent`, which always sorts (does not allow
   opt-out). Tools that rewrite their live file (e.g. Claude Code) use their own ordering, so `chezmoi diff` reports
   reorder noise when there is no real content change.<br/>
-  The current mitigation is to configure `chezmoi`'s `diff.command` in `.chezmoi.yaml.tmpl` to a wrapper at
+  The current mitigation would be to configure `chezmoi`'s `diff.command` in `.chezmoi.yaml.tmpl` to a wrapper at
   `~/.local/bin/chezmoi-diff` (from `private_dot_local/bin/executable_chezmoi-diff`) that normalizes both the target and
   the temporary files via `jq -S` when both parse as JSON, falling back to `git diff --no-index` for everything else.
   The wrapper uses `git --no-pager diff --no-index --no-ext-diff` to avoid interacting with chezmoi's own `diff.pager`,
@@ -263,6 +263,7 @@ chezmoi apply
 
 [gotchas]: #gotchas
 [license]: LICENSE
+[shell-related files conventions]: #shell-related-files-conventions
 
 [chezmoidata.format]: https://www.chezmoi.io/reference/special-files-and-directories/chezmoidata-format/
 [encryption]: https://www.chezmoi.io/user-guide/encryption/

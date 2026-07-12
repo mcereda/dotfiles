@@ -110,7 +110,7 @@
     ],
     "[markdown]": {
         "editor.unicodeHighlight.ambiguousCharacters": true,
-        "editor.wordWrapColumn": 80,
+        "editor.wordWrapColumn": 120,
         "editor.wordWrap": "wordWrapColumn"
     }
 }

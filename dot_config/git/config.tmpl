@@ -172,6 +172,19 @@
 
 
 {{- /*
+     * Start from the defaults and overwrite them with the existing
+     * configuration from the configuration file.
+     */}}
+
+{{- $defaults := dict }}
+{{- $_ := set $defaults "data" dict }}
+
+{{- $config := $defaults }}
+{{- $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{- $_ := mustMergeOverwrite $config $configFromFile }}
+
+
+{{- /*
      * Load pieces of configuration from hosts-specific configuration files,
      * should any such file exist.
      * Every file's content will be templated, and the result will be added,
@@ -179,10 +192,10 @@
      */}}
 
 {{- $hostGitconfigFiles := list
-        (joinPath .hostDir ".gitconfig.tmpl")
-        (joinPath .hostDir ".gitconfig")
-        (joinPath .hostDir ".config" "git" "config.tmpl")
-        (joinPath .hostDir ".config" "git" "config") }}
+        (joinPath $config.data.hostDir ".gitconfig.tmpl")
+        (joinPath $config.data.hostDir ".gitconfig")
+        (joinPath $config.data.hostDir ".config" "git" "config.tmpl")
+        (joinPath $config.data.hostDir ".config" "git" "config") }}
 
 {{- range $f := $hostGitconfigFiles }}
 {{-     if $debug }}
@@ -203,14 +216,14 @@
      */}}
 
 {{- $hostEncryptedGitconfigFiles := list
-        (joinPath $.encryptedHostDir (print ".gitconfig.tmpl" (dig "age" "suffix" ".age" .)))
-        (joinPath $.encryptedHostDir (print ".gitconfig.tmpl" (dig "gpg" "suffix" ".asc" .)))
-        (joinPath $.encryptedHostDir (print ".gitconfig" (dig "age" "suffix" ".age" .)))
-        (joinPath $.encryptedHostDir (print ".gitconfig" (dig "gpg" "suffix" ".asc" .)))
-        (joinPath $.encryptedHostDir ".config" "git" (print "config.tmpl" (dig "age" "suffix" ".age" .)))
-        (joinPath $.encryptedHostDir ".config" "git" (print "config.tmpl" (dig "gpg" "suffix" ".asc" .)))
-        (joinPath $.encryptedHostDir ".config" "git" (print "config" (dig "age" "suffix" ".age" .)))
-        (joinPath $.encryptedHostDir ".config" "git" (print "config" (dig "gpg" "suffix" ".asc" .))) }}
+        (joinPath $config.data.encryptedHostDir (print ".gitconfig.tmpl" (dig "age" "suffix" ".age" $config)))
+        (joinPath $config.data.encryptedHostDir (print ".gitconfig.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+        (joinPath $config.data.encryptedHostDir (print ".gitconfig" (dig "age" "suffix" ".age" $config)))
+        (joinPath $config.data.encryptedHostDir (print ".gitconfig" (dig "gpg" "suffix" ".asc" $config)))
+        (joinPath $config.data.encryptedHostDir ".config" "git" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
+        (joinPath $config.data.encryptedHostDir ".config" "git" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+        (joinPath $config.data.encryptedHostDir ".config" "git" (print "config" (dig "age" "suffix" ".age" $config)))
+        (joinPath $config.data.encryptedHostDir ".config" "git" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{- range $f := $hostEncryptedGitconfigFiles }}
 {{-     if $debug }}
@@ -224,7 +237,7 @@
      *      present in the configuration file _before_ the run.
      */}}
 
-{{-         if hasKey $.chezmoi.config "encryption" }}
+{{-         if hasKey $config "encryption" }}
 {{/*            newline */}}
 {{              includeTemplate $f . | decrypt }}
 {{/*            newline */}}

@@ -12,4 +12,4 @@
      * They will be deep-merged on top of the base settings via `mustMergeOverwrite`.
      */ -}}
 
-{{- template "visual-studio-code/user.settings.json" . -}}
+{{- includeTemplate "visual-studio-code/user.settings.json" . -}}
