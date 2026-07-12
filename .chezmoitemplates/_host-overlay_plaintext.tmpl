@@ -1,0 +1,78 @@
+{{- /*
+     * _host-overlays-text.tmpl
+     *
+     * Shared template for host-specific overlays on text/plain files.
+     * Host files are appended as raw content (no parsing, no merging).
+     *
+     * Parameters (passed as a dict):
+     *   chezmoi         - the $.chezmoi dict (for sourceDir)
+     *   config          - the merged chezmoi config dict (for path computation)
+     *   hostPlainFiles  - list of host plain file paths to check and output
+     *   hostEncryptedFiles - list of host encrypted file paths to check and output
+     *   debug           - boolean, enable debug comments in output
+     *
+     * Usage:
+     *   {{- includeTemplate "_host-overlays-text.tmpl" (dict
+     *        "chezmoi" $.chezmoi
+     *        "config" $config
+     *        "hostPlainFiles" $hostFiles
+     *        "hostEncryptedFiles" $hostEncryptedFiles
+     *        "debug" $debug
+     *      ) }}
+     */}}
+
+{{- $config := .config }}
+{{- $debug := .debug | default false }}
+{{- $sourceDir := .chezmoi.sourceDir }}
+
+{{- /*
+     * Host-specific additions and overrides.
+     * --------------------------------------
+     * Load pieces of configuration from host-specific configuration files,
+     * should any such file exist. Every file's content will be templated,
+     * and the result will be added, in the order each appears in the list.
+     */}}
+
+{{- range .hostPlainFiles }}
+
+{{-   if $debug }}
+{{      cat "looping on file" . | comment "# " }}
+{{-   end }}
+
+{{-   if stat (joinPath $sourceDir .) }}
+
+{{      includeTemplate . $ }}
+
+{{-   end }}
+
+{{- end }}
+
+{{- /*
+     * It is useless to hash the default file's names, as this method is not
+     * a real encryption and doing it just makes identifying the right file
+     * more difficult. Just add your file path to this list eventually.
+     */}}
+
+{{- range .hostEncryptedFiles }}
+
+{{-   if $debug }}
+{{      cat "looping on file" . | comment "# " }}
+{{-   end }}
+
+{{-   if stat (joinPath $sourceDir .) }}
+
+{{- /*
+     *     For chezmoi to be able to decrypt any encrypted file which content
+     *     needs to be loaded, it requires the 'encryption' setting to be
+     *     present in the configuration file _before_ the run.
+     */}}
+
+{{-     if hasKey $config "encryption" }}
+
+{{        includeTemplate . $ | decrypt }}
+
+{{-     end }}
+
+{{-   end }}
+
+{{- end }}

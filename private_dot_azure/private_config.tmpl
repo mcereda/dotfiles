@@ -36,78 +36,28 @@
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
-{{-    $azureConfig := $azureConfigDefaults }}
+{{-    $baseConfig := $azureConfigDefaults }}
 
 {{- /*
-     * Load pieces of configuration from hosts-specific configuration files,
-     * should any such file exist.
-     * Every file's content will be templated, and the result will be added,
-     * in the order each appears in the list.
+     * Host-specific additions and overrides.
+     * --------------------------------------
      */}}
 
-{{-    $hostAzureConfigFiles := list
-         (joinPath $config.data.hostDir ".azure" "config.tmpl")
-         (joinPath $config.data.hostDir ".azure" "config") }}
-
-{{-    range $f := $hostAzureConfigFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{-        $hostAzureConfig := includeTemplate $f $ | fromIni }}
-{{-        $_ := mustMergeOverwrite $azureConfig $hostAzureConfig }}
-
-{{-      end }}
-
-{{-    end }}
-
-{{-    if $debug }}
-{{       "merged with the host's specific config files" | comment "# " }}
-{{       "azure config:" | comment "# " }}
-{{       $azureConfig | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
-{{- /*
-     * It is useless to hash the default file's names, as this method is not
-     * a real encryption and doing it just makes identifying the right file
-     * more difficult. Just add your file path to this list eventually.
-     */}}
-
-{{-    $hostEncryptedAzureConfigFiles := list
-         (joinPath $config.data.encryptedHostDir ".azure" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir ".azure" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $config.data.encryptedHostDir ".azure" (print "config" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir ".azure" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
-
-{{-    range $f := $hostEncryptedAzureConfigFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{- /*
-     *     For chezmoi to be able to decrypt any encrypted file which content
-     *     needs to be loaded, it requires the 'encryption' setting to be
-     *     present in the configuration file _before_ the run.
-     */}}
-
-{{-        if hasKey $config "encryption" }}
-
-{{-          $hostAzureConfig := includeTemplate $f $ | decrypt | fromIni }}
-{{-          $_ := mustMergeOverwrite $azureConfig $hostAzureConfig }}
-
-{{-        end }}
-
-{{-      end }}
-
-{{-    end }}
-
-{{- /* The procedure adds a 'DEFAULT' section which is useless. */}}
-{{-    $azureConfig = omit $azureConfig "DEFAULT" }}
-
-{{     $azureConfig | toIni }}
+{{- $hostAzureConfigFiles := list
+     (joinPath $config.data.hostDir ".azure" "config.tmpl")
+     (joinPath $config.data.hostDir ".azure" "config") }}
+{{- $hostEncryptedAzureConfigFiles := list
+     (joinPath $config.data.encryptedHostDir ".azure" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".azure" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+     (joinPath $config.data.encryptedHostDir ".azure" (print "config" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".azure" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
+{{- includeTemplate "_host-overlay_merge.tmpl" (dict
+     "chezmoi" $.chezmoi
+     "config" $config
+     "baseConfig" $baseConfig
+     "hostPlainFiles" $hostAzureConfigFiles
+     "hostEncryptedFiles" $hostEncryptedAzureConfigFiles
+     "format" "ini"
+     "omitKeys" (list "DEFAULT")
+     "debug" $debug
+   ) }}

@@ -35,76 +35,28 @@
 {{       $config | toYaml | indent 4 | comment "# " }}
 {{-    end }}
 
-{{-    $awsConfig := $awsConfigDefaults }}
+{{-    $baseConfig := $awsConfigDefaults }}
 
 {{- /*
-     * Load pieces of configuration from hosts-specific configuration files,
-     * should any such file exist.
-     * Every file's content will be templated, and the result will be added,
-     * in the order each appears in the list.
+     * Host-specific additions and overrides.
+     * --------------------------------------
      */}}
 
-{{-    $hostAwsConfigFiles := list
-         (joinPath $config.data.hostDir ".aws" "config.tmpl")
-         (joinPath $config.data.hostDir ".aws" "config") }}
-
-{{-    range $f := $hostAwsConfigFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{-        $hostAwsConfig := includeTemplate $f $ | fromIni }}
-{{-        $_ := mustMergeOverwrite $awsConfig $hostAwsConfig }}
-
-{{-      end }}
-
-{{-    end }}
-
-{{-    if $debug }}
-{{       "merged with the host's specific config files" | comment "# " }}
-{{       "aws config:" | comment "# " }}
-{{       $awsConfig | toYaml | indent 4 | comment "# " }}
-{{-    end }}
-
-{{- /*
-     * It is useless to hash the default file's names, as this method is not
-     * a real encryption and doing it just makes identifying the right file
-     * more difficult. Just add your file path to this list eventually.
-     */}}
-
-{{-    $hostEncryptedAwsConfigFiles := list
-         (joinPath $config.data.encryptedHostDir ".aws" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir ".aws" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $config.data.encryptedHostDir ".aws" (print "config" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir ".aws" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
-
-{{-    range $f := $hostEncryptedAwsConfigFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{- /*
-     *     For chezmoi to be able to decrypt any encrypted file which content
-     *     needs to be loaded, it requires the 'encryption' setting to be
-     *     present in the configuration file _before_ the run.
-     */}}
-
-{{-        if hasKey $config "encryption" }}
-
-{{-          $hostAwsConfig := includeTemplate $f $ | decrypt | fromIni }}
-{{-          $_ := mustMergeOverwrite $awsConfig $hostAwsConfig }}
-
-{{-        end }}
-
-{{-      end }}
-
-{{-    end }}
-
-{{- /* Just remove the extra space. */}}
-{{     $awsConfig | toIni }}
+{{- $hostAwsConfigFiles := list
+     (joinPath $config.data.hostDir ".aws" "config.tmpl")
+     (joinPath $config.data.hostDir ".aws" "config") }}
+{{- $hostEncryptedAwsConfigFiles := list
+     (joinPath $config.data.encryptedHostDir ".aws" (print "config.tmpl" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".aws" (print "config.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+     (joinPath $config.data.encryptedHostDir ".aws" (print "config" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".aws" (print "config" (dig "gpg" "suffix" ".asc" $config))) }}
+{{- includeTemplate "_host-overlay_merge.tmpl" (dict
+     "chezmoi" $.chezmoi
+     "config" $config
+     "baseConfig" $baseConfig
+     "hostPlainFiles" $hostAwsConfigFiles
+     "hostEncryptedFiles" $hostEncryptedAwsConfigFiles
+     "format" "ini"
+     "omitKeys" (list "DEFAULT")
+     "debug" $debug
+   ) }}

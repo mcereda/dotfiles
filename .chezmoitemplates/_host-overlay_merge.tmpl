@@ -1,0 +1,125 @@
+{{- /*
+     * _host-overlays-merge.tmpl
+     *
+     * Shared template for host-specific overlays on config files (JSON, INI, YAML).
+     * Host files are parsed and deep-merged into a base config dict.
+     * The merged result is output in the target format.
+     *
+     * Parameters (passed as a dict):
+     *   chezmoi             - the $.chezmoi dict (for sourceDir)
+     *   config              - the merged chezmoi config dict (for path computation)
+     *   baseConfig          - the base config dict to merge host overrides into
+     *   hostPlainFiles      - list of host plain file paths to check and merge
+     *   hostEncryptedFiles  - list of host encrypted file paths to check and merge
+     *   format              - output format: "json", "ini", or "yaml"
+     *   debug               - boolean, enable debug comments in output
+     *   omitKeys            - (optional) list of top-level keys to remove before output
+     *                         (e.g. "DEFAULT" section added by fromIni)
+     *
+     * Usage:
+     *   {{- includeTemplate "_host-overlays-merge.tmpl" (dict
+     *        "chezmoi" $.chezmoi
+     *        "config" $config
+     *        "baseConfig" $baseConfig
+     *        "hostPlainFiles" $hostFiles
+     *        "hostEncryptedFiles" $hostEncryptedFiles
+     *        "format" "json"
+     *        "debug" $debug
+     *      ) -}}
+     */}}
+
+{{- $config := .config }}
+{{- $merged := .baseConfig }}
+{{- $debug := .debug | default false }}
+{{- $format := .format }}
+{{- $sourceDir := .chezmoi.sourceDir }}
+
+{{- /*
+     * Host-specific additions and overrides.
+     * --------------------------------------
+     * Load configuration overrides from host-specific configuration files,
+     * should any such file exist. Every file's content will be merged with
+     * the default settings, so that settings from the new files will override
+     * the ones from previous files.
+     */}}
+
+{{- range .hostPlainFiles }}
+
+{{-   if $debug }}
+{{      cat "looping on file" . | comment "# " }}
+{{-   end }}
+
+{{-   if stat (joinPath $sourceDir .) }}
+
+{{-     if eq $format "json" }}
+{{-       $override := includeTemplate . $ | fromJson }}
+{{-       $_ := mustMergeOverwrite $merged $override }}
+{{-     else if eq $format "ini" }}
+{{-       $override := includeTemplate . $ | fromIni }}
+{{-       $_ := mustMergeOverwrite $merged $override }}
+{{-     else }}
+{{-       $override := includeTemplate . $ | fromYaml }}
+{{-       $_ := mustMergeOverwrite $merged $override }}
+{{-     end }}
+
+{{-   end }}
+
+{{- end }}
+
+{{- /*
+     * It is useless to hash the default file's names, as this method is not
+     * a real encryption and doing it just makes identifying the right file
+     * more difficult. Just add your file path to this list eventually.
+     */}}
+
+{{- range .hostEncryptedFiles }}
+
+{{-   if $debug }}
+{{      cat "looping on file" . | comment "# " }}
+{{-   end }}
+
+{{-   if stat (joinPath $sourceDir .) }}
+
+{{- /*
+     *     For chezmoi to be able to decrypt any encrypted file which content
+     *     needs to be loaded, it requires the 'encryption' setting to be
+     *     present in the configuration file _before_ the run.
+     */}}
+
+{{-     if hasKey $config "encryption" }}
+
+{{-       if eq $format "json" }}
+{{-         $override := includeTemplate . $ | decrypt | fromJson }}
+{{-         $_ := mustMergeOverwrite $merged $override }}
+{{-       else if eq $format "ini" }}
+{{-         $override := includeTemplate . $ | decrypt | fromIni }}
+{{-         $_ := mustMergeOverwrite $merged $override }}
+{{-       else }}
+{{-         $override := includeTemplate . $ | decrypt | fromYaml }}
+{{-         $_ := mustMergeOverwrite $merged $override }}
+{{-       end }}
+
+{{-     end }}
+
+{{-   end }}
+
+{{- end }}
+
+{{- /*
+     * Optional: remove keys that are artifacts of the parsing process.
+     * E.g. fromIni adds a "DEFAULT" section that some tools don't expect.
+     */}}
+
+{{- if hasKey . "omitKeys" }}
+{{-   range .omitKeys }}
+{{-     $merged = omit $merged . }}
+{{-   end }}
+{{- end }}
+
+{{- if eq $format "json" }}
+{{-   $merged | toPrettyJson }}
+{{- else if eq $format "ini" }}
+{{-   $merged | toIni }}
+{{- else }}
+{{-   $merged | toYaml }}
+{{- end }}

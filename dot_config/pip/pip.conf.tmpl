@@ -34,78 +34,28 @@
 {{       $config | toIni | indent 4 | comment "# " }}
 {{-    end }}
 
-{{-    $pipConfig := $pipConfigDefaults }}
+{{-    $baseConfig := $pipConfigDefaults }}
 
 {{- /*
-     * Load pieces of configuration from hosts-specific configuration files,
-     * should any such file exist.
-     * Every file's content will be templated, and the result will be added,
-     * in the order each appears in the list.
+     * Host-specific additions and overrides.
+     * --------------------------------------
      */}}
 
-{{-    $hostPipConfigFiles := list
-         (joinPath $config.data.hostDir ".config" "pip" "pip.conf.tmpl")
-         (joinPath $config.data.hostDir ".config" "pip" "pip.conf") }}
-
-{{-    range $f := $hostPipConfigFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{-        $hostPipConfig := includeTemplate $f $ | fromIni }}
-{{-        $_ := mustMergeOverwrite $pipConfig $hostPipConfig }}
-
-{{-      end }}
-
-{{-    end }}
-
-{{-    if $debug }}
-{{       "merged with the host's specific config files" | comment "# " }}
-{{       "pip config:" | comment "# " }}
-{{       $pipConfig | toIni | indent 4 | comment "# " }}
-{{-    end }}
-
-{{- /*
-     * It is useless to hash the default file's names, as this method is not
-     * a real encryption and doing it just makes identifying the right file
-     * more difficult. Just add your file path to this list eventually.
-     */}}
-
-{{-    $hostEncryptedPipConfigFiles := list
-         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf.tmpl" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf" (dig "age" "suffix" ".age" $config)))
-         (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf" (dig "gpg" "suffix" ".asc" $config))) }}
-
-{{-    range $f := $hostEncryptedPipConfigFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{- /*
-     *     For chezmoi to be able to decrypt any encrypted file which content
-     *     needs to be loaded, it requires the 'encryption' setting to be
-     *     present in the configuration file _before_ the run.
-     */}}
-
-{{-        if hasKey $config "encryption" }}
-
-{{-          $hostPipConfig := includeTemplate $f $ | decrypt | fromIni }}
-{{-          $_ := mustMergeOverwrite $pipConfig $hostPipConfig }}
-
-{{-        end }}
-
-{{-      end }}
-
-{{-    end }}
-
-{{- /* The procedure adds a 'DEFAULT' section which is useless. */}}
-{{-    $pipConfig = omit $pipConfig "DEFAULT" }}
-
-{{-    $pipConfig | toIni }}
+{{- $hostPipConfigFiles := list
+     (joinPath $config.data.hostDir ".config" "pip" "pip.conf.tmpl")
+     (joinPath $config.data.hostDir ".config" "pip" "pip.conf") }}
+{{- $hostEncryptedPipConfigFiles := list
+     (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf.tmpl" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+     (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".config" "pip" (print "pip.conf" (dig "gpg" "suffix" ".asc" $config))) }}
+{{- includeTemplate "_host-overlay_merge.tmpl" (dict
+     "chezmoi" $.chezmoi
+     "config" $config
+     "baseConfig" $baseConfig
+     "hostPlainFiles" $hostPipConfigFiles
+     "hostEncryptedFiles" $hostEncryptedPipConfigFiles
+     "format" "ini"
+     "omitKeys" (list "DEFAULT")
+     "debug" $debug
+   ) }}

@@ -27,20 +27,18 @@
      */}}
 
 
-{{-    $hostFishConfigGrafanaFiles := list
+{{-    $hostFiles := list
          (joinPath $config.data.hostDir ".config" "fish" "conf.d" "grafana.fish.tmpl")
          (joinPath $config.data.hostDir ".config" "fish" "conf.d" "grafana.fish") }}
-
-{{-    range $f := $hostFishConfigGrafanaFiles }}
-
-{{-      if $debug }}
-{{         cat "looping on file" $f | comment "# " }}
-{{-      end }}
-
-{{-      if stat (joinPath $.chezmoi.sourceDir $f) }}
-
-{{         includeTemplate $f $ }}
-
-{{-      end }}
-
-{{-    end }}
+{{-    $hostEncryptedFiles := list
+         (joinPath $config.data.encryptedHostDir ".config" "fish" "conf.d" (print "grafana.fish.tmpl" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "fish" "conf.d" (print "grafana.fish.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "fish" "conf.d" (print "grafana.fish" (dig "age" "suffix" ".age" $config)))
+         (joinPath $config.data.encryptedHostDir ".config" "fish" "conf.d" (print "grafana.fish" (dig "gpg" "suffix" ".asc" $config))) }}
+{{-    includeTemplate "_host-overlay_plaintext.tmpl" (dict
+         "chezmoi" $.chezmoi
+         "config" $config
+         "hostPlainFiles" $hostFiles
+         "hostEncryptedFiles" $hostEncryptedFiles
+         "debug" $debug
+       ) }}

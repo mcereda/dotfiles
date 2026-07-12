@@ -9,6 +9,7 @@ My dotfiles, for better/faster/simpler host management and more fun!
 1. [Usage](#usage)
 1. [Design decisions](#design-decisions)
    1. [Encryption](#encryption)
+   1. [Shared template pattern for host overlays](#shared-template-pattern-for-host-overlays)
    1. [Shell-related files conventions](#shell-related-files-conventions)
 1. [Gotchas](#gotchas)
 1. [TODO](#todo)
@@ -178,6 +179,26 @@ and can be easily obtained with the following:
 ```sh
 chezmoi execute-template '{{ adler32sum (sha256sum .chezmoi.hostname) }}'
 ```
+
+### Shared template pattern for host overlays
+
+Host-specific overrides (plain and encrypted) iterate on candidate files, check their existence, and then include,
+decrypt and include, or merge them.
+
+The shared templates in `.chezmoitemplates/` generalize and centralize the logic.<br/>
+`_host-overlay_merge.tmpl` treats files that can be parsed as objects (JSON, INI, or YAML), and deep-merges them onto a
+base configuration before returning the object in the requested format.<br/>
+`_host-overlay_plaintext.tmpl` treats files which content must be appended as-is (shell configs, dotfiles, etc.)
+
+Callers define file lists, then include the relevant template passing them a dictionary with the chezmoi context and configuration, the file lists, and some options (format, `omitKeys`, `debug`).
+
+The shared templates need `$.chezmoi` passed **explicitly** because `includeTemplate` replaces `$` with the dictionary.
+
+INI files (AWS, Azure, pip) must pass `"omitKeys" (list "DEFAULT")` to strip the `DEFAULT` section that `fromIni`
+injects, at least when the tool using those files does not expect it.
+
+Files with a fallback/re-init logic that doesn't fit the shared template (`CLAUDE.md.tmpl`, `.chezmoi.yaml.tmpl`) need
+to be **excluded** from this pattern.
 
 ### Shell-related files conventions
 
