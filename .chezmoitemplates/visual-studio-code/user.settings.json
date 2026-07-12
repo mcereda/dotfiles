@@ -133,6 +133,13 @@
       ) }}
 {{- end }}
 
+{{- if has "redhat.ansible" $vscodeExtensions }}
+{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
+        "ansible.lightspeed.enabled"             false
+        "ansible.lightspeed.suggestions.enabled" false
+      ) }}
+{{- end }}
+
 {{- if has "redhat.vscode-yaml" $vscodeExtensions }}
 {{-   $_ := mustMergeOverwrite $vscodeSettings (dict
         "redhat.telemetry.enabled" false

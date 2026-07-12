@@ -15,11 +15,12 @@
     "terminal.integrated.cursorBlinking": true,
     
     "extensions.autoCheckUpdates": false,
-    "extensions.autoUpdate": false,
+    "extensions.autoUpdate": "off",
 
     "diffEditor.ignoreTrimWhitespace": false,
     "git.autofetch": false,
 
+    "chat.disableAIFeatures": true,
     "telemetry.telemetryLevel": "off",
     "telemetry.editStats.enabled": false,
     "telemetry.feedback.enabled": false,

@@ -1,9 +1,17 @@
 {
+    "$schema": "vscode://schemas/settings/user",
     "json.schemas": [
         {
             "url": "https://opencode.ai/config.json",
             "fileMatch": [
                 "opencode.json"
+            ]
+        },
+        {
+            "url": "vscode://schemas/settings/user",
+            "fileMatch": [
+                "**/visual-studio-code/user.settings*.json",
+                "**/Code/User/settings.json"
             ]
         }
     ],
