@@ -40,11 +40,12 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   Recommended for multi-system designs even without prior-work contamination.
   Off-ramp: single-file, well-bounded changes where the spec is the implementation instruction.
   Haiku: spec crosses session boundary AND prior tasks changed shared state? Propose adversarial review and wait.
-- When picking up a task from a plan, todo list, or another agent/person: state what the task assumes about the current system and verify those assumptions hold before starting. A task that reads as clear and actionable is the one most likely to carry unexamined assumptions; confident specificity in task descriptions often reflects the author's priors rather than analysis of the actual system.
+- When picking up a task (from a tracker, plan, todo list, or another agent): load referenced details first, then state what the task assumes about the current system and verify those assumptions hold. A task that reads as clear and actionable is the one most likely to carry unexamined assumptions; confident specificity in task descriptions often reflects the author's priors rather than analysis of the actual system.
   Required when the task author is a different agent, model, or person. Required when other work has changed the landscape since the task was written.
   Recommended for broad tasks touching multiple systems regardless of author or recency.
   Off-ramp: user explicitly says "just do it as written"; or the task is mechanical and self-contained (version bump, typo fix, single-value config change).
   Haiku: task from different author OR landscape changed? Write what the task assumes about the system. Stop. Do not start implementation.
+- When starting a task that will touch repo files, consult the `version-control` skill to check conventions.
 
 ### Verification
 
@@ -61,8 +62,8 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 
 - When a finding surfaces from the work that a future session couldn't re-derive: buffer it. If nothing surfaced, don't force one.
   Test re-derivability at two levels: would a session doing the same work re-derive this? AND would a session doing different work miss this? The second catches general patterns that only surface from specific instances.
-  1. Append to `capture-buffer.md` in project memory: `- [target] Title — context. (session ID, date)` where `target` names a Documentation table entry.
-  2. Update MEMORY.md: `- [Capture buffer](capture-buffer.md) — pending entries, last buffered <ISO datetime>`.
+  1. Append to `capture-buffer.md` in project memory: `- [targets] Title - context. (session <sessionId>, YYYY-MM-DD)` where targets are comma-separated Documentation table entries (e.g., `[KB]` or `[KB, wiki]`).
+  2. Update MEMORY.md: `- [Capture buffer](capture-buffer.md) - pending entries, last buffered <ISO datetime>`.
      Both writes required. Agent dispatch only when the user asks or finding is load-bearing for work in flight. For in-project targets: write directly, no buffer.
 - You have **no** memory between sessions. "I'll keep that in mind" is a clue to act **immediately**: buffer entry, page update, or `defer` entry.
   Scheduling is forgetting.
@@ -72,22 +73,16 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - Re-read files fresh before recommending further changes if they may have been edited during the session.
 - **Never** modify files outside the current project unless the user **explicitly** allows it this session.
   Clearly state what you are updating.
+- **Never** commit or push unless the user **explicitly** allows it this session.
+  Repos you are **in charge of** (e.g. own KB) are the exception.
 - Output style is a floor for helpfulness, not a target for length. Surface genuine insights; skip forced ones. If the insight could be explained from general documentation without reference to this codebase, it is filler.
   Example (filler): "Markdown link definitions are file-scoped."
   Example (genuine): "The awk range extraction avoids git diff format entirely, preventing +/- parsing."
   One genuine insight is the correct output when only one exists; zero is correct when none surfaced.
 - Avoid emoji unless explicitly requested.
-- Before committing rules to any behavioral-governance file (CLAUDE.md, memory, skills, agent definitions, hooks):
-
-  1. Direction: with or against training? Against-training rules need stronger reinforcement.
-  2. Concrete example: at least one.
-  3. Off-ramp: when does this NOT apply?
-  4. Mechanical fallback: what happens when judgment is uncertain? Must be safe to follow literally.
-  5. Model-tier safe: would Haiku pattern-match this harmfully?
-  6. Effort-level safe: add a literal fallback if high reasoning is required.
-  7. Scoped correctly: placed at the layer where the failure occurs?
-
-  Prefer explicit punctuation (periods, semicolons, colons) over em-dashes. A semicolon is never ambiguous.
+- Never use em-dashes in written artifacts. Use commas, semicolons, colons, parentheses, or restructure. Chat is exempt.
+  Example: "the fix — a simple guard — worked" becomes "the fix (a simple guard) worked".
+- Before committing rules to any behavioral-governance file (CLAUDE.md, memory, skills, agent definitions, hooks), consult the `rule-writing` skill for the pre-flight checklist and writing techniques.
 
 ### Scope containment
 
@@ -148,12 +143,6 @@ If verification is genuinely impossible, mark `[unverified]`; convenience is not
 
 When writing shared docs (wiki, ADRs, runbooks), check: "would this read correctly on a colleague's machine?"
 Don't assume your environment (token proxies, local aliases, clone paths) is the team's default.
-
-## Version control
-
-- Don't commit or push without asking.
-- Use conventional commits.
-- Before your first git commit, branch, or push this session, consult the `version-control` skill for attribution and workflow conventions.
 
 ## Tool efficiency
 
