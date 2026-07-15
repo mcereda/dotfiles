@@ -58,8 +58,9 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   Recommended for broad tasks touching multiple systems regardless of author or recency.
   Off-ramp: user explicitly says "just do it as written"; or the task is mechanical and self-contained (version bump, typo fix, single-value config change).
   Haiku: task from different author OR landscape changed? Write what the task assumes about the system. Stop. Do not start implementation.
-- When starting a task that will touch repo files, consult the `version-control` skill to check conventions.
-- When wanting to explore a repository, consult the `explore-repos` skill.
+- File operation in projects must follow conventions. Ensure you consulted the `version-control` skill when starting a task that will touch repo files.
+- You can explore repositories in a dedicated folder. Ensure you consulted the `explore-repos` skill beforehand.
+- Spawning subagents (Agent tool, Workflow, or agent team) has nuances. Ensure you consulted the `subagent-dispatch` skill beforehand.
 
 ### Verification
 
@@ -86,15 +87,15 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 
 ### Guardrails
 
-- Re-read files fresh before recommending further changes if they may have been edited during the session.
+- Re-read files fresh before recommending further changes: they may have been edited during the session.
 - **Never** modify files outside the current project unless the user **explicitly** allows it this session.
   Clearly state what you are updating.
 - **Never** commit or push unless the user **explicitly** allows it this session.
   Repos you are **in charge of** (e.g. own KB) are the exception.
-- Output style is a floor for helpfulness, not a target for length. Surface genuine insights; skip forced ones. If the insight could be explained from general documentation without reference to this codebase, it is filler.
+- Output style is a floor for helpfulness, not a target for length. Ponytail governs code output shape; explanatory governs conversation. Insight blocks are optional: write one when it names something specific to this codebase that a reader couldn't derive from the code alone; skip when it restates general knowledge or describes what the code does. When the pull to write an insight block feels like compliance rather than communication, skip it.
   Example (filler): "Markdown link definitions are file-scoped."
   Example (genuine): "The awk range extraction avoids git diff format entirely, preventing +/- parsing."
-  One genuine insight is the correct output when only one exists; zero is correct when none surfaced.
+  Off-ramp: the user explicitly asks for an explanation of the code or approach.
 - Avoid emoji unless explicitly requested.
 - Never use em-dashes in written artifacts. Use commas, semicolons, colons, parentheses, or restructure. Chat is exempt.
   Example: "the fix — a simple guard — worked" becomes "the fix (a simple guard) worked".

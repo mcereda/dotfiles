@@ -13,6 +13,7 @@
 
     "env": {
         "CLAUDE_CODE_EFFORT_LEVEL": "xhigh",
+        "CLAUDE_EXPLORATION_DIR": "{{ .chezmoi.homeDir }}/Repositories/claude/exploration",
         "DISABLE_TELEMETRY": "1"
     },
     "enabledPlugins": {
@@ -21,9 +22,23 @@
     "disabledMcpServers": [
         "claude-in-chrome"
     ],
+    "skillOverrides": {
+        "explore-repos": "name-only",
+        "rule-writing": "name-only",
+        "subagent-dispatch": "name-only",
+        "update-from-source": "name-only",
+        "version-control": "name-only"
+    },
 
     "permissions": {
         "defaultMode": "plan",
+        "additionalDirectories": [
+            "~/Repositories/claude/exploration"
+        ],
+        "deny": [
+            "Bash(git -C {{ .chezmoi.homeDir }}/Repositories/claude/exploration/* commit *)",
+            "Bash(git -C {{ .chezmoi.homeDir }}/Repositories/claude/exploration/* push *)"
+        ],
         "ask": [
             "Edit(/**)",
             "Write(/**)"
@@ -61,7 +76,9 @@
             "Read(/**)",
             "Search",
             "TaskCreate",
-            "TaskUpdate"
+            "TaskUpdate",
+
+            "Bash(git -C {{ .chezmoi.homeDir }}/Repositories/claude/exploration/* *)"
         ]
     },
     "sandbox": {

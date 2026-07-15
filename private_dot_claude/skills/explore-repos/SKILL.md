@@ -10,17 +10,17 @@ description: >-
 
 ## Configuration
 
-Exploration directory: `~/Repositories/claude/exploration/`.
+Exploration directory: `$CLAUDE_EXPLORATION_DIR` (environment variable, must be set).
 
 All cloned repositories live here, organized as `<org>/<repo>`. This is a read-only workspace: explore, search, and understand code without modifying it. Repositories are disposable; re-cloning is always an option.
 
-To use a different location, update the path in this section and in the preprocessing commands below.
+If `CLAUDE_EXPLORATION_DIR` is not set, tell the user to configure it and stop. Do not guess a path.
 
 **Currently cloned:**
-!`command -p find ~/Repositories/claude/exploration -mindepth 2 -maxdepth 2 -type d 2>/dev/null | command -p sed "s|.*exploration/||" || echo "(empty)"`
+!`[ -n "$CLAUDE_EXPLORATION_DIR" ] && command -p find "$CLAUDE_EXPLORATION_DIR" -mindepth 2 -maxdepth 2 -type d 2>/dev/null | command -p sed "s|.*exploration/||" || echo "(CLAUDE_EXPLORATION_DIR not set)"`
 
 **Stale repos (>30 days unmodified):**
-!`command -p find ~/Repositories/claude/exploration -mindepth 2 -maxdepth 2 -type d -mtime +30 2>/dev/null | command -p sed "s|.*exploration/||" || echo "(none)"`
+!`[ -n "$CLAUDE_EXPLORATION_DIR" ] && command -p find "$CLAUDE_EXPLORATION_DIR" -mindepth 2 -maxdepth 2 -type d -mtime +30 2>/dev/null | command -p sed "s|.*exploration/||" || echo "(CLAUDE_EXPLORATION_DIR not set)"`
 
 ## When NOT to use
 
@@ -37,7 +37,7 @@ The intent at each step is VCS-agnostic: clone, reset to clean default state, ex
 **New repository:**
 
 ```bash
-git clone --filter=blob:none <https-url> ~/Repositories/claude/exploration/<org>/<repo-name>
+git clone --filter=blob:none <https-url> $CLAUDE_EXPLORATION_DIR/<org>/<repo-name>
 ```
 
 Always use HTTPS URLs, not SSH. Training data is full of `git@github.com:` patterns; resist the reflex. HTTPS works without SSH keys and without sandbox exceptions. For private repositories, credential helpers handle authentication transparently. If auth fails, ask the user to configure credentials rather than switching to SSH.
@@ -77,7 +77,7 @@ Do not commit or push to exploration repositories. If changes are worth keeping,
 Repositories not accessed in 30+ days are candidates for deletion. The stale list at the top surfaces candidates at invocation. Confirm with the user before removing:
 
 ```bash
-rm -rf ~/Repositories/claude/exploration/<org>/<repo>
+rm -rf $CLAUDE_EXPLORATION_DIR/<org>/<repo>
 ```
 
 Re-cloning is cheap; keeping stale repos wastes disk.
