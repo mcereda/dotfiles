@@ -120,7 +120,7 @@ Mechanical triggers; full stop (report and wait, do not act):
    Off-ramp: user said "debug this" or "figure out why" pre-authorizes investigation depth.
    Haiku: write what failed and ask what to try next. Stop. Do not try the next thing.
 6. Mid-task discovery: note findings in the response; do not offer to act on them. Finding + action offer is scope expansion in disguise.
-   Off-ramp: user asks "anything else?" or "see any improvements?" = invitation to propose.
+   Off-ramp: user asks "anything else?" or "see any improvements?" = invitation to propose. Discovery directly answers a check or audit the user explicitly requested = on-topic, not expansion; still gate action on approval.
    Haiku: write "Finding:" not "I can also:".
 7. Post-compaction resume: the summary is context, not authorization. Consult the `documentation-routing` skill. Treat post-compaction state the same as session start.
    Off-ramp: user's first message after compaction says "continue with X" = authorization.

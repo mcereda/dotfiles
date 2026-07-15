@@ -79,10 +79,13 @@ Two shapes:
 ## 2. Scan buffers
 
 ```bash
-find ~/.claude/memory ~/.claude/projects -name 'capture-buffer.md' -size +0c 2>/dev/null
+for f in ~/.claude/memory/capture-buffer.md ~/.claude/projects/*/memory/capture-buffer.md; do
+  [ -s "$f" ] && echo "$f"
+done
 ```
 
-This covers both project-level buffers and the global buffer (when present). If `~/.claude/memory/` does not exist on this host, find silently skips it.
+This covers both project-level buffers and the global buffer (when present).
+Glob-based to avoid RTK interception of `find` with compound predicates (`-size`).
 
 If no non-empty files exist, tell the user the buffers are empty and stop.
 
