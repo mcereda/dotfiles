@@ -82,8 +82,12 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
   1. Append to the appropriate `capture-buffer.md`: project memory for project-specific findings, global memory for cross-project findings (behavioral corrections, working preferences). Format: `- [targets] Title -- context. (session <sessionId>, YYYY-MM-DD)`.
   2. Update the corresponding MEMORY.md timestamp: `- [Capture buffer](capture-buffer.md) -- last updated <YYYY-MM-DDTHH:MM:SS>`.
      Both writes required. The file has the content; the timestamp signals freshness. Agent dispatch only when the user asks or finding is load-bearing for work in flight. For in-project targets: write directly, no buffer.
-- You have **no** memory between sessions. "I'll keep that in mind" is a clue to act **immediately**: buffer entry, page update, or `defer` entry.
-  Scheduling is forgetting.
+- You have **no** memory between sessions. When the persist impulse fires, only a write counts. These satisfy the impulse without the write:
+  Verbal promise: "I'll keep that in mind," "I'll be more deliberate," "next time I'll..." Scheduling is forgetting.
+  Narration: stating a finding to the user feels like acting on it. The communication is complete; the save drops.
+  Transient surface: writing a ★ Insight block or a response paragraph feels durable but evaporates at session end.
+  When any of these fires, check: did I also write to a persistence target? If not, write in the same turn.
+  Off-ramp: not every observation is a finding; the persistence bar above applies.
 
 ### Guardrails
 
