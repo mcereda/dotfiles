@@ -112,13 +112,18 @@ Identify which tags are relevant to the current repository. Process only those e
 For each entry relevant to this repo:
 
 1. Apply the content bar (state the prior, compare).
-2. Classify promoted entries:
+2. Classify the source type and confidence **now**, not during writing:
+   - **Source type**: empirical (session observation), official docs, web content, training data.
+   - **Confidence**: high (cross-verified or source code), medium (single authoritative source), low (inferred).
+   - For empirical observations: external corroboration not required, but name the source (session ID, tool version, what was observed). Set confidence by documentation status.
+   - For all other source types: follow the project's verification protocol.
+3. Classify promoted entries:
    - **Update**: refines or corrects existing content. Search the project for the topic to find the target.
    - **Create**: warrants new content. Search to confirm nothing existing covers it.
    - **Defer**: potentially valuable but needs more context or verification.
-3. Discarded entries: note the title and a one-line reason.
+4. Discarded entries: note the title and a one-line reason.
 
-Present the full classification to the user before processing.
+Present the full classification to the user before processing, including source type and confidence for each promoted entry.
 The user may override individual classifications.
 
 ## 5. Verify and process
@@ -171,7 +176,8 @@ For each source buffer file:
 - For entries with multiple tags: strip the processed tag(s), keep the entry with remaining tags.
 - For entries whose last tag was just processed: remove the entry.
 - Keep the file even when empty (only the header remains). Deleting and recreating adds MEMORY.md churn for no benefit.
-- Update the corresponding `MEMORY.md` timestamp (global buffer uses `~/.claude/memory/MEMORY.md`; project buffer uses the project's `MEMORY.md`):
+- Update the corresponding `MEMORY.md` timestamp (global buffer uses `~/.claude/memory/MEMORY.md`; project buffer uses the project's `MEMORY.md`).
+  Run `date +%Y-%m-%dT%H:%M:%S` to get the actual time; do not guess:
   `- [Capture buffer](capture-buffer.md) -- last swept YYYY-MM-DDTHH:MM:SS`
 
 ## 8. Report
@@ -201,14 +207,14 @@ Buffers: 3 projects, 7 entries total.
 3. **Scan**: `capture-buffer.md` in `devops`, `pikachu`, `claude-kb`.
 4. **Parse**: 7 entries. Tags: 4 `[KB]`, 1 `[KB, wiki]`, 1 `[wiki]`, 1 `[user-kb]`.
 5. **Classify** (sweeping from KB repo, processing `[KB]` tags):
-   - `[KB]` "HAProxy notice drops info-level HTTP logs" -- prior: "notice level keeps HTTP request logs." Prior is wrong. Promote (update) target page.
-   - `[KB]` "ECS task def requires explicit log driver" -- prior: "I don't know, I'd check the docs." Discard.
-   - `[KB, wiki]` "Spot drain via set-instance-health" -- prior: "only fix is more on-demand." Prior is incomplete. Promote (update). Wiki tag stays for future wiki sweep.
+   - `[KB]` "HAProxy notice drops info-level HTTP logs" -- prior: "notice level keeps HTTP request logs." Prior is wrong. Source: empirical (session observed syslog output). Confidence: high. Promote (update) target page.
+   - `[KB]` "ECS task def requires explicit log driver" -- prior: "I don't know, I'd check the docs." Discard (visible gap, not silent failure).
+   - `[KB, wiki]` "Spot drain via set-instance-health" -- prior: "only fix is more on-demand." Prior is incomplete. Source: empirical (tested in session). Confidence: medium. Promote (update). Wiki tag stays for future wiki sweep.
    - `[wiki]` "Pikachu DB failover requires manual DNS" -- skip (no KB tag; wiki-only).
    - `[user-kb]` "jq -S doesn't sort arrays" -- skip (not a KB tag).
    - (2 more classified similarly)
-6. **Verify**: source named for each promoted entry, confidence classified.
+6. **Verify**: source and confidence already classified in step 5; verify non-empirical claims per protocol.
 7. **Process**: updated target pages following CONTRIBUTING.md format.
 8. **Validate**: `task lint` clean. Committed. `git push-reachable`.
 9. **Cleanup**: fully processed entries removed. `[KB, wiki]` entry stripped to `[wiki]`. Non-KB entries unchanged.
-10. **Report**: "3 projects, 7 entries (4 KB-relevant). 2 promoted, 1 discarded, 1 deferred. 2 non-KB skipped. Discard rate 33%."
+10. **Report**: "3 projects, 7 entries (4 KB-relevant). 2 promoted, 1 discarded, 1 deferred. Pending for other targets: 1 wiki, 1 user-kb. Discard rate 33%."
