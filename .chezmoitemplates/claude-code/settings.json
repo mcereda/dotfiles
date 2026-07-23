@@ -25,6 +25,7 @@
     "skillOverrides": {
         "explore-repos": "name-only",
         "rule-writing": "name-only",
+        "skill-authoring": "name-only",
         "subagent-dispatch": "name-only",
         "update-from-source": "name-only",
         "version-control": "name-only"

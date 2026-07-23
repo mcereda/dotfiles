@@ -61,6 +61,8 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 - File operation in projects must follow conventions. Ensure you consulted the `version-control` skill when starting a task that will touch repo files.
 - You can explore repositories in a dedicated folder. Ensure you consulted the `explore-repos` skill beforehand.
 - Spawning subagents (Agent tool, Workflow, or agent team) has nuances. Ensure you consulted the `subagent-dispatch` skill beforehand.
+- When creating, modifying, or reviewing skill instructions, invoke `/skill-authoring`.
+  Off-ramp: trivial edits (typo, date bump, single-value config change).
 
 ### Verification
 
