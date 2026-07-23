@@ -16,11 +16,14 @@ All cloned repositories live here, organized as `<org>/<repo>`. This is a read-o
 
 If `CLAUDE_EXPLORATION_DIR` is not set, tell the user to configure it and stop. Do not guess a path.
 
-**Currently cloned:**
-!`[ -n "$CLAUDE_EXPLORATION_DIR" ] && command -p find "$CLAUDE_EXPLORATION_DIR" -mindepth 2 -maxdepth 2 -type d 2>/dev/null | command -p sed "s|.*exploration/||" || echo "(CLAUDE_EXPLORATION_DIR not set)"`
+**Before starting**, list what is already cloned and what is stale:
 
-**Stale repos (>30 days unmodified):**
-!`[ -n "$CLAUDE_EXPLORATION_DIR" ] && command -p find "$CLAUDE_EXPLORATION_DIR" -mindepth 2 -maxdepth 2 -type d -mtime +30 2>/dev/null | command -p sed "s|.*exploration/||" || echo "(CLAUDE_EXPLORATION_DIR not set)"`
+```bash
+find "$CLAUDE_EXPLORATION_DIR" -mindepth 2 -maxdepth 2 -type d 2>/dev/null | sed "s|.*exploration/||"
+find "$CLAUDE_EXPLORATION_DIR" -mindepth 2 -maxdepth 2 -type d -mtime +30 2>/dev/null | sed "s|.*exploration/||"
+```
+
+Present the first result as "Currently cloned" and the second as "Stale (>30 days)".
 
 ## When NOT to use
 
@@ -88,5 +91,4 @@ Environment-specific configuration. Other harnesses adapt as needed.
 
 - Add the exploration directory to `additionalDirectories` in settings to suppress per-directory trust prompts on first file read (file-level allow and directory-trust are separate permission layers).
 - Git operations scoped via `git -C <exploration-path>/*` can be added to allow rules. Commit and push should remain denied or always-ask.
-- The `!` preprocessing runs shell commands before the model sees the content. Environments without preprocessing support should run the `find` commands manually at invocation.
-- `command -p` in preprocessing bypasses shell functions and aliases, using the system's default PATH. This avoids interference from CLI proxies or wrappers.
+- The repo listing runs via Bash tool calls at invocation, not `!` preprocessing. The `!` preprocessor's static analyzer rejects shell variable expansion (`$CLAUDE_EXPLORATION_DIR`) as `simple_expansion`. Environments without Bash tool access should run the `find` commands manually.
