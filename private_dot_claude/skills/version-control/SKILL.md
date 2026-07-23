@@ -35,14 +35,19 @@ Start at the step that matches where you are. If the user already has changes an
    If no docs need updating, complete the task naming what you checked and why no update is needed (e.g. "checked README and help text; pure refactor, no behavioral change").
    Skip the task for docs-only changes: the change itself is the documentation work.
 5. **Review.** Re-read changed files together before committing. Lint catches mechanics, not coherence across files.
-6. **Commit.** Prefer using conventional commits.
+6. **Verify.** Run the project's test command before committing.
+   Discovery order: `Taskfile.yml` (`task test`) → `Makefile` (`make test`) → `package.json` scripts (`npm test`) → language convention (`go test ./...`, `pytest`, `cargo test`). Run the first match.
+   No test command found: compile or syntax-check the changed files.
+   For behavioral changes (new flag, new route, changed user-facing output), consider invoking `/verify` if the project has a verify or run skill under `.claude/skills/`. Skip `/verify` for refactors, renames, and internal-only changes.
+   Skip this step for docs-only changes, config-only changes, or when the user says so.
+7. **Commit.** Prefer using conventional commits.
    Attribution rules below. When a ticket is involved, reference it in the commit message (e.g. `fix(auth): validate token expiry (PROJ-1234)`).
    Commit outside the sandbox; GPG signing does not work inside it. If blocked, tell the user to run the command directly (prefix with `!`).
-7. **Push.** Per project permissions. Do not push without asking unless the project explicitly authorizes it.
-8. **Update tracking.** Skip entirely when no tracker was involved.
+8. **Push.** Per project permissions. Do not push without asking unless the project explicitly authorizes it.
+9. **Update tracking.** Skip entirely when no tracker was involved.
    When a tracker is involved: ask the user what to update unless the project's conventions are already known.
    Common actions: status change, branch or MR link, comment. If a TODO file was the source, mark the item done.
-9. **Cleanup.** Exit worktree if used; delete merged branches.
+10. **Cleanup.** Exit worktree if used; delete merged branches.
 
 ## Commit Attribution
 

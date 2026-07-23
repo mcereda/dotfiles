@@ -18,8 +18,8 @@ The argument is ignored; this skill always sweeps all buffers.
 
 ## Pre-filled context
 
-**Pending buffers:**
-!`find ~/.claude/memory ~/.claude/projects -name 'capture-buffer.md' -size +0c 2>/dev/null`
+**Pending buffers (global only; project buffers checked in step 2):**
+!`ls ~/.claude/memory/capture-buffer.md 2>/dev/null`
 
 ## 0. Guard checks
 
@@ -84,8 +84,9 @@ for f in ~/.claude/memory/capture-buffer.md ~/.claude/projects/*/memory/capture-
 done
 ```
 
+Glob-based because `!` preprocessing blocks `find` and `ls` on `~/.claude/projects` (not in `additionalDirectories`).
+Regular Bash tool calls do not have this restriction, so step 2 can scan all projects.
 This covers both project-level buffers and the global buffer (when present).
-Glob-based to avoid RTK interception of `find` with compound predicates (`-size`).
 
 If no non-empty files exist, tell the user the buffers are empty and stop.
 
@@ -132,9 +133,11 @@ Follow the project's documentation conventions for format, cross-referencing, an
 
 ### External target routing
 
-Entries tagged for a different repository (e.g. `[wiki]` when sweeping from a non-wiki repo) should be left in the buffer for a future sweep from the appropriate repo.
+Entries tagged for a different repository (e.g. `[wiki]` when sweeping from a non-wiki repo) stay in the buffer by default.
+Do not auto-dispatch agents to other repos.
+Report what is pending for other targets (tag, count, one-line summary each) so the user can decide: dispatch now, skip, or leave for a future sweep from the target repo.
 
-If an agent is available for the target (check the session's available agent types), you may compose the content and dispatch. Include in the agent prompt:
+If the user explicitly requests dispatch, compose the content and send it via the appropriate contributor agent. Include in the agent prompt:
 - The composed content (not the raw buffer entry)
 - Target file path
 - Whether it is a new page or update
@@ -178,7 +181,7 @@ Summarize:
 - Entry count and classification breakdown
 - Discard rate and whether it is within the 25-65% target band
 - Content edited or created
-- Agent dispatches (if any)
+- Entries pending for other targets (tag, count, summary)
 - Deferred items (if any)
 - Buffer cleanup status
 

@@ -39,3 +39,16 @@ Mechanical fallback: before dispatching a general-purpose agent, check: does thi
 Suggest agent teams only for genuinely parallelizable, independent work streams: multiple independent modules, competing hypotheses, multi-perspective reviews, large exploratory research.
 
 Do **not** use for sequential tasks, same-file edits, or heavy inter-step dependencies.
+
+## Execution mode
+
+Agents dispatched for autonomous writes (filing agents, contributors) inherit the parent session's execution mode by default. If the parent is in a restrictive mode, the agent stalls waiting for approval instead of writing.
+
+Set the execution mode explicitly at dispatch time for any agent expected to write files.
+
+Example: a devops-wiki-contributor spawned from a session in plan mode inherited the mode and stalled instead of filing.
+
+Off-ramp: omit when you want the agent to inherit the parent's mode intentionally (e.g. review-only dispatch).
+
+> [!note] Claude Code
+> Pass `mode` on the Agent tool call. Filing agents (kb-contributor, devops-wiki-contributor) typically need `mode: "auto"`.
