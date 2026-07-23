@@ -18,10 +18,10 @@
 ################################################################################
 
 [alias]
-	branch-get-default = "\
-		!git branch-get-default-from-local-ref \
+	branch-get-default = "!f() { \
+		git branch-get-default-from-local-ref \
 		|| git branch-get-default-from-remote \
-	"
+	;} && f"
 	branch-get-default-from-local-ref = "!f() { \
 		ref=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null) && \
 		echo \"${ref#refs/remotes/origin/}\" \
