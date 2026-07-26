@@ -72,8 +72,6 @@
             "Bash(ls *)",
             "Bash(tail *)",
             "Bash(wc *)",
-            "Glob(/**)",
-            "Grep(/**)",
             "Read(/**)",
             "Search",
             "TaskCreate",
