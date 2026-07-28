@@ -107,6 +107,14 @@ Tags are comma-separated inside one bracket pair: `KB`, `wiki`, `user-kb`.
 An entry may have one tag (`[KB]`) or multiple (`[KB, wiki]`).
 Identify which tags are relevant to the current repository. Process only those entries; leave the rest for a future sweep from the appropriate repo.
 
+### In-project compliance check
+
+When a buffer file belongs to the current project and contains entries targeting the current project's documentation, flag them as compliance gaps. These findings should have been written directly during the source session.
+
+Example: the KB project's own buffer containing a `[KB]`-tagged entry means a KB session buffered instead of writing directly.
+
+Still process them (they need promotion regardless). Count them separately in the report. Entries in OTHER projects' buffers targeting this repo are correctly buffered (cross-project routing is what the buffer is for).
+
 ## 4. Classify each entry
 
 For each entry relevant to this repo:
@@ -122,6 +130,10 @@ For each entry relevant to this repo:
    - **Create**: warrants new content. Search to confirm nothing existing covers it.
    - **Defer**: potentially valuable but needs more context or verification.
 4. Discarded entries: note the title and a one-line reason.
+5. **Generalize**: for entries targeting other repos, check whether the finding overlaps with a topic the current project already documents. The current project's existing pages define what is in scope; generalization is not a reason to expand scope.
+   Test: does the current repo already have a page about the tool, pattern, or system the finding is about? If yes, strip the project-specific context and check whether a general principle remains that the existing page does not yet cover. If no existing page overlaps, skip.
+   Example (sweeping from KB): `[CONTRIBUTING.md gotchas] ignoreChanges on LaunchTemplate carries frozen AMI ID into new versions`. The KB already has `pulumi-aws-patterns.md`. Strip the LaunchTemplate-specific detail; the general principle (`ignoreChanges` on versioned resources carries state-frozen values into new versions) fits the existing page. Promote as a separate item. The original entry stays for the devops-start sweep.
+   Off-ramp: not every project-specific finding generalizes. If stripping the specifics leaves only "this tool has a quirk" with no matching page in the current repo, it is project context.
 
 Present the full classification to the user before processing, including source type and confidence for each promoted entry.
 The user may override individual classifications.
@@ -184,7 +196,8 @@ For each source buffer file:
 
 Summarize:
 - Buffers scanned and source projects
-- Entry count and classification breakdown
+- Entry count and classification breakdown (include generalized entries as a separate line)
+- In-project compliance gaps (entries that should have been written directly), if any
 - Discard rate and whether it is within the 25-65% target band
 - Content edited or created
 - Entries pending for other targets (tag, count, summary)
@@ -197,6 +210,7 @@ Check at the end:
 
 - **Discard rate outside 25-65%.** Note in the report. Below 25%: the sweep may be rubber-stamping. Above 65%: capture may be too noisy.
 - **Entries accumulating for unroutable tags.** If 3+ entries for a tag with no available target persist across sweeps, note in the report.
+- **Discard rate below 25% by user direction.** When the user explicitly overrides discards ("save these, don't discard"), the rate drops below the monitoring band. This is correct, not rubber-stamping. The band monitors operator judgment; user-directed saves bypass it. Note in the report: "rate below band, N entries promoted by user direction."
 
 ## Worked example
 

@@ -61,3 +61,6 @@ Choose authorship by contribution weight:
 
 > [!warning]
 > `opusplan` attribution is unreliable; use model `opus` for correct attribution.
+
+> [!important]
+> The author cannot also be a co-author.
