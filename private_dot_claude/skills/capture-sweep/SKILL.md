@@ -41,13 +41,9 @@ Check whether the current project has documentation conventions:
 ls CONTRIBUTING.md CONVENTIONS.md .claude/docs/ 2>/dev/null
 ```
 
-If `CONTRIBUTING.md` exists, read it. Follow its format, verification protocol, and writing conventions for all promoted content.
+If convention files exist, read them. Follow their format, verification protocol, and writing instructions for all promoted content.
 
-If no conventions file exists, use safe defaults:
-- Standard markdown formatting
-- No special frontmatter unless the project uses it
-- Commit with conventional format
-- Do not push unless the project's CLAUDE.md authorizes it
+If no conventions file exists, conform to the destination's existing format: read a few existing pages or docs in the target location and match their structure, frontmatter, and style. Do not push unless the project's rules authorize it.
 
 ## Why discarding matters
 
@@ -99,11 +95,17 @@ Each buffer file follows this format:
 ```markdown
 # Capture buffer
 
-- [TAG1, TAG2] Title -- context. (session ID, date)
-  Optional continuation lines with more context.
+- [TAG1, TAG2] Title -- context. (session <uuid>, <YYYY-MM-DDTHH:MM:SS>)
+  markers: keyword1, keyword2
+  verify: <url|filepath|command>
 ```
 
-Tags are comma-separated inside one bracket pair: `KB`, `wiki`, `user-kb`.
+- Session ID is the `$CLAUDE_CODE_SESSION_ID` UUID. Older entries may have partial IDs or `session this`; treat those as unresolvable (no transcript lookup).
+- `markers:` (required since 2026-07-28): grep-friendly keywords for locating context in the source transcript. Entries without markers still get processed, but context gathering falls back to title-based search.
+- `verify:` (optional): a pointer to verify or disprove the claim.
+- Timestamp is local time (`date +%Y-%m-%dT%H:%M:%S`).
+
+Tags are comma-separated inside one bracket pair: `KB`, `infra-wiki`, `user-kb`.
 An entry may have one tag (`[KB]`) or multiple (`[KB, wiki]`).
 Identify which tags are relevant to the current repository. Process only those entries; leave the rest for a future sweep from the appropriate repo.
 
@@ -115,12 +117,47 @@ Example: the KB project's own buffer containing a `[KB]`-tagged entry means a KB
 
 Still process them (they need promotion regardless). Count them separately in the report. Entries in OTHER projects' buffers targeting this repo are correctly buffered (cross-project routing is what the buffer is for).
 
-## 4. Classify each entry
+## 4. Gather context
+
+Before classifying, try to enrich each entry beyond its buffer text.
+Buffer entries are compressed notes written under momentum; any additional context makes classification more informed.
+This step is best-effort: the sweep works without transcripts; they are an accelerator, not a requirement.
 
 For each entry relevant to this repo:
 
+### a. Transcript lookup (when available)
+
+Extract the session UUID from the entry's parenthetical. If the session ID is missing, malformed, or no file is found, skip to step (b).
+
+Search the session transcript for the exchange surrounding the finding, using the entry's `markers:` keywords (or title words as fallback).
+
+Session transcripts are JSONL files at `~/.claude/projects/*/{sessionId}.jsonl`. If a transcript compression script is available in the current project (e.g. `compress-transcript.py --depth annotated`), pipe the compressed output through grep for cleaner results. Otherwise grep the raw JSONL. Use `grep -i -C 30 'marker1\|marker2'` to capture surrounding context.
+
+From the extracted context, note:
+- What the session was doing when the finding surfaced
+- Whether the finding was a correction, a discovery, or a side-observation
+- Any references, URLs, file paths, or commands that support the claim
+- How confident the writer appeared (hedged language vs. definitive)
+
+### b. Verify claims
+
+When the transcript is unavailable or the extracted context does not clearly support the claim, use the following fallback chain (stop at the first that resolves):
+
+1. **Check the `verify:` line** if present: run the command, fetch the URL, or read the file.
+2. **Web-verify** factual claims about external tools, APIs, or libraries. One independent source is sufficient.
+3. **Ask the user** as last resort, when both transcript and web sources are insufficient. Batch questions across entries rather than asking one at a time.
+
+### c. Annotate for classification
+
+Attach gathered context to the entry as internal notes (not written to the buffer).
+The classification step uses these notes to set source type, confidence, and disposition with evidence rather than inference from a one-liner.
+
+## 5. Classify each entry
+
+For each entry relevant to this repo, using context gathered in step 4:
+
 1. Apply the content bar (state the prior, compare).
-2. Classify the source type and confidence **now**, not during writing:
+2. Classify the source type and confidence using the gathered context, not the buffer text alone:
    - **Source type**: empirical (session observation), official docs, web content, training data.
    - **Confidence**: high (cross-verified or source code), medium (single authoritative source), low (inferred).
    - For empirical observations: external corroboration not required, but name the source (session ID, tool version, what was observed). Set confidence by documentation status.
@@ -138,12 +175,12 @@ For each entry relevant to this repo:
 Present the full classification to the user before processing, including source type and confidence for each promoted entry.
 The user may override individual classifications.
 
-## 5. Verify and process
+## 6. Write promoted content
 
 Process in this order: edits first, creations second.
 
-For each promoted entry, follow the verification protocol:
-- If the project has a `CONTRIBUTING.md` with a verification protocol, follow it.
+For each promoted entry, apply the project's writing-time verification protocol (this is about documentation quality, not about understanding the entry; step 4 handled that):
+- If the project has conventions, and they specify a verification protocol, follow it.
 - Otherwise: name the source, classify confidence (high/medium/low). Mark claims that cannot be sourced as `[unverified]`.
 
 Follow the project's documentation conventions for format, cross-referencing, and index updates.
@@ -160,7 +197,7 @@ If the user explicitly requests dispatch, compose the content and send it via th
 - Whether it is a new page or update
 - "If you don't know or can't verify something, say so."
 
-## 6. Validate and commit
+## 7. Validate and commit
 
 Only when the sweep produced content changes in this repo.
 
@@ -181,7 +218,7 @@ update(<project>): capture sweep -- N promoted, M discarded
 
 Push only if the project's CLAUDE.md authorizes it.
 
-## 7. Clean up buffers
+## 8. Clean up buffers
 
 For each source buffer file:
 
@@ -192,11 +229,12 @@ For each source buffer file:
   Run `date +%Y-%m-%dT%H:%M:%S` to get the actual time; do not guess:
   `- [Capture buffer](capture-buffer.md) -- last swept YYYY-MM-DDTHH:MM:SS`
 
-## 8. Report
+## 9. Report
 
 Summarize:
 - Buffers scanned and source projects
 - Entry count and classification breakdown (include generalized entries as a separate line)
+- Context gathering: transcripts found vs. missing, entries enriched via markers vs. title-only, any web verifications or user questions
 - In-project compliance gaps (entries that should have been written directly), if any
 - Discard rate and whether it is within the 25-65% target band
 - Content edited or created
@@ -219,16 +257,20 @@ Buffers: 3 projects, 7 entries total.
 1. **Guard**: no project-level capture-sweep skill found. Proceed.
 2. **Conventions**: `CONTRIBUTING.md` found, read. Project uses YAML frontmatter, `task lint`, `git push-reachable`.
 3. **Scan**: `capture-buffer.md` in `devops`, `pikachu`, `claude-kb`.
-4. **Parse**: 7 entries. Tags: 4 `[KB]`, 1 `[KB, wiki]`, 1 `[wiki]`, 1 `[user-kb]`.
-5. **Classify** (sweeping from KB repo, processing `[KB]` tags):
-   - `[KB]` "HAProxy notice drops info-level HTTP logs" -- prior: "notice level keeps HTTP request logs." Prior is wrong. Source: empirical (session observed syslog output). Confidence: high. Promote (update) target page.
-   - `[KB]` "ECS task def requires explicit log driver" -- prior: "I don't know, I'd check the docs." Discard (visible gap, not silent failure).
-   - `[KB, wiki]` "Spot drain via set-instance-health" -- prior: "only fix is more on-demand." Prior is incomplete. Source: empirical (tested in session). Confidence: medium. Promote (update). Wiki tag stays for future wiki sweep.
+4. **Parse**: 7 entries. Tags: 4 `[KB]`, 1 `[KB, wiki]`, 1 `[wiki]`, 1 `[user-kb]`. 4 KB-relevant entries parsed. 3 have `markers:`, 1 is older format (no markers).
+5. **Gather context** (4 KB-relevant entries):
+   - "HAProxy notice drops info-level HTTP logs" (markers: `haproxy, syslog, facility`): transcript found, compressed. Grep hit at turn 42: session was debugging missing access logs, discovered `facility=notice` silently drops HTTP request entries.
+   - "ECS task def requires explicit log driver" (markers: `ecs, logDriver, awslogs`): transcript found. Grep shows this was a side-observation, not the main task. No correction or surprise involved.
+   - "Spot drain via set-instance-health" (markers: `spot, drain, set-instance-health`): transcript not found (session rotated). `verify:` line points to AWS docs URL; fetched and confirmed the API exists. Confidence set to medium (single source).
+   - "Route53 alias vs CNAME for ELB" (no markers, old format): title-based grep on raw JSONL, 2 hits but noisy. Enough to see it was an aside during ALB setup.
+6. **Classify** (sweeping from KB repo, processing `[KB]` tags):
+   - `[KB]` "HAProxy notice drops info-level HTTP logs" -- prior: "notice level keeps HTTP request logs." Prior is wrong. Source: empirical (session observed syslog output, transcript confirmed). Confidence: high. Promote (update) target page.
+   - `[KB]` "ECS task def requires explicit log driver" -- prior: "I don't know, I'd check the docs." Discard (visible gap, not silent failure; transcript confirmed low-stakes side-observation).
+   - `[KB, wiki]` "Spot drain via set-instance-health" -- prior: "only fix is more on-demand." Prior is incomplete. Source: empirical (web-verified via AWS docs). Confidence: medium. Promote (update). Wiki tag stays for future wiki sweep.
    - `[wiki]` "Pikachu DB failover requires manual DNS" -- skip (no KB tag; wiki-only).
    - `[user-kb]` "jq -S doesn't sort arrays" -- skip (not a KB tag).
    - (2 more classified similarly)
-6. **Verify**: source and confidence already classified in step 5; verify non-empirical claims per protocol.
-7. **Process**: updated target pages following CONTRIBUTING.md format.
+7. **Write**: source and confidence established in steps 5-6. Applied project verification protocol; updated target pages following `CONTRIBUTING.md` format.
 8. **Validate**: `task lint` clean. Committed. `git push-reachable`.
 9. **Cleanup**: fully processed entries removed. `[KB, wiki]` entry stripped to `[wiki]`. Non-KB entries unchanged.
-10. **Report**: "3 projects, 7 entries (4 KB-relevant). 2 promoted, 1 discarded, 1 deferred. Pending for other targets: 1 wiki, 1 user-kb. Discard rate 33%."
+10. **Report**: "3 projects, 7 entries (4 KB-relevant). Context: 3/4 transcripts found, 1 web-verified. 2 promoted, 1 discarded, 1 deferred. Pending for other targets: 1 wiki, 1 user-kb. Discard rate 33%."
