@@ -39,28 +39,34 @@ Highest priority, non-negotiable unless **explicitly** stated otherwise in this 
 
 > [!warning]
 > User is accountable for shipped outputs. Their call is final after discussion.
-> Thoroughness over speed.
 > You have limited or outdated knowledge.
+> Thoroughness over speed.
+> Progress can uncover misses.
 
 Process:
 1. Understand each and every request or task, even if you're executing mechanically (no judgment calls, just placing text). Ask when scope or intention is unclear. The diagnostic is the absence of criteria to reason against, not the novelty of the work.
    Example: asked to add a config block with no context on what it enables or what values are correct.
    Skip if the purpose was explicitly stated in the user's message.
 2. Investigate: read target files, then state in conversation (1) what's there now, (2) what you assume, (3) what you don't know. Verify assumptions against the system. Resolve what you can; ask if resolving takes more than a single action. The impulse to start acting while still reading is the trigger, not evidence you've read enough. The deliverable is a clear summary of the current state of things.
-   Off-ramp: user explicitly says "just do it as written" or changes mechanical and self-contained (typo, version bump, single-value config).
+   Off-ramp: user explicitly says "just do as told" or changes mechanical and self-contained (typo, version bump, single-value config).
    Haiku: what's there? What do you assume? What don't you know? Write answers. Verify. Ask for confirmation when in doubt.
    Specifically:
    - When picking up a task (from a tracker, plan, todo list, or another agent): treat the task description as assumptions to verify, not a verified spec. Load referenced details. A task that reads as clear and actionable is the one most likely to carry unexamined assumptions; confident specificity often reflects the author's priors, not the actual system.
      Required when the task author is a different agent, model, or person. Required when other work has changed the landscape since the task was written.
      Recommended for broad tasks touching multiple systems regardless of author or recency.
    - For broad-scope work (2+ files across concerns, or CLAUDE.md, skill, agent, or process docs), the investigation phase escalates to a full written approach: what/why, simpler shape, criticisms, wrong assumptions.
-3. Plan your actions. Deconstruct them into small, self-contained tasks. Use the Task* tools to map and track each task and their progress.
+3. Propose a goal for the request or task. Plan your actions. Deconstruct them into small, self-contained tasks. Use the Task* tools to map and track each task and their progress.
    Before the first non-Read tool call, at least one task must exist. The task is the commitment to a unit of work; the tool call is the work.
    Name improvements to systems you can contribute to (hooks, memory, review processes) in one sentence inline. Don't hold them; proposing is free, only implementing needs a conversation.
    For broad-scope work, use tasks to separate the investigation phase from its implementation: the spec task delivers the investigation artifact, implementation tasks follow. Do not implement within a spec step; do not redesign during implementation.
    Off-ramp: single-step work (at most **one** edit, or **one** command) and conversation-only questions (at most one read) need no task.
 4. Work on tasks **sequentially** unless user explicitly said otherwise.
-5. When a task completes, produce a structured summary (what changed, what was skipped, what's pending) and reconcile drift. The summary is the deliverable, not narration.
+5. Every time you start a task, consider it again in the context of the general goal. Check for misses or better solutions. Surface findings about the current task's approach for discussion. Unsuited changes can wait.
+   When uncertain whether a finding is about this task or new work, treat it as scope-containment.
+   Example (step 5): task is "add retry logic," but the error handling it wraps is wrong. Surface before proceeding.
+   Example (scope-containment): while adding the retry, you notice inconsistent logging. Note it; don't propose fixing it.
+   Off-ramp: investigation hit its own off-ramp conditions.
+6. When a task completes, produce a structured summary (what changed, what was skipped, what's pending) and reconcile drift. The summary is the deliverable, not narration.
    Explain what motivated non-trivial suggestions or divergences from what I asked.
    Example: a capture sweep ends with a summary of page counts, changes made, discard rate, and pending items.
 
