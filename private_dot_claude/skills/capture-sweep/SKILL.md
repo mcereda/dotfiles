@@ -210,10 +210,11 @@ ls Taskfile.yml Makefile package.json 2>/dev/null
 
 Use `task lint`, `make lint`, or `npm run lint` as appropriate. Fix any errors.
 
-Commit all changes in one commit. Use a descriptive message:
+Commit all changes in one commit.
+Describe the content that changed, not the process that produced it:
 
 ```
-update(<project>): capture sweep -- N promoted, M discarded
+update(<project>): <summarize what was promoted, e.g. "add migration tracker and deploy gotchas">
 ```
 
 Push only if the project's CLAUDE.md authorizes it.

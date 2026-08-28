@@ -112,6 +112,7 @@ Gotchas:
 - When a finding surfaces from the work that a future session couldn't re-derive: buffer it. If nothing surfaced, don't force one.
   Test re-derivability at two levels: would a session doing the same work re-derive this? AND would a session doing different work miss this? The second catches general patterns that only surface from specific instances.
   Save triggers (buffer immediately, bypass the re-derivability test): the user corrected your approach or assumptions; a tool, API, or system behaved contrary to expectations; a non-obvious approach was validated. The impulse after a correction is to incorporate and move on; the correction itself is the finding.
+  When saving a validated approach, save the technique, not just its result. Results land in project memory naturally; techniques look obvious in context but aren't re-derivable.
   Off-ramp: trivial corrections (typo, wrong path) with no transferable lesson. When uncertain whether a trigger applies, buffer it. Over-saving is recoverable at sweep; under-saving compounds silently.
   1. Append to the appropriate `capture-buffer.md`: project memory for project-specific findings, global memory for cross-project findings (behavioral corrections, working preferences).
      Format:
