@@ -76,7 +76,7 @@ brew "git" if OS.mac?
 brew "uv"
 {{- end }}
 
-{{- if lookPath "docker" }}
+{{  if lookPath "docker" -}}
 brew "hadolint"
 {{- end }}
 
@@ -84,14 +84,15 @@ brew "hadolint"
 {{- if eq $.chezmoi.os "darwin" }}
 
 cask "bluesnooze"
-cask "zen"  # better than firefox, based on it
+# cask "ghostmoon"        # when it becomes available
 cask "iterm2"
-cask "keepingyouawake"
 cask "keyboardcleantool"
-cask "monitorcontrol"    # for better control on external monitors
-cask "mos"               # for separated mouse scrolling control
-cask "rectangle"         # for window snapping
+cask "monitorcontrol"     # better control of external monitors
+cask "mos"                # better mouse scrolling control
+cask "rectangle"          # better window snapping
 cask "vlc"
+cask "zed"                # better than vscode
+cask "zen"                # better than firefox, based on it
 
 {{- end }}
 
