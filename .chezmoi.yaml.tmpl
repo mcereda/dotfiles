@@ -50,9 +50,11 @@
      * placeholders must be backtick raw string literals (not "...") so they
      * survive the first render as literal text. See README.md "Gotchas".
      */}}
-{{-    $_ := set $defaults "diff" dict }}
-{{-    $_ := set $defaults.diff "command" (joinPath $.chezmoi.homeDir ".local/bin/chezmoi-diff") }}
-{{-    $_ := set $defaults.diff "args" (list `{{ .Destination }}` `{{ .Target }}`) }}
+{{-    if stat "~/.local/bin/chezmoi-diff" }}
+{{-      $_ := set $defaults "diff" dict }}
+{{-      $_ := set $defaults.diff "command" (joinPath $.chezmoi.homeDir ".local/bin/chezmoi-diff") }}
+{{-      $_ := set $defaults.diff "args" (list `{{ .Destination }}` `{{ .Target }}`) }}
+{{-    end }}
 
 {{-    if $debug }}
 {{       "defaults:" | comment "# " }}
