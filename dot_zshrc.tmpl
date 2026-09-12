@@ -436,8 +436,9 @@ export EDITOR={{ $editor | quote }}
 {{-    end }}
 
 {{-    if or
-         (lookPath "code")
-         (lookPath "code-oss") }}
+         (ne (lookPath "code") "")
+         (ne (lookPath "code-oss") "")
+       }}
 
 ####################
 # Visual Studio Code.

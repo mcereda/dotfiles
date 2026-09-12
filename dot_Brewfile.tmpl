@@ -94,7 +94,7 @@ cask "vlc"
 {{- end }}
 
 
-{{- if lookPath "code" }}
+{{- if ne (lookPath "code") "" }}
 
 vscode "angelo-breuer.clock"
 vscode "catppuccin.catppuccin-vsc"

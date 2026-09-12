@@ -15,16 +15,16 @@ TODO.md
 
 {{-    if ne .chezmoi.os "darwin" }}
 
-# Ignore Darwin-specific applications configurations.
-.config/fish/conf.d/osx.*
+# Ignore Darwin-specific application configurations.
 Library/
+.config/fish/**/osx.*
 
 {{-    end }}
 
 {{-    if ne .chezmoi.os "linux" }}
 
 # Ignore Linux-specific applications configurations.
-.config/fish/conf.d/linux.*
+.config/fish/**/linux.*
 
 {{-    end }}
 
@@ -41,6 +41,15 @@ Library/
      */}}
 
 
+{{-    if not (lookPath "ansible") }}
+
+# Ansible not found in the user's PATH, ignore all the related files.
+.ansible.cfg
+.config/fish/**/*ansible*
+
+{{-    end }}
+
+
 {{-    if not (lookPath "asdf") }}
 
 # Asdf not found in the user's PATH, ignore all the related files.
@@ -54,7 +63,7 @@ Library/
 
 # AWS CLI not found in the user's PATH, ignore all the related files.
 .aws/
-.config/fish/**/aws*
+.config/fish/**/*aws*
 
 {{-    end }}
 
@@ -79,9 +88,11 @@ Library/
 
 {{-    if not (lookPath "brew") }}
 
-# Brew not found in the user's PATH, ignore all the related files.
+# Homebrew not found in the user's PATH, ignore all the related files.
+.config/homebrew/
+.homebrew/
 .Brewfile
-.config/fish/conf.d/*brew.fish
+.config/fish/**/*brew*
 
 {{-    end }}
 
@@ -94,30 +105,19 @@ Library/
 {{-    end }}
 
 
-{{-    if not (or
-         (lookPath "code")
-         (lookPath "code-oss")) }}
+{{-    if or
+         (eq (lookPath "code") "")
+         (eq (lookPath "code-oss") "")
+       }}
 
 # Visual Studio Code not found in the user's PATH, ignore all its files.
 .config/Code/
 .config/Code - OSS/
 .vscode/
 .vscode-oss/
-
-{{-    else }}
-{{-      if ne .chezmoi.os "darwin" }}
-
-# Ignore VSCode configuration files for Darwin.
+{{-      if eq .chezmoi.os "darwin" }}
 Library/Application Support/Code/
 Library/Application Support/Code - OSS/
-
-{{-      end }}
-{{-      if ne .chezmoi.os "linux" }}
-
-# Ignore VSCode configuration files for Linux.
-.config/Code/
-.config/Code - OSS/
-
 {{-      end }}
 {{-    end }}
 
@@ -125,7 +125,7 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "dblab") }}
 
 # DBLab CLI not found in the user's PATH, ignore all the related files.
-.config/fish/functions/dblab*.fish
+.config/fish/**/*dblab*
 
 {{-    end }}
 
@@ -142,7 +142,9 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "git") }}
 
 # Git not found in the user's PATH, ignore all the related files.
+.config/git/
 .gitconfig
+.config/fish/**/*git*
 
 {{-    end }}
 
@@ -151,6 +153,15 @@ Library/Application Support/Code - OSS/
 
 # GnuPG not found in the user's PATH, ignore all the related files.
 .gnupg/
+.config/fish/**/*gpg*
+
+{{-    end }}
+
+
+{{-    if not (lookPath "keybase") }}
+
+# Keybase not found in the user's PATH, ignore all the related files.
+.config/fish/**/*keybase*
 
 {{-    end }}
 
@@ -158,7 +169,7 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "kubectl") }}
 
 # Kubectl not found in the user's PATH, ignore all related files.
-.config/fish/**/kubectl*
+.config/fish/**/*kubectl*
 
 {{-    end }}
 
@@ -167,6 +178,14 @@ Library/Application Support/Code - OSS/
 
 # Mas not found in the user's PATH, ignore all related files.
 .config/fish/**/*mas*
+
+{{-    end }}
+
+
+{{-    if not (lookPath "opencode") }}
+
+# OpenCode not found in the user's PATH, ignore all related files.
+.config/opencode/
 
 {{-    end }}
 
@@ -191,7 +210,9 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "psql") }}
 
 # psql not found in the user's PATH, ignore all the related files.
-.config/fish/conf.d/osx.postgresql.fish
+.pgpass
+.pg_service.conf
+.config/fish/**/*postgresql*
 
 {{-    end }}
 
@@ -199,18 +220,7 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "pulumi") }}
 
 # Pulumi not found in the user's PATH, ignore all related files.
-.config/fish/**/pulumi*
-
-{{-    end }}
-
-
-{{-    if and
-         (not (lookPath "python"))
-         (not (lookPath "python2"))
-         (not (lookPath "python3")) }}
-
-# Python not found in the user's PATH, ignore all the related files.
-.local/lib/python/
+.config/fish/**/*pulumi*
 
 {{-    end }}
 
@@ -226,7 +236,7 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "snow") }}
 
 # Snowflake CLI not found in the user's PATH, ignore all the related files.
-.config/fish/conf.d/*snowflake.fish
+.config/fish/**/*snowflake*
 
 {{-    end }}
 
@@ -235,7 +245,7 @@ Library/Application Support/Code - OSS/
 
 # Starship not found in the user's PATH, ignore all the related files.
 .config/starship.toml
-.config/fish/conf.d/*starship.fish
+.config/fish/**/*starship*
 
 {{-    end }}
 
@@ -243,6 +253,7 @@ Library/Application Support/Code - OSS/
 {{-    if not (lookPath "tmux") }}
 
 # Tmux not found in the user's PATH, ignore all the related files.
+.config/tmux/
 .tmux.conf
 
 {{-    end }}
