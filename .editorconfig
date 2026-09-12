@@ -13,3 +13,6 @@ indent_size = 2
 
 [*.{bash,fish,sh,zsh}]
 indent_style = tab
+
+[*/.ssh/config]
+indent_style = tab
