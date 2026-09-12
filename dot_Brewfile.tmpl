@@ -69,8 +69,10 @@ brew "pinentry-mac" if OS.mac?
 brew "git-lfs"
 brew "git" if OS.mac?
 
-{{- if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
-# brew "pipx"  # "uv" seems to be a better option
+{{  if or
+      (lookPath "python")
+      (lookPath "python2")
+      (lookPath "python3") -}}
 brew "uv"
 {{- end }}
 
