@@ -1,5 +1,6 @@
 if not grep -q (gpgconf --list-dirs 'agent-ssh-socket' | sed "s|$HOME|~|") "$HOME/.ssh/config"
 	set -x 'SSH_AUTH_SOCK' (gpgconf --list-dirs 'agent-ssh-socket')
+	ssh-add -q
 end
 
 if status is-interactive
