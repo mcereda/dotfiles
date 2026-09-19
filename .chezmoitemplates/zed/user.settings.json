@@ -1,0 +1,63 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+
+{{- /*
+     * Load base user settings from user.settings.base.json.
+     */}}
+
+{{ $zedSettings := includeTemplate "zed/user.settings.base.json" . | fromJson }}
+
+
+{{- /*
+     * Host-specific additions and overrides.
+     * --------------------------------------
+     * Load configuration overrides from hosts-specific configuration files,
+     * should any such file exist.
+     * Every file's content will be merged with the default settings, so that
+     * settings from the new files will override the ones from previous files.
+     */}}
+
+{{- $defaults := dict }}
+{{- $_ := set $defaults "data" dict }}
+{{- $config := $defaults }}
+{{- $configFromFile := include $.chezmoi.configFile | fromYaml }}
+{{- $_ := mustMergeOverwrite $config $configFromFile }}
+
+{{- $hostSettingsFiles := list
+     (joinPath $config.data.hostDir "Code" "User" "settings.json.tmpl")
+     (joinPath $config.data.hostDir "Code" "User" "settings.json") }}
+
+{{- range $f := $hostSettingsFiles }}
+{{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-     $override := includeTemplate $f $ | fromJson }}
+{{-     $_ := mustMergeOverwrite $zedSettings $override }}
+{{-   end }}
+{{- end }}
+
+{{- $hostEncryptedSettingsFiles := list
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json.tmpl" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json" (dig "gpg" "suffix" ".asc" $config))) }}
+
+{{- range $f := $hostEncryptedSettingsFiles }}
+{{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
+{{-     if hasKey $config "encryption" }}
+{{-       $override := includeTemplate $f $ | decrypt | fromJson }}
+{{-       $_ := mustMergeOverwrite $zedSettings $override }}
+{{-     end }}
+{{-   end }}
+{{- end }}
+
+
+{{- /*
+     * Write settings down.
+     */}}
+
+{{- $zedSettings | toPrettyJson -}}
