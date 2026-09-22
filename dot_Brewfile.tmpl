@@ -85,15 +85,18 @@ brew "hadolint"
 {{- if eq $.chezmoi.os "darwin" }}
 
 cask "bluesnooze"
-# cask "ghostmoon"        # when it becomes available
 cask "iterm2"
 cask "keyboardcleantool"
-cask "monitorcontrol"     # better control of external monitors
-cask "mos"                # better mouse scrolling control
-cask "rectangle"          # better window snapping
+cask "monitorcontrol"     # better control over external monitors
 cask "vlc"
 cask "zed"                # better than vscode
 cask "zen"                # better than firefox, based on it
+
+# cask "ghostmoon"    # when it becomes available
+# cask "mos"          # better mouse scrolling control
+# cask "mullvad-vpn"
+# cask "openlogi"
+# cask "rectangle"    # better window snapping
 
 {{- end }}
 
