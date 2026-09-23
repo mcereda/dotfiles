@@ -89,7 +89,6 @@ cask "iterm2"
 cask "keyboardcleantool"
 cask "monitorcontrol"     # better control over external monitors
 cask "vlc"
-cask "zed"                # better than vscode
 cask "zen"                # better than firefox, based on it
 
 # cask "ghostmoon"    # when it becomes available
@@ -101,30 +100,29 @@ cask "zen"                # better than firefox, based on it
 {{- end }}
 
 
-{{- if ne (lookPath "code") "" }}
+{{- if or
+      (ne (lookPath "code") "")
+      (ne (lookPath "code-oss") "")
+      (ne (lookPath "codium") "") }}
 
-vscode "angelo-breuer.clock"
+# vscode "angelo-breuer.clock"  # FIXME: not available in codium, check is still there for VScode
 vscode "catppuccin.catppuccin-vsc"
 vscode "Gruntfuggly.todo-tree"
-vscode "nhoizey.gremlins"
+# vscode "nhoizey.gremlins"  # FIXME: not available in codium, check is still there for VScode
 vscode "oderwat.indent-rainbow"
 vscode "streetsidesoftware.code-spell-checker-british-english"
 vscode "streetsidesoftware.code-spell-checker"
-
 vscode "EditorConfig.EditorConfig"
 vscode "esbenp.prettier-vscode"
-vscode "JHeilingbrunner.vscode-gnupg-tool"
-
 vscode "codezombiech.gitignore"
 vscode "eamodio.gitlens"
 
 {{- /*  markdown */}}
 vscode "bierner.markdown-mermaid"
-vscode "ianjsikes.md-graph"
+# vscode "ianjsikes.md-graph"  # FIXME: not available in codium, check is still there for VScode
 vscode "yzhang.markdown-all-in-one"
 
 {{- /*  common files */}}
-vscode "casualjim.gotemplate"
 vscode "redhat.vscode-xml"
 vscode "redhat.vscode-yaml"
 
@@ -144,11 +142,16 @@ vscode "ms-azuretools.vscode-bicep"
 
 {{-   if lookPath "docker" }}
 vscode "ms-azuretools.vscode-docker"
-vscode "ms-vscode-remote.remote-containers"
+# vscode "ms-vscode-remote.remote-containers"  # FIXME: not available in codium, check is still there for VScode
 {{-   end }}
 
 {{-   if lookPath "go" }}
 vscode "golang.go"
+vscode "joelhill.go-template"  # FIXME: "casualjim.gotemplate" not available in codium, check is still there for VScode
+{{-   end }}
+
+{{-   if lookPath "gpg" }}
+# vscode "JHeilingbrunner.vscode-gnupg-tool"  # FIXME: not available in codium, check is still there for VScode
 {{-   end }}
 
 {{-   if lookPath "kubectl" }}
@@ -175,7 +178,7 @@ vscode "ms-python.python"
 vscode "timonwong.shellcheck"
 {{-   end }}
 
-vscode "ms-vscode-remote.remote-ssh-edit"
+# vscode "ms-vscode-remote.remote-ssh-edit"  # FIXME: not available in codium, check is still there for VScode
 
 {{-   if lookPath "terraform" }}
 vscode "hashicorp.terraform"
@@ -201,4 +204,4 @@ vscode "ms-azuretools.vscode-azureterraform"
          "hostPlainFiles" $hostFiles
          "hostEncryptedFiles" $hostEncryptedFiles
          "debug" $debug
-       ) }}
+       ) -}}

@@ -108,6 +108,7 @@ Library/
 {{-    if or
          (eq (lookPath "code") "")
          (eq (lookPath "code-oss") "")
+         (eq (lookPath "codium") "")
        }}
 
 # Visual Studio Code not found in the user's PATH, ignore all its files.
