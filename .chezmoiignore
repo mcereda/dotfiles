@@ -31,6 +31,7 @@ Library/
 {{-    if ne .chezmoi.os "windows" }}
 
 # Ignore Windows-specific applications configurations.
+.config/fish/**/windows.*
 .config/git/config.windows.inc
 
 {{-    end }}
@@ -89,10 +90,10 @@ Library/
 {{-    if not (lookPath "brew") }}
 
 # Homebrew not found in the user's PATH, ignore all the related files.
-.config/homebrew/
-.homebrew/
 .Brewfile
 .config/fish/**/*brew*
+.config/homebrew/
+.homebrew/
 
 {{-    end }}
 
@@ -105,22 +106,15 @@ Library/
 {{-    end }}
 
 
-{{-    if or
-         (eq (lookPath "code") "")
-         (eq (lookPath "code-oss") "")
-         (eq (lookPath "codium") "")
-       }}
-
+{{/* FIXME: broken
 # Visual Studio Code not found in the user's PATH, ignore all its files.
 .config/Code/
-.config/Code - OSS/
+.config/VSCodium/
 .vscode/
+.vscode-shared/
 .vscode-oss/
-{{-      if eq .chezmoi.os "darwin" }}
-Library/Application Support/Code/
-Library/Application Support/Code - OSS/
-{{-      end }}
-{{-    end }}
+.vscode-oss-shared/
+*/}}
 
 
 {{-    if not (lookPath "dblab") }}

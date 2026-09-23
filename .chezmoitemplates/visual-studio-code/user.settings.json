@@ -1,4 +1,8 @@
-{{- $vscodeExtensions := output "code" "--list-extensions" | splitList "\n" | compact }}
+{{- $vscodeExecutable := coalesce
+        (lookPath "code")
+        (lookPath "codium") }}
+
+{{- $vscodeExtensions := output $vscodeExecutable "--list-extensions" | splitList "\n" | compact }}
 
 {{- /*
      * Load base user settings from user.settings.base.json.
@@ -6,97 +10,26 @@
 
 {{- $vscodeSettings := includeTemplate "visual-studio-code/user.settings.base.json" . | fromJson }}
 
+{{- $shell := coalesce
+        (lookPath "fish")
+        (lookPath "zsh")
+        (lookPath "bash")
+    | base }}
 
-{{- /*
-     * Ignore extensions requiring missing binaries.
-     */}}
-
-{{- $ignoredExtensions := list }}
-
-{{- if not (lookPath "ansible") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "redhat.ansible" }}
+{{- if eq .chezmoi.os "darwin" }}
+{{-     if stat "/Applications/iTerm.app" }}
+{{-         $_ := mustMergeOverwrite $vscodeSettings (dict
+                "terminal.external.osxExec" "iTerm.app"
+            ) }}
+{{-     end }}
+{{-     $_ := mustMergeOverwrite $vscodeSettings (dict
+            "terminal.integrated.defaultProfile.osx" $shell
+        ) }}
 {{- end }}
-
-{{- if not (lookPath "az") }}
-{{-   $ignoredExtensions = concat $ignoredExtensions (list
-        "ms-azure-devops.azure-pipelines"
-        "ms-azuretools.vscode-azureterraform"
-        "ms-azuretools.vscode-bicep"
-        "ms-vscode.azure-account"
-        "ms-vscode.azurecli"
-        "msazurermtools.azurerm-vscode-tools"
-      ) }}
-{{- end }}
-
-{{- if not (lookPath "docker") }}
-{{-   $ignoredExtensions = concat $ignoredExtensions (list
-        "ms-azuretools.vscode-docker"
-        "ms-vscode-remote.remote-containers"
-      ) }}
-{{- end }}
-
-{{- if not (lookPath "git") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "eamodio.gitlens" }}
-{{- end }}
-
-{{- if not (lookPath "go") }}
-{{-   $ignoredExtensions = concat $ignoredExtensions (list
-        "casualjim.gotemplate"
-        "golang.go"
-      ) }}
-{{- end }}
-
-{{- if not (lookPath "gpg") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "JHeilingbrunner.vscode-gnupg-tool" }}
-{{- end }}
-
-{{- if not (lookPath "kubectl") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "ms-kubernetes-tools.vscode-kubernetes-tools" }}
-{{- end }}
-
-{{- if not (lookPath "make") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "ms-vscode.makefile-tools" }}
-{{- end }}
-
-{{- if not (lookPath "pwsh") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "ms-vscode.powershell" }}
-{{- end }}
-
-{{- if not (lookPath "shellcheck") }}
-{{-   $ignoredExtensions = append $ignoredExtensions "timonwong.shellcheck" }}
-{{- end }}
-
-{{- if not (or (lookPath "terraform") (lookPath "tofu")) }}
-{{-   $ignoredExtensions = append $ignoredExtensions "hashicorp.terraform" }}
-{{- end }}
-
-
-{{- /*
-     * Ignore extensions depending on the host's class.
-     */}}
-
-{{- $class := dig "class" "private" . }}
-
-{{- if ne $class "work" }}
-{{-   $ignoredExtensions = concat $ignoredExtensions (list
-        "ms-vsliveshare.vsliveshare"
-        "ms-vsliveshare.vsliveshare-audio"
-        "ms-vsliveshare.vsliveshare-pack"
-      ) }}
-{{- end }}
-
-{{- $_ := set $vscodeSettings "settingsSync.ignoredExtensions" $ignoredExtensions }}
-
 
 {{- /*
      * Extension-specific settings.
      */}}
-
-{{- if and (eq .chezmoi.os "darwin") (stat "/Applications/iTerm.app") }}
-{{-   $_ := mustMergeOverwrite $vscodeSettings (dict
-        "terminal.external.osxExec" "iTerm.app"
-      ) }}
-{{- end }}
 
 {{- if has "angelo-breuer.clock" $vscodeExtensions }}
 {{-   $_ := mustMergeOverwrite $vscodeSettings (dict
