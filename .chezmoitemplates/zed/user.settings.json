@@ -30,8 +30,8 @@
 {{- $_ := mustMergeOverwrite $config $configFromFile }}
 
 {{- $hostSettingsFiles := list
-     (joinPath $config.data.hostDir "Code" "User" "settings.json.tmpl")
-     (joinPath $config.data.hostDir "Code" "User" "settings.json") }}
+     (joinPath $config.data.hostDir ".config" "zed" "settings.json.tmpl")
+     (joinPath $config.data.hostDir ".config" "zed" "settings.json") }}
 
 {{- range $f := $hostSettingsFiles }}
 {{-   if stat (joinPath $.chezmoi.sourceDir $f) }}
@@ -41,10 +41,10 @@
 {{- end }}
 
 {{- $hostEncryptedSettingsFiles := list
-     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json.tmpl" (dig "age" "suffix" ".age" $config)))
-     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json.tmpl" (dig "gpg" "suffix" ".asc" $config)))
-     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json" (dig "age" "suffix" ".age" $config)))
-     (joinPath $config.data.encryptedHostDir "Code" "User" (print "settings.json" (dig "gpg" "suffix" ".asc" $config))) }}
+     (joinPath $config.data.encryptedHostDir ".config" "zed" (print "settings.json.tmpl" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".config" "zed" (print "settings.json.tmpl" (dig "gpg" "suffix" ".asc" $config)))
+     (joinPath $config.data.encryptedHostDir ".config" "zed" (print "settings.json" (dig "age" "suffix" ".age" $config)))
+     (joinPath $config.data.encryptedHostDir ".config" "zed" (print "settings.json" (dig "gpg" "suffix" ".asc" $config))) }}
 
 {{- range $f := $hostEncryptedSettingsFiles }}
 {{-   if stat (joinPath $.chezmoi.sourceDir $f) }}

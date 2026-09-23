@@ -19,6 +19,12 @@
     }
   },
 
+  "inlay_hints": {
+    "show_background": true
+  },
+  "indent_guides": {
+    "background_coloring": "indent_aware"
+  },
   "project_panel": {
     "dock": "left"
   },
