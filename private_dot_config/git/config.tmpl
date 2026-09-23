@@ -143,6 +143,12 @@
 [user]
 	email = {{ .email }}
 	name = {{ .name }}
+	{{ if .signingKey -}} signingKey = {{ .signingKey }}! {{ end}}
+
+{{  if .signingKey -}}
+[commit]
+	gpgsign = true
+{{- end }}
 
 
 {{- /*

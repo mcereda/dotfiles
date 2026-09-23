@@ -57,7 +57,8 @@ platform's tools for this.
    ```yaml
    # file at $(chezmoi source-path)/.chezmoidata.yaml
    name: Johnny B. Good
-   email: …
+   email: jbgood@example.org
+   signingKey: 01AB23CD  # optional; get with `gpg --list-keys --keyid-format 'short' '<email>'`
    ```
 
    values in here will be used to override the templates defaults; see [gotchas] for details
