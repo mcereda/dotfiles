@@ -142,6 +142,7 @@ vscode "ms-azuretools.vscode-bicep"
 
 {{-   if lookPath "docker" }}
 vscode "ms-azuretools.vscode-docker"
+vscode "ms-azuretools.vscode-containers"
 # vscode "ms-vscode-remote.remote-containers"  # FIXME: not available in codium, check is still there for VScode
 {{-   end }}
 
@@ -172,6 +173,8 @@ vscode "ms-vscode.powershell"
 
 {{-   if or (lookPath "python") (lookPath "python2") (lookPath "python3") }}
 vscode "ms-python.python"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-python.debugpy"
 {{-   end }}
 
 {{-   if lookPath "shellcheck" }}
