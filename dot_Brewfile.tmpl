@@ -48,6 +48,7 @@
 
 brew "bash" if OS.mac?
 brew "chezmoi"
+brew "clamav" if OS.mac?
 brew "coreutils" if OS.mac?  # for `realpath`
 brew "fish"
 brew "fzf"
@@ -85,17 +86,17 @@ brew "hadolint"
 {{- if eq $.chezmoi.os "darwin" }}
 
 cask "bluesnooze"
+# cask "ghostmoon"        # when it becomes available
 cask "iterm2"
 cask "keyboardcleantool"
 cask "monitorcontrol"     # better control over external monitors
+# cask "mullvad-vpn"
+# cask "mos"              # better mouse scrolling control
+# cask "openlogi"         # for logitech devices
+# cask "openmtp"          # or "macdroid", better android file transfers
+# cask "rectangle"        # better window snapping
 cask "vlc"
 cask "zen"                # better than firefox, based on it
-
-# cask "ghostmoon"    # when it becomes available
-# cask "mos"          # better mouse scrolling control
-# cask "mullvad-vpn"
-# cask "openlogi"
-# cask "rectangle"    # better window snapping
 
 {{- end }}
 
@@ -119,6 +120,7 @@ vscode "eamodio.gitlens"
 
 {{- /*  markdown */}}
 vscode "bierner.markdown-mermaid"
+vscode "davidanson.vscode-markdownlint"
 # vscode "ianjsikes.md-graph"  # FIXME: not available in codium, check is still there for VScode
 vscode "yzhang.markdown-all-in-one"
 
@@ -148,7 +150,7 @@ vscode "ms-azuretools.vscode-containers"
 
 {{-   if lookPath "go" }}
 vscode "golang.go"
-vscode "joelhill.go-template"  # FIXME: "casualjim.gotemplate" not available in codium, check is still there for VScode
+# vscode "joelhill.go-template"  # FIXME: "casualjim.gotemplate" not available in codium, check is still there for VScode
 {{-   end }}
 
 {{-   if lookPath "gpg" }}
@@ -175,6 +177,11 @@ vscode "ms-vscode.powershell"
 vscode "ms-python.python"
 vscode "ms-python.vscode-python-envs"
 vscode "ms-python.debugpy"
+{{-   end }}
+
+{{-   if lookPath "pulumi" }}
+vscode "pulumi.pulumi-lsp-client"
+vscode "pulumi.pulumi-vscode-tools"
 {{-   end }}
 
 {{-   if lookPath "shellcheck" }}
