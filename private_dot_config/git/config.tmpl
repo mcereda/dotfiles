@@ -60,10 +60,9 @@
 		git switch \"$1\" \
 	;} && f"
 	config-show-final = "!f() { \
-		git config --list \
-		| awk -F '=' '{print $1}' \
+		git config --name-only --list \
 		| sort -u \
-		| xargs -I {} \
+		| xargs -I{} \
 			sh -c 'printf \"{}=\" && git config --get {}' \
 	;} && f"
 	diff-words = diff --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+'
@@ -158,8 +157,10 @@
      * --------
      */}}
 
-{{- $includePaths := list
-        (joinPath "~/.config/git" (join "." (list "config" (ternary "windows" "unix" (eq .chezmoi.os "windows")) "inc"))) }}
+{{- $includePaths := list (joinPath
+        "~/.config/git"
+        (join "." (list "config" (ternary "windows" "unix" (eq .chezmoi.os "windows")) "inc"))
+) }}
 
 {{- if and
         (lookPath "git-lfs")
